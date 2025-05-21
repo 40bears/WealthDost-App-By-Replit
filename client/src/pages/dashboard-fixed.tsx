@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 // Define feature types for our top navigation with empty string for default home feed
-type FeatureType = "watchlist" | "analytics" | "debate" | "quiz" | "news" | "home_feed";
+type FeatureType = "home_feed" | "watchlist" | "analytics" | "debate" | "quiz" | "news";
 
 // Define bottom tab types
 type Tab = "home" | "experts" | "explore" | "invroom" | "create";
@@ -113,8 +113,8 @@ const Dashboard = () => {
               View All
             </Button>
           </div>
-          <div className="flex space-x-2 overflow-x-auto pb-2">
-            <div className="flex-shrink-0 w-24 bg-white rounded-lg border border-gray-200 p-2 shadow-sm">
+          <div className="grid grid-cols-3 gap-2">
+            <div className="bg-white rounded-lg border border-gray-200 p-2 shadow-sm">
               <div className="flex justify-between items-center">
                 <span className="text-xs font-medium">NIFTY</span>
                 <span className="text-green-600 text-xs font-medium">+0.8%</span>
@@ -125,7 +125,7 @@ const Dashboard = () => {
               </div>
             </div>
             
-            <div className="flex-shrink-0 w-24 bg-white rounded-lg border border-gray-200 p-2 shadow-sm">
+            <div className="bg-white rounded-lg border border-gray-200 p-2 shadow-sm">
               <div className="flex justify-between items-center">
                 <span className="text-xs font-medium">SENSEX</span>
                 <span className="text-green-600 text-xs font-medium">+0.6%</span>
@@ -136,7 +136,7 @@ const Dashboard = () => {
               </div>
             </div>
             
-            <div className="flex-shrink-0 w-24 bg-white rounded-lg border border-gray-200 p-2 shadow-sm">
+            <div className="bg-white rounded-lg border border-gray-200 p-2 shadow-sm">
               <div className="flex justify-between items-center">
                 <span className="text-xs font-medium">BNKNIFTY</span>
                 <span className="text-red-600 text-xs font-medium">-0.2%</span>
@@ -144,17 +144,6 @@ const Dashboard = () => {
               <div className="text-sm font-semibold my-0.5">52,187</div>
               <div className="w-full h-1 bg-gray-100 rounded-sm overflow-hidden">
                 <div className="bg-red-500 h-full" style={{width: '40%'}}></div>
-              </div>
-            </div>
-            
-            <div className="flex-shrink-0 w-24 bg-white rounded-lg border border-gray-200 p-2 shadow-sm">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-medium">USD/INR</span>
-                <span className="text-green-600 text-xs font-medium">+0.1%</span>
-              </div>
-              <div className="text-sm font-semibold my-0.5">83.12</div>
-              <div className="w-full h-1 bg-gray-100 rounded-sm overflow-hidden">
-                <div className="bg-green-500 h-full" style={{width: '52%'}}></div>
               </div>
             </div>
           </div>
