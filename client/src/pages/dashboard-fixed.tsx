@@ -10,17 +10,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 // Define feature types for our top navigation
-type FeatureType = "watchlist" | "analytics" | "debate" | "quiz" | "news";
+type FeatureType = "watchlist" | "analytics" | "debate" | "quiz" | "news" | "";
 
 // Define bottom tab types
-type Tab = "home" | "experts" | "explore" | "invroom";
+type Tab = "home" | "experts" | "explore" | "invroom" | "create";
 
 // Define experts section tabs
 type ExpertsTabType = "topAnalysts" | "ask";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState<Tab>("home");
-  const [activeFeature, setActiveFeature] = useState<FeatureType | null>(null);
+  const [activeFeature, setActiveFeature] = useState<FeatureType>("");
   const [expertsTab, setExpertsTab] = useState<ExpertsTabType>("topAnalysts");
 
   // Fetch market data
@@ -44,6 +44,13 @@ const Dashboard = () => {
 
   // Function to handle tab changes
   const handleTabChange = (tab: Tab) => {
+    // Handle the create action without changing the active tab
+    if (tab === "create") {
+      console.log("Create post button clicked");
+      // You could show a modal or redirect to create post page
+      return; // Don't change the active tab for create button
+    }
+    
     setActiveTab(tab);
     // When Home tab is clicked, reset to show posts feed
     if (tab === "home") {
