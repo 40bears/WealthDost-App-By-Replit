@@ -95,23 +95,6 @@ const Dashboard = () => {
 
     return (
       <div className="px-4 py-6">
-        {/* User Interests Section */}
-        <div className="mb-6">
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="font-semibold">Your Interests</h3>
-            <Button variant="ghost" size="sm" className="text-xs">Edit</Button>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {userInterests.map((interest, index) => (
-              <span 
-                key={index} 
-                className="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full font-medium"
-              >
-                {interest}
-              </span>
-            ))}
-          </div>
-        </div>
         
         {/* Community Posts Section */}
         <div className="mt-4 relative">
@@ -169,8 +152,8 @@ const Dashboard = () => {
           )}
           
           {/* Floating Post Button */}
-          <Button className="fixed bottom-20 right-4 rounded-full w-12 h-12 p-0 btn-pulse shadow-lg" variant="default">
-            <span className="material-icons text-xl">add</span>
+          <Button className="fixed bottom-20 right-4 rounded-full w-14 h-14 p-0 btn-pulse shadow-lg flex items-center justify-center" variant="default">
+            <span className="material-icons text-2xl">add</span>
           </Button>
         </div>
       </div>
