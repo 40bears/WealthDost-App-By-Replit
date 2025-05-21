@@ -52,22 +52,130 @@ const Dashboard = () => {
   };
 
   // Function to render posts feed
-  const renderPostsFeed = () => (
-    <div className="px-4 py-6">
-      <div className="mt-1">
-        <h3 className="font-semibold mb-3">Recent Community Posts</h3>
-        <ContentFeed posts={typedPosts} isLoading={isLoadingPosts} />
-        {(!typedPosts || typedPosts.length === 0) && !isLoadingPosts && (
-          <div className="bg-gray-50 p-4 rounded-lg text-center mt-4">
-            <span className="material-icons text-4xl text-gray-400 mb-2">feed</span>
-            <h3 className="font-medium mb-1">No posts yet</h3>
-            <p className="text-sm text-gray-500 mb-4">Be the first to share insights or questions with the community.</p>
-            <Button className="btn-pulse">Create a Post</Button>
+  const renderPostsFeed = () => {
+    // Mock posts data when API returns empty
+    const mockPosts = [
+      {
+        id: 1,
+        userId: 101,
+        author: "Rahul Sharma",
+        profileImageUrl: null,
+        content: "Just added Tesla to my watchlist. Their new energy storage solutions look promising for long-term growth.",
+        timestamp: new Date(Date.now() - 1000 * 60 * 30),
+        likes: 24,
+        comments: 7,
+        tags: ["tech", "stocks", "renewable"]
+      },
+      {
+        id: 2,
+        userId: 102,
+        author: "Priya Mehta",
+        profileImageUrl: null,
+        content: "What are your thoughts on investing in small-cap funds in the current market? Looking for some expert opinions.",
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
+        likes: 15,
+        comments: 12,
+        tags: ["mutualfunds", "smallcap"]
+      },
+      {
+        id: 3,
+        userId: 103,
+        author: "Vikram Patel",
+        profileImageUrl: null,
+        content: "Attended a great webinar on sustainable investing today. The green energy transition is creating some interesting opportunities in the market.",
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5),
+        likes: 32,
+        comments: 8,
+        tags: ["sustainable", "greeninvesting"]
+      }
+    ];
+
+    // User profile with interests
+    const userInterests = ["Tech Stocks", "Renewable Energy", "Mutual Funds", "Real Estate"];
+
+    return (
+      <div className="px-4 py-6">
+        {/* User Interests Section */}
+        <div className="mb-6">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="font-semibold">Your Interests</h3>
+            <Button variant="ghost" size="sm" className="text-xs">Edit</Button>
           </div>
-        )}
+          <div className="flex flex-wrap gap-2">
+            {userInterests.map((interest, index) => (
+              <span 
+                key={index} 
+                className="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full font-medium"
+              >
+                {interest}
+              </span>
+            ))}
+          </div>
+        </div>
+        
+        {/* Community Posts Section */}
+        <div className="mt-4 relative">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="font-semibold">Community Feed</h3>
+            <Button variant="ghost" size="sm" className="text-xs flex items-center">
+              <span className="material-icons text-sm mr-1">filter_list</span>
+              Filter
+            </Button>
+          </div>
+          
+          {/* Show API posts if available, otherwise show mock posts */}
+          {typedPosts && typedPosts.length > 0 ? (
+            <ContentFeed posts={typedPosts} isLoading={isLoadingPosts} />
+          ) : (
+            <div className="space-y-4">
+              {mockPosts.map((post) => (
+                <div key={post.id} className="bg-white border border-gray-200 rounded-lg p-4">
+                  <div className="flex items-start mb-3">
+                    <Avatar className="h-10 w-10 mr-3">
+                      <AvatarFallback className="bg-primary/10 text-primary">
+                        {post.author.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <h4 className="font-medium text-sm">{post.author}</h4>
+                      <p className="text-xs text-gray-500">{post.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} • {post.timestamp.toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-700 mb-3">{post.content}</p>
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    {post.tags.map((tag, index) => (
+                      <span key={index} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex text-xs text-gray-500">
+                    <button className="flex items-center mr-4 click-bounce">
+                      <span className="material-icons text-sm mr-1">thumb_up</span>
+                      {post.likes}
+                    </button>
+                    <button className="flex items-center mr-4 click-bounce">
+                      <span className="material-icons text-sm mr-1">comment</span>
+                      {post.comments}
+                    </button>
+                    <button className="flex items-center click-bounce">
+                      <span className="material-icons text-sm mr-1">share</span>
+                      Share
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          
+          {/* Floating Post Button */}
+          <Button className="fixed bottom-20 right-4 rounded-full w-12 h-12 p-0 btn-pulse shadow-lg" variant="default">
+            <span className="material-icons text-xl">add</span>
+          </Button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   // Render content based on selected feature
   const renderFeatureContent = () => {
