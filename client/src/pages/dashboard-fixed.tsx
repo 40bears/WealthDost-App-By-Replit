@@ -105,8 +105,71 @@ const Dashboard = () => {
     return (
       <div className="px-4 py-6">
         
+        {/* Market Highlights Section */}
+        <div className="mt-4 mb-6">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="font-semibold">Market Highlights</h3>
+            <Button variant="ghost" size="sm" className="text-xs">
+              View All
+            </Button>
+          </div>
+          <div className="flex space-x-3 overflow-x-auto pb-2">
+            <div className="flex-shrink-0 w-32 bg-white rounded-lg border border-gray-200 p-3 shadow-sm">
+              <div className="flex justify-between items-start mb-1">
+                <span className="text-xs font-medium">NIFTY 50</span>
+                <span className="text-green-600 text-xs font-medium">+0.8%</span>
+              </div>
+              <div className="text-lg font-semibold mb-1">24,305</div>
+              <div className="h-6 w-full">
+                <div className="w-full h-2 bg-gray-100 rounded-sm overflow-hidden mt-1">
+                  <div className="bg-green-500 h-full" style={{width: '70%'}}></div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex-shrink-0 w-32 bg-white rounded-lg border border-gray-200 p-3 shadow-sm">
+              <div className="flex justify-between items-start mb-1">
+                <span className="text-xs font-medium">SENSEX</span>
+                <span className="text-green-600 text-xs font-medium">+0.6%</span>
+              </div>
+              <div className="text-lg font-semibold mb-1">80,245</div>
+              <div className="h-6 w-full">
+                <div className="w-full h-2 bg-gray-100 rounded-sm overflow-hidden mt-1">
+                  <div className="bg-green-500 h-full" style={{width: '65%'}}></div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex-shrink-0 w-32 bg-white rounded-lg border border-gray-200 p-3 shadow-sm">
+              <div className="flex justify-between items-start mb-1">
+                <span className="text-xs font-medium">BANKNIFTY</span>
+                <span className="text-red-600 text-xs font-medium">-0.2%</span>
+              </div>
+              <div className="text-lg font-semibold mb-1">52,187</div>
+              <div className="h-6 w-full">
+                <div className="w-full h-2 bg-gray-100 rounded-sm overflow-hidden mt-1">
+                  <div className="bg-red-500 h-full" style={{width: '40%'}}></div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex-shrink-0 w-32 bg-white rounded-lg border border-gray-200 p-3 shadow-sm">
+              <div className="flex justify-between items-start mb-1">
+                <span className="text-xs font-medium">USD/INR</span>
+                <span className="text-green-600 text-xs font-medium">+0.1%</span>
+              </div>
+              <div className="text-lg font-semibold mb-1">83.12</div>
+              <div className="h-6 w-full">
+                <div className="w-full h-2 bg-gray-100 rounded-sm overflow-hidden mt-1">
+                  <div className="bg-green-500 h-full" style={{width: '52%'}}></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
         {/* Community Posts Section */}
-        <div className="mt-4 relative">
+        <div className="relative">
           <div className="flex justify-between items-center mb-3">
             <h3 className="font-semibold">Community Feed</h3>
             <Button variant="ghost" size="sm" className="text-xs flex items-center">
