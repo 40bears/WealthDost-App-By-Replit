@@ -15,9 +15,13 @@ type FeatureType = "watchlist" | "analytics" | "debate" | "quiz" | "news";
 // Define bottom tab types
 type Tab = "home" | "experts" | "explore" | "invroom";
 
+// Define experts section tabs
+type ExpertsTabType = "topAnalysts" | "ask";
+
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState<Tab>("home");
   const [activeFeature, setActiveFeature] = useState<FeatureType>("watchlist");
+  const [expertsTab, setExpertsTab] = useState<ExpertsTabType>("topAnalysts");
 
   // Fetch market data
   const { data: marketData, isLoading: isLoadingMarketData } = useQuery({
@@ -402,60 +406,42 @@ const Dashboard = () => {
             </div>
           </div>
         );
+        
+      default:
+        return (
+          <div className="px-4 py-6">
+            <h2 className="text-xl font-semibold mb-4">Welcome to WealthDost</h2>
+            <p className="text-gray-600 mb-4">Select a feature to get started.</p>
+            <ContentFeed posts={typedPosts} isLoading={isLoadingPosts} />
+          </div>
+        );
     }
   };
 
-  // Render bottom tab content
-  const renderTabContent = () => {
-    if (activeTab === "home") {
-      return renderFeatureContent();
-    } else if (activeTab === "experts") {
-      return (
-        <div className="px-4 py-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">Experts</h2>
-            <div className="flex space-x-2">
-              <button className="px-3 py-1 bg-primary text-white text-sm rounded-full font-medium">Ask</button>
-              <button className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">Top Analysts</button>
-            </div>
+  // Render the experts tab content
+  const renderExpertsContent = () => {
+    return (
+      <div className="px-4 py-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold">Experts</h2>
+          <div className="flex space-x-2">
+            <button 
+              onClick={() => setExpertsTab("topAnalysts")} 
+              className={`px-3 py-1 text-sm rounded-full font-medium ${expertsTab === "topAnalysts" ? "bg-primary text-white" : "bg-gray-100 text-gray-700"}`}
+            >
+              Top Analysts
+            </button>
+            <button 
+              onClick={() => setExpertsTab("ask")} 
+              className={`px-3 py-1 text-sm rounded-full font-medium ${expertsTab === "ask" ? "bg-primary text-white" : "bg-gray-100 text-gray-700"}`}
+            >
+              Ask
+            </button>
           </div>
-          
-          {/* Ask an Expert Section */}
+        </div>
+        
+        {expertsTab === "topAnalysts" && (
           <div className="mb-6">
-            <p className="text-gray-600 mb-4">Get answers from verified financial experts.</p>
-            <div className="bg-gray-50 rounded-lg p-4 mb-4">
-              <h3 className="font-medium mb-3">Ask Your Question</h3>
-              <textarea 
-                className="w-full p-3 border border-gray-300 rounded-lg mb-3" 
-                rows={3}
-                placeholder="What would you like to ask our experts?"
-              />
-              <div className="flex mb-3">
-                <Button className="w-full">Submit Question</Button>
-              </div>
-              <p className="text-xs text-gray-500">Our verified experts typically respond within 24 hours</p>
-            </div>
-            <div className="space-y-4">
-              <h3 className="font-medium">Popular Questions</h3>
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
-                <h4 className="font-medium mb-1">How to start investing with ₹10,000?</h4>
-                <div className="flex items-center text-xs text-gray-500 mb-3">
-                  <span>Answered by</span>
-                  <span className="font-medium ml-1">Priya Shah, CFA</span>
-                  <div className="ml-1 bg-blue-100 text-blue-800 text-xs py-0.5 px-1 rounded inline-flex items-center">
-                    <span className="material-icons text-xs mr-0.5">verified</span>
-                    Expert
-                  </div>
-                </div>
-                <p className="text-sm text-gray-600">Start with a mix of liquid funds, index funds, and maybe 1-2 blue-chip stocks. Focus on learning the basics of diversification while...</p>
-                <Button variant="ghost" size="sm" className="mt-2 text-primary">Read full answer</Button>
-              </div>
-            </div>
-          </div>
-          
-          {/* Top Analysts Section */}
-          <div>
-            <h3 className="font-medium mb-3">Top Analysts</h3>
             <p className="text-gray-600 mb-4">Track and follow performance of community analysts.</p>
             
             <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
@@ -523,87 +509,140 @@ const Dashboard = () => {
               </button>
             </div>
           </div>
-        </div>
-      );
-    } else if (activeTab === "explore") {
-      return (
-        <div className="px-4 py-6">
-          <h2 className="text-xl font-semibold mb-4">Explore</h2>
-          <p className="text-gray-600 mb-4">Discover trending content, new users, and tools.</p>
+        )}
+        
+        {expertsTab === "ask" && (
+          <div>
+            <p className="text-gray-600 mb-4">Get answers from verified financial experts.</p>
+            <div className="bg-gray-50 rounded-lg p-4 mb-4">
+              <h3 className="font-medium mb-3">Ask Your Question</h3>
+              <textarea 
+                className="w-full p-3 border border-gray-300 rounded-lg mb-3" 
+                rows={3}
+                placeholder="What would you like to ask our experts?"
+              />
+              <div className="flex mb-3">
+                <Button className="w-full">Submit Question</Button>
+              </div>
+              <p className="text-xs text-gray-500">Our verified experts typically respond within 24 hours</p>
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-medium">Popular Questions</h3>
+              <div className="bg-white border border-gray-200 rounded-lg p-4">
+                <h4 className="font-medium mb-1">How to start investing with ₹10,000?</h4>
+                <div className="flex items-center text-xs text-gray-500 mb-3">
+                  <span>Answered by</span>
+                  <span className="font-medium ml-1">Priya Shah, CFA</span>
+                  <div className="ml-1 bg-blue-100 text-blue-800 text-xs py-0.5 px-1 rounded inline-flex items-center">
+                    <span className="material-icons text-xs mr-0.5">verified</span>
+                    Expert
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600">Start with a mix of liquid funds, index funds, and maybe 1-2 blue-chip stocks. Focus on learning the basics of diversification while...</p>
+                <Button variant="ghost" size="sm" className="mt-2 text-primary">Read full answer</Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Render explore tab content
+  const renderExploreContent = () => {
+    return (
+      <div className="px-4 py-6">
+        <h2 className="text-xl font-semibold mb-4">Explore</h2>
+        <p className="text-gray-600 mb-4">Discover trending content, new users, and tools.</p>
+        
+        <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-medium">Trending Topics</h3>
+            <span className="text-xs text-gray-500">This Week</span>
+          </div>
           
-          <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-medium">Trending Topics</h3>
-              <span className="text-xs text-gray-500">This Week</span>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+              <div className="flex items-center">
+                <span className="material-icons text-primary mr-2">trending_up</span>
+                <span>#AIStocks</span>
+              </div>
+              <span className="text-xs text-gray-500">1,243 posts</span>
             </div>
             
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                <div className="flex items-center">
-                  <span className="material-icons text-primary mr-2">trending_up</span>
-                  <span>#AIStocks</span>
-                </div>
-                <span className="text-xs text-gray-500">1,243 posts</span>
+            <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+              <div className="flex items-center">
+                <span className="material-icons text-primary mr-2">trending_up</span>
+                <span>#FedRateDecision</span>
               </div>
-              
-              <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                <div className="flex items-center">
-                  <span className="material-icons text-primary mr-2">trending_up</span>
-                  <span>#FedRateDecision</span>
-                </div>
-                <span className="text-xs text-gray-500">987 posts</span>
-              </div>
+              <span className="text-xs text-gray-500">987 posts</span>
             </div>
           </div>
         </div>
-      );
-    } else if (activeTab === "invroom") {
-      return (
-        <div className="px-4 py-6">
-          <h2 className="text-xl font-semibold mb-4">Investment Rooms</h2>
-          <p className="text-gray-600 mb-4">Virtual portfolio-building and discussion spaces.</p>
-          
-          <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
-            <div className="text-center p-6">
-              <span className="material-icons text-4xl text-gray-400 mb-3">meeting_room</span>
-              <h3 className="font-medium mb-2">Create or Join an Investment Room</h3>
-              <p className="text-sm text-gray-500 mb-4">Collaborate on mock portfolios, discuss investment strategies, and learn together.</p>
-              
-              <div className="flex flex-col space-y-3">
-                <Button>Create New Room</Button>
-                <Button variant="outline">Browse Public Rooms</Button>
-                <Button variant="ghost">Enter Room Code</Button>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <h3 className="font-medium mb-3">Featured Rooms</h3>
+      </div>
+    );
+  };
+
+  // Render investment room tab content
+  const renderInvRoomContent = () => {
+    return (
+      <div className="px-4 py-6">
+        <h2 className="text-xl font-semibold mb-4">Investment Rooms</h2>
+        <p className="text-gray-600 mb-4">Virtual portfolio-building and discussion spaces.</p>
+        
+        <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+          <div className="text-center p-6">
+            <span className="material-icons text-4xl text-gray-400 mb-3">meeting_room</span>
+            <h3 className="font-medium mb-2">Create or Join an Investment Room</h3>
+            <p className="text-sm text-gray-500 mb-4">Collaborate on mock portfolios, discuss investment strategies, and learn together.</p>
             
-            <div className="space-y-3">
-              <div className="border border-gray-100 rounded-lg p-3 hover:border-primary transition cursor-pointer">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-medium">Growth Investors Club</h4>
-                  <span className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded">+18.4% YTD</span>
-                </div>
-                <p className="text-xs text-gray-600 mb-2">Collaborative portfolio focused on high-growth tech and renewable energy stocks.</p>
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  <span>42 members</span>
-                  <span>7 active discussions</span>
-                </div>
+            <div className="flex flex-col space-y-3">
+              <Button>Create New Room</Button>
+              <Button variant="outline">Browse Public Rooms</Button>
+              <Button variant="ghost">Enter Room Code</Button>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white border border-gray-200 rounded-lg p-4">
+          <h3 className="font-medium mb-3">Featured Rooms</h3>
+          
+          <div className="space-y-3">
+            <div className="border border-gray-100 rounded-lg p-3 hover:border-primary transition cursor-pointer">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-medium">Growth Investors Club</h4>
+                <span className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded">+18.4% YTD</span>
+              </div>
+              <p className="text-xs text-gray-600 mb-2">Collaborative portfolio focused on high-growth tech and renewable energy stocks.</p>
+              <div className="flex items-center justify-between text-xs text-gray-500">
+                <span>42 members</span>
+                <span>7 active discussions</span>
               </div>
             </div>
           </div>
         </div>
-      );
-    } else {
-      // Default fallback if none of the tabs match
-      return (
-        <div className="px-4 py-6">
-          <h2 className="text-xl font-semibold mb-4">Dashboard</h2>
-          <p className="text-gray-600 mb-4">Select a tab to view content.</p>
-        </div>
-      );
+      </div>
+    );
+  };
+
+  // Render content based on selected bottom tab
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "home":
+        return renderFeatureContent();
+      case "experts":
+        return renderExpertsContent();
+      case "explore":
+        return renderExploreContent();
+      case "invroom":
+        return renderInvRoomContent();
+      default:
+        return (
+          <div className="px-4 py-6">
+            <h2 className="text-xl font-semibold mb-4">Dashboard</h2>
+            <p className="text-gray-600 mb-4">Select a tab to view content.</p>
+          </div>
+        );
     }
   };
 
@@ -626,10 +665,12 @@ const Dashboard = () => {
 
       {/* Main Content Area */}
       <div className="flex-grow overflow-auto pb-16">
-        {/* Quick Nav Tabs */}
-        <FeatureNavigation activeFeature={activeFeature} onFeatureSelect={handleFeatureSelect} />
+        {/* Quick Nav Tabs (only visible on home tab) */}
+        {activeTab === "home" && (
+          <FeatureNavigation activeFeature={activeFeature} onFeatureSelect={handleFeatureSelect} />
+        )}
 
-        {/* Dynamic Content Area based on selected tab and feature */}
+        {/* Dynamic Content Area based on selected tab */}
         {renderTabContent()}
       </div>
 
