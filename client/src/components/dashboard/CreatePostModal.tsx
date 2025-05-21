@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 
 interface CreatePostModalProps {
   isOpen: boolean;
@@ -25,6 +25,9 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Share your idea</DialogTitle>
+          <DialogDescription>
+            Share your investment insights and ideas with the community
+          </DialogDescription>
         </DialogHeader>
         
         <div className="grid gap-4 py-4">
