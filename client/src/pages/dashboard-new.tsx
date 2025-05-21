@@ -38,9 +38,40 @@ const Dashboard = () => {
     setActiveFeature(feature);
   };
 
+  // Function to handle tab changes
+  const handleTabChange = (tab: Tab) => {
+    setActiveTab(tab);
+  };
+
   // Render content based on selected feature
   const renderFeatureContent = () => {
     switch (activeFeature) {
+      case "watchlist":
+        return (
+          <div className="px-4 py-6">
+            <h2 className="text-xl font-semibold mb-4">Watchlist</h2>
+            <p className="text-gray-600 mb-4">Track, monitor, and analyze investment interests.</p>
+            <div className="bg-gray-50 rounded-lg p-4 mb-4">
+              <div className="text-center">
+                <span className="material-icons text-4xl text-gray-400 mb-2">visibility</span>
+                <h3 className="font-medium mb-1">Add stocks, crypto, or funds</h3>
+                <p className="text-sm text-gray-500">Your watchlist is empty. Start adding assets to track.</p>
+                <Button className="mt-4">Add Assets</Button>
+              </div>
+            </div>
+            <div className="space-y-2 mb-4">
+              <h3 className="font-medium">Features:</h3>
+              <ul className="list-disc pl-5 space-y-1 text-sm text-gray-600">
+                <li>Live prices and percentage changes</li>
+                <li>Set alerts on price, news, and volume</li>
+                <li>Categorize by themes (e.g., Green Energy, Tech)</li>
+                <li>Track sentiment metrics</li>
+                <li>"Watch by Tribe" to see what others are tracking</li>
+              </ul>
+            </div>
+          </div>
+        );
+        
       case "analytics":
         return (
           <div className="px-4 py-6">
@@ -141,31 +172,7 @@ const Dashboard = () => {
             </div>
           </div>
         );
-      case "watchlist":
-        return (
-          <div className="px-4 py-6">
-            <h2 className="text-xl font-semibold mb-4">Watchlist</h2>
-            <p className="text-gray-600 mb-4">Track, monitor, and analyze investment interests.</p>
-            <div className="bg-gray-50 rounded-lg p-4 mb-4">
-              <div className="text-center">
-                <span className="material-icons text-4xl text-gray-400 mb-2">visibility</span>
-                <h3 className="font-medium mb-1">Add stocks, crypto, or funds</h3>
-                <p className="text-sm text-gray-500">Your watchlist is empty. Start adding assets to track.</p>
-                <Button className="mt-4">Add Assets</Button>
-              </div>
-            </div>
-            <div className="space-y-2 mb-4">
-              <h3 className="font-medium">Features:</h3>
-              <ul className="list-disc pl-5 space-y-1 text-sm text-gray-600">
-                <li>Live prices and percentage changes</li>
-                <li>Set alerts on price, news, and volume</li>
-                <li>Categorize by themes (e.g., Green Energy, Tech)</li>
-                <li>Track sentiment metrics</li>
-                <li>"Watch by Tribe" to see what others are tracking</li>
-              </ul>
-            </div>
-          </div>
-        );
+        
       case "debate":
         return (
           <div className="px-4 py-6">
@@ -217,6 +224,7 @@ const Dashboard = () => {
             <Button className="w-full mt-4">Start New Debate</Button>
           </div>
         );
+        
       case "quiz":
         return (
           <div className="px-4 py-6">
@@ -277,6 +285,7 @@ const Dashboard = () => {
             </div>
           </div>
         );
+        
       case "news":
         return (
           <div className="px-4 py-6">
@@ -393,298 +402,193 @@ const Dashboard = () => {
             </div>
           </div>
         );
-      default:
-        return activeTab === "home" ? (
-          <div className="px-4 py-6">
-            <WelcomeCard />
-            <MarketOverview data={typedMarketData} isLoading={isLoadingMarketData} />
-            <ContentFeed posts={typedPosts} isLoading={isLoadingPosts} />
-          </div>
-        ) : activeTab === "experts" ? (
-          <div className="px-4 py-6">
-            <h2 className="text-xl font-semibold mb-4">Ask an Expert</h2>
-            <p className="text-gray-600 mb-4">Get answers from verified financial experts.</p>
-            <div className="bg-gray-50 rounded-lg p-4 mb-6">
-              <h3 className="font-medium mb-3">Ask Your Question</h3>
-              <textarea 
-                className="w-full p-3 border border-gray-300 rounded-lg mb-3" 
-                rows={3}
-                placeholder="What would you like to ask our experts?"
-              />
-              <div className="flex mb-3">
-                <Button className="w-full">Submit Question</Button>
-              </div>
-              <p className="text-xs text-gray-500">Our verified experts typically respond within 24 hours</p>
-            </div>
-            <div className="space-y-4">
-              <h3 className="font-medium">Popular Questions</h3>
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
-                <h4 className="font-medium mb-1">How to start investing with ₹10,000?</h4>
-                <div className="flex items-center text-xs text-gray-500 mb-3">
-                  <span>Answered by</span>
-                  <span className="font-medium ml-1">Priya Shah, CFA</span>
-                  <div className="ml-1 bg-blue-100 text-blue-800 text-xs py-0.5 px-1 rounded inline-flex items-center">
-                    <span className="material-icons text-xs mr-0.5">verified</span>
-                    Expert
-                  </div>
-                </div>
-                <p className="text-sm text-gray-600">Start with a mix of liquid funds, index funds, and maybe 1-2 blue-chip stocks. Focus on learning the basics of diversification while...</p>
-                <Button variant="ghost" size="sm" className="mt-2 text-primary">Read full answer</Button>
-              </div>
-            </div>
-          </div>
-        ) : activeTab === "top-analyst" ? (
-          <div className="px-4 py-6">
-            <h2 className="text-xl font-semibold mb-4">Top Analysts</h2>
-            <p className="text-gray-600 mb-4">Track and follow performance of community analysts.</p>
-            
-            <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
-              <h3 className="font-medium mb-3">Analyst Leaderboard</h3>
-              
-              <div className="space-y-4">
-                <div className="flex items-center p-3 bg-gray-50 rounded-lg mb-3 border-l-4 border-primary">
-                  <div className="flex-shrink-0 mr-3 relative">
-                    <Avatar className="h-12 w-12">
-                      <AvatarFallback className="bg-primary text-white">RS</AvatarFallback>
-                    </Avatar>
-                    <div className="absolute -bottom-1 -right-1 bg-primary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">1</div>
-                  </div>
-                  <div className="flex-grow">
-                    <div className="flex items-center">
-                      <h4 className="font-medium">Rahul Singh</h4>
-                      <div className="ml-2 bg-blue-100 text-blue-800 text-xs py-0.5 px-1 rounded inline-flex items-center">
-                        <span className="material-icons text-xs mr-0.5">verified</span>
-                        <span>Pro</span>
-                      </div>
-                      <div className="ml-auto">
-                        <Button variant="outline" size="sm">Follow</Button>
-                      </div>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">Technical Analysis • 94% accuracy</p>
-                    <div className="flex items-center text-xs mt-1">
-                      <div className="bg-green-100 text-green-800 py-0.5 px-1 rounded mr-2">
-                        +32.5% YTD
-                      </div>
-                      <span className="text-gray-500">43K followers</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex items-center p-3 bg-gray-50 rounded-lg border-l-4 border-gray-300">
-                  <div className="flex-shrink-0 mr-3 relative">
-                    <Avatar className="h-12 w-12">
-                      <AvatarFallback className="bg-purple-500 text-white">MP</AvatarFallback>
-                    </Avatar>
-                    <div className="absolute -bottom-1 -right-1 bg-gray-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">2</div>
-                  </div>
-                  <div className="flex-grow">
-                    <div className="flex items-center">
-                      <h4 className="font-medium">Meera Patel</h4>
-                      <div className="ml-2 bg-gray-100 text-gray-800 text-xs py-0.5 px-1 rounded inline-flex items-center">
-                        <span>Fundamental</span>
-                      </div>
-                      <div className="ml-auto">
-                        <Button variant="outline" size="sm">Follow</Button>
-                      </div>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">Fundamental Analysis • 87% accuracy</p>
-                    <div className="flex items-center text-xs mt-1">
-                      <div className="bg-green-100 text-green-800 py-0.5 px-1 rounded mr-2">
-                        +27.1% YTD
-                      </div>
-                      <span className="text-gray-500">28K followers</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex items-center p-3 bg-gray-50 rounded-lg border-l-4 border-gray-300">
-                  <div className="flex-shrink-0 mr-3 relative">
-                    <Avatar className="h-12 w-12">
-                      <AvatarFallback className="bg-amber-500 text-white">AK</AvatarFallback>
-                    </Avatar>
-                    <div className="absolute -bottom-1 -right-1 bg-gray-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">3</div>
-                  </div>
-                  <div className="flex-grow">
-                    <div className="flex items-center">
-                      <h4 className="font-medium">Aditya Kumar</h4>
-                      <div className="ml-2 bg-gray-100 text-gray-800 text-xs py-0.5 px-1 rounded inline-flex items-center">
-                        <span>Macro</span>
-                      </div>
-                      <div className="ml-auto">
-                        <Button variant="outline" size="sm">Follow</Button>
-                      </div>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">Macro Trends • 82% accuracy</p>
-                    <div className="flex items-center text-xs mt-1">
-                      <div className="bg-green-100 text-green-800 py-0.5 px-1 rounded mr-2">
-                        +23.8% YTD
-                      </div>
-                      <span className="text-gray-500">19K followers</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <button className="w-full text-center text-primary text-sm mt-4">
-                View full leaderboard
-              </button>
-            </div>
-          </div>
-        ) : activeTab === "invroom" ? (
-          <div className="px-4 py-6">
-            <h2 className="text-xl font-semibold mb-4">Investment Rooms</h2>
-            <p className="text-gray-600 mb-4">Virtual portfolio-building and discussion spaces.</p>
-            
-            <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
-              <div className="text-center p-6">
-                <span className="material-icons text-4xl text-gray-400 mb-3">meeting_room</span>
-                <h3 className="font-medium mb-2">Create or Join an Investment Room</h3>
-                <p className="text-sm text-gray-500 mb-4">Collaborate on mock portfolios, discuss investment strategies, and learn together.</p>
-                
-                <div className="flex flex-col space-y-3">
-                  <Button>Create New Room</Button>
-                  <Button variant="outline">Browse Public Rooms</Button>
-                  <Button variant="ghost">Enter Room Code</Button>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white border border-gray-200 rounded-lg p-4">
-              <h3 className="font-medium mb-3">Featured Rooms</h3>
-              
-              <div className="space-y-3">
-                <div className="border border-gray-100 rounded-lg p-3 hover:border-primary transition cursor-pointer">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium">Growth Investors Club</h4>
-                    <span className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded">+18.4% YTD</span>
-                  </div>
-                  <p className="text-xs text-gray-600 mb-2">Collaborative portfolio focused on high-growth tech and renewable energy stocks.</p>
-                  <div className="flex items-center justify-between text-xs text-gray-500">
-                    <span>42 members</span>
-                    <span>7 active discussions</span>
-                  </div>
-                </div>
-                
-                <div className="border border-gray-100 rounded-lg p-3 hover:border-primary transition cursor-pointer">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium">Dividend Seekers</h4>
-                    <span className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded">+9.1% YTD</span>
-                  </div>
-                  <p className="text-xs text-gray-600 mb-2">Building a portfolio of stable dividend-paying stocks with monthly income focus.</p>
-                  <div className="flex items-center justify-between text-xs text-gray-500">
-                    <span>76 members</span>
-                    <span>12 active discussions</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="px-4 py-6">
-            <h2 className="text-xl font-semibold mb-4">Explore</h2>
-            <p className="text-gray-600 mb-4">Discover trending content, new users, and tools.</p>
-            
-            <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-medium">Trending Topics</h3>
-                <span className="text-xs text-gray-500">This Week</span>
-              </div>
-              
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                  <div className="flex items-center">
-                    <span className="material-icons text-primary mr-2">trending_up</span>
-                    <span>#AIStocks</span>
-                  </div>
-                  <span className="text-xs text-gray-500">1,243 posts</span>
-                </div>
-                
-                <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                  <div className="flex items-center">
-                    <span className="material-icons text-primary mr-2">trending_up</span>
-                    <span>#FedRateDecision</span>
-                  </div>
-                  <span className="text-xs text-gray-500">987 posts</span>
-                </div>
-                
-                <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                  <div className="flex items-center">
-                    <span className="material-icons text-primary mr-2">trending_up</span>
-                    <span>#RenewableEnergy</span>
-                  </div>
-                  <span className="text-xs text-gray-500">823 posts</span>
-                </div>
-                
-                <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                  <div className="flex items-center">
-                    <span className="material-icons text-primary mr-2">trending_up</span>
-                    <span>#CryptoRegulation</span>
-                  </div>
-                  <span className="text-xs text-gray-500">754 posts</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-medium">Explore by Category</h3>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-3">
-                <button className="p-3 bg-gray-50 rounded-lg text-left hover:bg-gray-100 transition">
-                  <div className="flex items-center mb-1">
-                    <span className="material-icons text-blue-500 mr-2">forum</span>
-                    <span className="font-medium">Debates</span>
-                  </div>
-                  <p className="text-xs text-gray-500">Join financial opinion battles</p>
-                </button>
-                
-                <button className="p-3 bg-gray-50 rounded-lg text-left hover:bg-gray-100 transition">
-                  <div className="flex items-center mb-1">
-                    <span className="material-icons text-green-500 mr-2">quiz</span>
-                    <span className="font-medium">Quizzes</span>
-                  </div>
-                  <p className="text-xs text-gray-500">Test your financial knowledge</p>
-                </button>
-                
-                <button className="p-3 bg-gray-50 rounded-lg text-left hover:bg-gray-100 transition">
-                  <div className="flex items-center mb-1">
-                    <span className="material-icons text-purple-500 mr-2">groups</span>
-                    <span className="font-medium">Tribes</span>
-                  </div>
-                  <p className="text-xs text-gray-500">Join interest-based communities</p>
-                </button>
-                
-                <button className="p-3 bg-gray-50 rounded-lg text-left hover:bg-gray-100 transition">
-                  <div className="flex items-center mb-1">
-                    <span className="material-icons text-amber-500 mr-2">leaderboard</span>
-                    <span className="font-medium">Analysts</span>
-                  </div>
-                  <p className="text-xs text-gray-500">Follow top performers</p>
-                </button>
-              </div>
-              
-              <button className="w-full text-center text-primary text-sm mt-4">
-                Browse all categories
-              </button>
-            </div>
-          </div>
-        );
-      }
-      default:
-        return (
-          <>
-            <WelcomeCard />
-            <MarketOverview data={typedMarketData} isLoading={isLoadingMarketData} />
-            <ContentFeed posts={typedPosts} isLoading={isLoadingPosts} />
-          </>
-        );
     }
   };
 
-  // Type assertions for data to fix typescript issues
-  const typedMarketData = marketData as any[];
-  const typedPosts = posts as any[];
+  // Render bottom tab content
+  const renderTabContent = () => {
+    if (activeTab === "home") {
+      return renderFeatureContent();
+    } else if (activeTab === "experts") {
+      return (
+        <div className="px-4 py-6">
+          <h2 className="text-xl font-semibold mb-4">Ask an Expert</h2>
+          <p className="text-gray-600 mb-4">Get answers from verified financial experts.</p>
+          <div className="bg-gray-50 rounded-lg p-4 mb-6">
+            <h3 className="font-medium mb-3">Ask Your Question</h3>
+            <textarea 
+              className="w-full p-3 border border-gray-300 rounded-lg mb-3" 
+              rows={3}
+              placeholder="What would you like to ask our experts?"
+            />
+            <div className="flex mb-3">
+              <Button className="w-full">Submit Question</Button>
+            </div>
+            <p className="text-xs text-gray-500">Our verified experts typically respond within 24 hours</p>
+          </div>
+          <div className="space-y-4">
+            <h3 className="font-medium">Popular Questions</h3>
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <h4 className="font-medium mb-1">How to start investing with ₹10,000?</h4>
+              <div className="flex items-center text-xs text-gray-500 mb-3">
+                <span>Answered by</span>
+                <span className="font-medium ml-1">Priya Shah, CFA</span>
+                <div className="ml-1 bg-blue-100 text-blue-800 text-xs py-0.5 px-1 rounded inline-flex items-center">
+                  <span className="material-icons text-xs mr-0.5">verified</span>
+                  Expert
+                </div>
+              </div>
+              <p className="text-sm text-gray-600">Start with a mix of liquid funds, index funds, and maybe 1-2 blue-chip stocks. Focus on learning the basics of diversification while...</p>
+              <Button variant="ghost" size="sm" className="mt-2 text-primary">Read full answer</Button>
+            </div>
+          </div>
+        </div>
+      );
+    } else if (activeTab === "top-analyst") {
+      return (
+        <div className="px-4 py-6">
+          <h2 className="text-xl font-semibold mb-4">Top Analysts</h2>
+          <p className="text-gray-600 mb-4">Track and follow performance of community analysts.</p>
+          
+          <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+            <h3 className="font-medium mb-3">Analyst Leaderboard</h3>
+            
+            <div className="space-y-4">
+              <div className="flex items-center p-3 bg-gray-50 rounded-lg mb-3 border-l-4 border-primary">
+                <div className="flex-shrink-0 mr-3 relative">
+                  <Avatar className="h-12 w-12">
+                    <AvatarFallback className="bg-primary text-white">RS</AvatarFallback>
+                  </Avatar>
+                  <div className="absolute -bottom-1 -right-1 bg-primary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">1</div>
+                </div>
+                <div className="flex-grow">
+                  <div className="flex items-center">
+                    <h4 className="font-medium">Rahul Singh</h4>
+                    <div className="ml-2 bg-blue-100 text-blue-800 text-xs py-0.5 px-1 rounded inline-flex items-center">
+                      <span className="material-icons text-xs mr-0.5">verified</span>
+                      <span>Pro</span>
+                    </div>
+                    <div className="ml-auto">
+                      <Button variant="outline" size="sm">Follow</Button>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Technical Analysis • 94% accuracy</p>
+                  <div className="flex items-center text-xs mt-1">
+                    <div className="bg-green-100 text-green-800 py-0.5 px-1 rounded mr-2">
+                      +32.5% YTD
+                    </div>
+                    <span className="text-gray-500">43K followers</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex items-center p-3 bg-gray-50 rounded-lg border-l-4 border-gray-300">
+                <div className="flex-shrink-0 mr-3 relative">
+                  <Avatar className="h-12 w-12">
+                    <AvatarFallback className="bg-purple-500 text-white">MP</AvatarFallback>
+                  </Avatar>
+                  <div className="absolute -bottom-1 -right-1 bg-gray-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">2</div>
+                </div>
+                <div className="flex-grow">
+                  <div className="flex items-center">
+                    <h4 className="font-medium">Meera Patel</h4>
+                    <div className="ml-2 bg-gray-100 text-gray-800 text-xs py-0.5 px-1 rounded inline-flex items-center">
+                      <span>Fundamental</span>
+                    </div>
+                    <div className="ml-auto">
+                      <Button variant="outline" size="sm">Follow</Button>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Fundamental Analysis • 87% accuracy</p>
+                  <div className="flex items-center text-xs mt-1">
+                    <div className="bg-green-100 text-green-800 py-0.5 px-1 rounded mr-2">
+                      +27.1% YTD
+                    </div>
+                    <span className="text-gray-500">28K followers</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <button className="w-full text-center text-primary text-sm mt-4">
+              View full leaderboard
+            </button>
+          </div>
+        </div>
+      );
+    } else if (activeTab === "invroom") {
+      return (
+        <div className="px-4 py-6">
+          <h2 className="text-xl font-semibold mb-4">Investment Rooms</h2>
+          <p className="text-gray-600 mb-4">Virtual portfolio-building and discussion spaces.</p>
+          
+          <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+            <div className="text-center p-6">
+              <span className="material-icons text-4xl text-gray-400 mb-3">meeting_room</span>
+              <h3 className="font-medium mb-2">Create or Join an Investment Room</h3>
+              <p className="text-sm text-gray-500 mb-4">Collaborate on mock portfolios, discuss investment strategies, and learn together.</p>
+              
+              <div className="flex flex-col space-y-3">
+                <Button>Create New Room</Button>
+                <Button variant="outline">Browse Public Rooms</Button>
+                <Button variant="ghost">Enter Room Code</Button>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <h3 className="font-medium mb-3">Featured Rooms</h3>
+            
+            <div className="space-y-3">
+              <div className="border border-gray-100 rounded-lg p-3 hover:border-primary transition cursor-pointer">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-medium">Growth Investors Club</h4>
+                  <span className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded">+18.4% YTD</span>
+                </div>
+                <p className="text-xs text-gray-600 mb-2">Collaborative portfolio focused on high-growth tech and renewable energy stocks.</p>
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <span>42 members</span>
+                  <span>7 active discussions</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div className="px-4 py-6">
+          <h2 className="text-xl font-semibold mb-4">Explore</h2>
+          <p className="text-gray-600 mb-4">Discover trending content, new users, and tools.</p>
+          
+          <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-medium">Trending Topics</h3>
+              <span className="text-xs text-gray-500">This Week</span>
+            </div>
+            
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                <div className="flex items-center">
+                  <span className="material-icons text-primary mr-2">trending_up</span>
+                  <span>#AIStocks</span>
+                </div>
+                <span className="text-xs text-gray-500">1,243 posts</span>
+              </div>
+              
+              <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                <div className="flex items-center">
+                  <span className="material-icons text-primary mr-2">trending_up</span>
+                  <span>#FedRateDecision</span>
+                </div>
+                <span className="text-xs text-gray-500">987 posts</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+  };
 
   return (
     <div className="flex flex-col h-full relative">
@@ -708,12 +612,12 @@ const Dashboard = () => {
         {/* Quick Nav Tabs */}
         <FeatureNavigation activeFeature={activeFeature} onFeatureSelect={handleFeatureSelect} />
 
-        {/* Dynamic Content Area based on selected feature */}
-        {renderFeatureContent()}
+        {/* Dynamic Content Area based on selected tab and feature */}
+        {renderTabContent()}
       </div>
 
       {/* Bottom Navigation */}
-      <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+      <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
     </div>
   );
 };
