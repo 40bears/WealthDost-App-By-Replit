@@ -1,0 +1,206 @@
+Create an app named WealthDost 
+
+create a sign up page
+
+Then In the next division I want Button 1: Investor or finance enthusiast and Button 2: for Experts
+
+Create Back Button to return to previous
+Create Button 1 Investor or finance enthusiast should have:
+
+1️ Basic Profile Setup (Onboarding)
+•	Name & Username 🎭 (Finance-themed usernames like @StockGuru, @CryptoWhale)
+•	Profile Picture & Bio 📸 (Optional, but users can add finance-related taglines like “Long-term investor | Tech stocks | AI enthusiast”)
+•	Investment Experience Level 🎓
+o	🐣 Beginner (0-2 years)
+o	🦅 Intermediate (2-5 years)
+o	🦈 Advanced (5+ years)
+•	Content Preference 🎥
+o	📈 Stock Market
+o	🚀 Crypto & Web3
+o	🏠 Real Estate & Alternative Assets
+o	🌍 Macroeconomics & Global Markets
+o	💰 Personal Finance & Wealth Building
+Create a Next button to move forward and Back Button to return to previous 
+________________________________________
+2️ Risk Appetite & Return Expectations (Gamified Profiling)
+Users take a quick, fun quiz to determine their investment personality:
+Q. How do you react to market volatility & return target?
+1📉 Sell immediately to avoid losses (Low risk-taker)- 🏦 5-8% (Safe & Steady)
+2🤷‍♂️ Hold, but get slightly anxious (Moderate risk-taker)- 10-15% (Balanced Growth)
+3🚀 Buy more! I see opportunities (High risk-taker)- 20%+ (High-Risk, High-Reward)
+Outcome: Based on responses, users are categorized into Risk Personas:
+🔵 The Cautious Owl (Prefers steady, low-risk investments)
+🟡 The Calculated Fox (Balanced, analytical investor)
+🔴 The Risk-Taking Shark (Aggressive, thrill-seeking investor)
+🎮 Gamification: Users unlock badges for their persona and can update it over time!
+
+Don’t mention this Badge separate give in the profile generated
+
+Create a Next button to move forward and Back Button to return to previous
+
+A profile and Risk Persona should be automatically generated with the details already entered for the Button 1 Investor or finance enthusiast
+Name & Username 🎭 (Finance-themed usernames like @StockGuru, @CryptoWhale)
+•	Profile Picture & Bio 📸 (Optional, but users can add finance-related taglines like “Long-term investor | Tech stocks | AI enthusiast”)
+•	Investment Experience Level 🎓
+o	🐣 Beginner (0-2 years)
+o	🦅 Intermediate (2-5 years)
+o	🦈 Advanced (5+ years)
+•	The Risk Persona badge
+
+
+Create a Back Button to return to previous
+
+
+Create Button 2 for Experts should have:
+
+(II) Expert Profile Setup (Onboarding)
+1️ Basic Profile & Expertise
+•	Name & Username 🎭 (e.g., @AlphaAnalyst, @MarketMaverick)
+•	Profile Picture & Bio 📸 (Finance tagline: "Equity Research | Options Trader | Macro Specialist")
+•	Educational Background 🎓 (CA, CFA, MBA (Finance) from IIM/ISB, B.Com/M.Com, Finance Engineer, or Self-Taught Market Expert)
+•	Exceptional Achievements 🏆 (Featured on CNBC/ET Now, SEBI/RBI Recognized, Managed ₹100Cr+ AUM, Top Finance Speaker, Published in Forbes/Moneycontrol, Finance Startup Founder)
+✅ Next Button → Move forward
+🔙 Back Button → Return to previous step
+
+2️ Investment Specialization
+•	📈 Stock Market & Equity Research
+•	🚀 Crypto & Web3
+•	🏦 Private Equity & Venture Capital
+•	🌍 Macroeconomics & Global Markets
+•	💰 Wealth Planning & Financial Advisory
+•	🏠 Real Estate & Alternative Investments
+
+✅ Next Button → Move forward
+🔙 Back Button → Return to previous step
+3️ Expert Persona (Gamified Profiling)
+•	How do you approach investment research?
+o	🔵 The Wise Owl 🦉 (Long-Term Expert, Value Investor)
+o	🟡 The Strategic Fox 🦊 (Balanced Expert, Fundamental & Technical)
+o	🔴 The Bold Shark 🦈 (High-Risk, Growth & Trading Expert)
+4️ Final Profile (Generated)
+•	Includes Name, Username, Profile Picture, Bio, Education, Specialization, Achievements & Expert Persona Badge.
+A profile and Risk Persona should be automatically generated with the details already entered for the Button 1 Investor or finance enthusiast
+
+🔙 Back Button → Return to previous step
+
+
+
+
+
+After the profile is set, there shoul be a button to enter the dashboard and in the dash board create the following interative buttons such that 1 to 5  should be at the top and  6 to 9 button at the bottom with home button at the bottom left. And the in between should be feeds like Instagram and explore button is also similar to the Instagram where users click and get the others post.
+Create in depth buttons with the descriptions below
+
+Detailed description of Button
+🔖 1. Watchlist
+Track, monitor, and analyze investment interests.
+Includes:
+•	Add stocks/cryptos/funds to personalized lists
+•	Live prices, % change, charts
+•	Set alerts (price, news, volume)
+•	Categorize by themes (e.g., Green Energy, Tech)
+•	Sentiment meter (crowd sentiment)
+•	“Watch by Tribe” → see what others in your Tribe are tracking
+________________________________________
+🗣️ 2. Debate
+Community-sourced opinion battles and polls.
+Includes:
+•	Start or join debates (e.g., “Is Tesla overvalued?”)
+•	Polls with vote % and comments
+•	Argument builder: “Bull Case” vs “Bear Case”
+•	Upvote/downvote responses
+•	Tag experts or friends
+•	Filter debates by sector, trending, or new
+________________________________________
+🧠 3. Quiz
+Gamified learning for financial literacy.
+Includes:
+•	Daily quiz (5–10 MCQs) with points
+•	Categories: Markets, Personal Finance, Investing, Crypto
+•	XP badges (Novice, Analyst, Strategist, Guru)
+•	Leaderboard within Tribes or overall
+•	Unlock special content on scoring milestones
+________________________________________
+🧬 4. Tribe
+Community based on interest or identity.
+Includes:
+•	Join Tribes (e.g., “Tech Bros”, “Cautious Owls”, “Gen Z 	Investors”)
+•	Tribe dashboard: common holdings, average risk score, top picks
+•	Tribe chat & forum
+•	Post polls, ask questions, share resources
+•	Top contributors leaderboard
+•	Ability to switch/join multiple tribes
+
+5. NewsPulse – Smart, Personalized Financial News Hub
+Not just headlines — a daily rhythm of insight, discovery, and action.
+🔍 Core Features:
+•	Curated Streams:
+o	📈 Market Movers: Top stock/sector news impacting portfolios
+o	🧠 Think Like a Pro: Analyst takes, expert breakdowns
+o	🔬 Thematic Focus: Green Energy, AI, Real Estate, Startups, Crypto
+•	News Match to Watchlist & Tribe:
+o	See news relevant to your Watchlist holdings
+o	See what’s trending in your Tribe: “4 members read this”
+•	Daily News Dose (5-a-Day):
+o	Bite-sized, scrollable cards with key takeaways:
+ • “What happened?”
+ • “Why it matters?”
+ • “Investor Angle”
+o	Mark as read to earn XP streaks
+•	AI Summary & Sentiment:
+o	Auto-tag news as 🔼 Bullish, 🔽 Bearish, 🟰 Neutral
+o	TL;DR and sentiment emojis generated for every article
+•	Actionable Buttons:
+o	⭐ Add stock to Watchlist
+o	📢 Start a Debate on this news
+o	🧠 Quiz me on this topic
+🔁 Send to Tribe / Ask an Expert 
+📊 6. Analytics
+User-level financial behavior insights.
+Includes:
+•	Portfolio summary (if connected)
+•	Risk score, sector allocation
+•	Time spent on Watchlist, Debate, Quiz
+•	Tribe activity heatmap
+•	XP and progress report
+•	Suggest personalized tips (e.g., “You tend to panic sell—read this…”)
+________________________________________
+🌐 7. Explore
+Discover trending content, new users, or tools.
+Includes:
+•	Trending posts, experts, debates
+•	Popular Tribes
+•	Latest quizzes
+•	AI-powered content recommendations
+•	“Random Discovery” button
+•	Tags & filters: Market News, Charts, Memes
+________________________________________
+🌟 8. Top Analyst
+Track and follow performance of community analysts.
+Includes:
+•	Leaderboard of analysts based on returns, risk, accuracy
+•	Analyst portfolios (real or simulated)
+•	Ratings by peers (1–5 stars)
+•	“Follow” button for alerts
+•	Historical performance charts
+Analyst categories: Technical, Fundamental, Macro, Options
+
+Include “ Ask Expert” to Top Analsyt
+Verified experts answer crowd-sourced queries.
+Includes:
+•	Ask a question publicly or to specific expert categories (e.g., Tax, Crypto, Real Estate)
+•	Browse Q&A feed with upvotes
+•	Featured experts and bios
+•	“Top Rated Answers of the Week”
+•	Option to tip experts (if monetization included)
+•	
+________________________________________
+🧭 9. Inv. Room (Investor Room)
+A virtual portfolio-building and discussion space.
+Includes:
+•	Create and share mock portfolios
+•	Private or open rooms for collaboration
+•	Room chat, discussions, voting on changes
+•	Portfolio stats (returns, diversification, risk)
+•	Simulated investing challenges
+•	Invite-only groups (e.g., College Clubs, Office Teams)
+
