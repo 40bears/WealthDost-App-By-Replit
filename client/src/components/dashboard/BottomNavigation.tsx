@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 
-type Tab = "home" | "experts" | "explore" | "top-analyst" | "invroom";
+type Tab = "home" | "experts" | "explore" | "invroom";
 
 interface BottomNavigationProps {
   activeTab: Tab;
@@ -12,7 +12,6 @@ const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => 
     { id: "home", icon: "home", label: "Home" },
     { id: "experts", icon: "psychology", label: "Experts" },
     { id: "explore", icon: "search", label: "Explore" },
-    { id: "top-analyst", icon: "leaderboard", label: "Top Analyst" },
     { id: "invroom", icon: "meeting_room", label: "Inv.Room" },
   ];
 
