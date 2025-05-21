@@ -18,7 +18,7 @@ const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => 
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10 safe-bottom">
-      <div className="max-w-md mx-auto flex justify-around items-center py-2">
+      <div className="max-w-md mx-auto flex justify-around items-center py-2 px-2">
         {tabs.map((tab) => (
           tab.special ? (
             <button
@@ -26,8 +26,8 @@ const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => 
               className="flex flex-col items-center px-3 py-1 btn-pulse"
               onClick={() => onTabChange(tab.id as Tab)}
             >
-              <div className="w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center -mt-7 shadow-lg">
-                <span className="material-icons text-2xl">add</span>
+              <div className="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center -mt-8 shadow-lg">
+                <span className="material-icons text-3xl">add</span>
               </div>
               <span className="text-xs mt-1 text-primary font-medium">{tab.label}</span>
             </button>

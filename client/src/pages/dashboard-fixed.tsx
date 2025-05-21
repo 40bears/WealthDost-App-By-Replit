@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 // Define feature types for our top navigation with empty string for default home feed
-type FeatureType = "" | "watchlist" | "analytics" | "debate" | "quiz" | "news";
+type FeatureType = "watchlist" | "analytics" | "debate" | "quiz" | "news" | "home_feed";
 
 // Define bottom tab types
 type Tab = "home" | "experts" | "explore" | "invroom" | "create";
@@ -21,7 +21,7 @@ type ExpertsTabType = "topAnalysts" | "ask";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState<Tab>("home");
-  const [activeFeature, setActiveFeature] = useState<FeatureType>("");
+  const [activeFeature, setActiveFeature] = useState<FeatureType>("home_feed");
   const [expertsTab, setExpertsTab] = useState<ExpertsTabType>("topAnalysts");
   const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
 
@@ -56,7 +56,7 @@ const Dashboard = () => {
     setActiveTab(tab);
     // When Home tab is clicked, reset to show posts feed
     if (tab === "home") {
-      setActiveFeature("");
+      setActiveFeature("home_feed");
     }
   };
 
@@ -168,8 +168,8 @@ const Dashboard = () => {
 
   // Render content based on selected feature
   const renderFeatureContent = () => {
-    // If no feature is selected, show posts feed first
-    if (activeFeature === "") {
+    // If home feed is selected, show posts feed first
+    if (activeFeature === "home_feed") {
       return renderPostsFeed();
     }
     
