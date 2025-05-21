@@ -26,10 +26,10 @@ const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => 
               className="flex flex-col items-center px-3 py-1 btn-pulse"
               onClick={() => onTabChange(tab.id as Tab)}
             >
-              <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center -mt-5 shadow-lg">
+              <div className="w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center -mt-7 shadow-lg">
                 <span className="material-icons text-2xl">add</span>
               </div>
-              <span className="text-xs mt-0.5 text-primary font-medium">{tab.label}</span>
+              <span className="text-xs mt-1 text-primary font-medium">{tab.label}</span>
             </button>
           ) : (
             <button

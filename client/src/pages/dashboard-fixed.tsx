@@ -5,6 +5,7 @@ import FeatureNavigation from "@/components/dashboard/FeatureNavigation";
 import BottomNavigation from "@/components/dashboard/BottomNavigation";
 import WelcomeCard from "@/components/dashboard/WelcomeCard";
 import ContentFeed from "@/components/dashboard/ContentFeed";
+import CreatePostModal from "@/components/dashboard/CreatePostModal";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -22,6 +23,7 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState<Tab>("home");
   const [activeFeature, setActiveFeature] = useState<FeatureType>("");
   const [expertsTab, setExpertsTab] = useState<ExpertsTabType>("topAnalysts");
+  const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
 
   // Fetch market data
   const { data: marketData, isLoading: isLoadingMarketData } = useQuery({
@@ -47,7 +49,7 @@ const Dashboard = () => {
     // Handle the create action without changing the active tab
     if (tab === "create") {
       console.log("Create post button clicked");
-      // You could show a modal or redirect to create post page
+      setIsCreatePostModalOpen(true);
       return; // Don't change the active tab for create button
     }
     
@@ -789,6 +791,12 @@ const Dashboard = () => {
         {renderTabContent()}
       </div>
 
+      {/* Create Post Modal */}
+      <CreatePostModal 
+        isOpen={isCreatePostModalOpen}
+        onClose={() => setIsCreatePostModalOpen(false)}
+      />
+      
       {/* Bottom Navigation - Fixed */}
       <div className="fixed bottom-0 left-0 right-0 bg-white z-20 max-w-md mx-auto">
         <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
