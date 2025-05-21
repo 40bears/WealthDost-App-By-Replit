@@ -54,10 +54,7 @@ const Dashboard = () => {
   // Function to render posts feed
   const renderPostsFeed = () => (
     <div className="px-4 py-6">
-      <h2 className="text-xl font-semibold mb-4">Welcome to WealthDost</h2>
-      <p className="text-gray-600 mb-4">Your personalized financial community feed.</p>
-      <WelcomeCard />
-      <div className="mt-4">
+      <div className="mt-1">
         <h3 className="font-semibold mb-3">Recent Community Posts</h3>
         <ContentFeed posts={typedPosts} isLoading={isLoadingPosts} />
         {(!typedPosts || typedPosts.length === 0) && !isLoadingPosts && (
