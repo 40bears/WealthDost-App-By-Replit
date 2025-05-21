@@ -1,0 +1,113 @@
+Detailed description of Button
+🔖 1. Watchlist
+Track, monitor, and analyze investment interests.
+Includes:
+•	Add stocks/cryptos/funds to personalized lists
+•	Live prices, % change, charts
+•	Set alerts (price, news, volume)
+•	Categorize by themes (e.g., Green Energy, Tech)
+•	Sentiment meter (crowd sentiment)
+•	“Watch by Tribe” → see what others in your Tribe are tracking
+________________________________________
+🗣️ 2. Debate
+Community-sourced opinion battles and polls.
+Includes:
+•	Start or join debates (e.g., “Is Tesla overvalued?”)
+•	Polls with vote % and comments
+•	Argument builder: “Bull Case” vs “Bear Case”
+•	Upvote/downvote responses
+•	Tag experts or friends
+•	Filter debates by sector, trending, or new
+________________________________________
+🧠 3. Quiz
+Gamified learning for financial literacy.
+Includes:
+•	Daily quiz (5–10 MCQs) with points
+•	Categories: Markets, Personal Finance, Investing, Crypto
+•	XP badges (Novice, Analyst, Strategist, Guru)
+•	Leaderboard within Tribes or overall
+•	Unlock special content on scoring milestones
+________________________________________
+🧬 4. Tribe
+Community based on interest or identity.
+Includes:
+•	Join Tribes (e.g., “Tech Bros”, “Cautious Owls”, “Gen Z 	Investors”)
+•	Tribe dashboard: common holdings, average risk score, top picks
+•	Tribe chat & forum
+•	Post polls, ask questions, share resources
+•	Top contributors leaderboard
+•	Ability to switch/join multiple tribes
+
+5. NewsPulse – Smart, Personalized Financial News Hub
+Not just headlines — a daily rhythm of insight, discovery, and action.
+🔍 Core Features:
+•	Curated Streams:
+o	📈 Market Movers: Top stock/sector news impacting portfolios
+o	🧠 Think Like a Pro: Analyst takes, expert breakdowns
+o	🔬 Thematic Focus: Green Energy, AI, Real Estate, Startups, Crypto
+•	News Match to Watchlist & Tribe:
+o	See news relevant to your Watchlist holdings
+o	See what’s trending in your Tribe: “4 members read this”
+•	Daily News Dose (5-a-Day):
+o	Bite-sized, scrollable cards with key takeaways:
+ • “What happened?”
+ • “Why it matters?”
+ • “Investor Angle”
+o	Mark as read to earn XP streaks
+•	AI Summary & Sentiment:
+o	Auto-tag news as 🔼 Bullish, 🔽 Bearish, 🟰 Neutral
+o	TL;DR and sentiment emojis generated for every article
+•	Actionable Buttons:
+o	⭐ Add stock to Watchlist
+o	📢 Start a Debate on this news
+o	🧠 Quiz me on this topic
+🔁 Send to Tribe / Ask an Expert 
+📊 6. Analytics
+User-level financial behavior insights.
+Includes:
+•	Portfolio summary (if connected)
+•	Risk score, sector allocation
+•	Time spent on Watchlist, Debate, Quiz
+•	Tribe activity heatmap
+•	XP and progress report
+•	Suggest personalized tips (e.g., “You tend to panic sell—read this…”)
+________________________________________
+🌐 7. Explore
+Discover trending content, new users, or tools.
+Includes:
+•	Trending posts, experts, debates
+•	Popular Tribes
+•	Latest quizzes
+•	AI-powered content recommendations
+•	“Random Discovery” button
+•	Tags & filters: Market News, Charts, Memes
+________________________________________
+🌟 8. Top Analyst
+Track and follow performance of community analysts.
+Includes:
+•	Leaderboard of analysts based on returns, risk, accuracy
+•	Analyst portfolios (real or simulated)
+•	Ratings by peers (1–5 stars)
+•	“Follow” button for alerts
+•	Historical performance charts
+Analyst categories: Technical, Fundamental, Macro, Options
+
+Include “ Ask Expert” to Top Analsyt
+Verified experts answer crowd-sourced queries.
+Includes:
+•	Ask a question publicly or to specific expert categories (e.g., Tax, Crypto, Real Estate)
+•	Browse Q&A feed with upvotes
+•	Featured experts and bios
+•	“Top Rated Answers of the Week”
+•	Option to tip experts (if monetization included)
+•	
+________________________________________
+🧭 9. Inv. Room (Investor Room)
+A virtual portfolio-building and discussion space.
+Includes:
+•	Create and share mock portfolios
+•	Private or open rooms for collaboration
+•	Room chat, discussions, voting on changes
+•	Portfolio stats (returns, diversification, risk)
+•	Simulated investing challenges
+•	Invite-only groups (e.g., College Clubs, Office Teams)

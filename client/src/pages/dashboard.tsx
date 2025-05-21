@@ -12,14 +12,14 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
 // Define feature types for our top navigation
-type FeatureType = "home" | "watchlist" | "debate" | "quiz" | "tribe" | "ask-expert";
+type FeatureType = "watchlist" | "analytics" | "debate" | "quiz" | "news";
 
 // Define bottom tab types
-type Tab = "home" | "analytics" | "explore" | "analyst" | "invroom";
+type Tab = "home" | "experts" | "explore" | "top-analyst" | "invroom";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState<Tab>("home");
-  const [activeFeature, setActiveFeature] = useState<FeatureType>("home");
+  const [activeFeature, setActiveFeature] = useState<FeatureType>("watchlist");
 
   // Fetch market data
   const { data: marketData, isLoading: isLoadingMarketData } = useQuery({
@@ -39,13 +39,105 @@ const Dashboard = () => {
   // Render content based on selected feature
   const renderFeatureContent = () => {
     switch (activeFeature) {
-      case "home":
+      case "analytics":
         return (
-          <>
-            <WelcomeCard />
+          <div className="px-4 py-6">
+            <h2 className="text-xl font-semibold mb-4">Analytics</h2>
+            <p className="text-gray-600 mb-4">User-level financial behavior insights.</p>
             <MarketOverview data={typedMarketData} isLoading={isLoadingMarketData} />
-            <ContentFeed posts={typedPosts} isLoading={isLoadingPosts} />
-          </>
+            
+            <div className="mt-6 space-y-4">
+              <div className="bg-white border border-gray-200 rounded-lg p-4">
+                <h3 className="font-medium mb-3">Risk Assessment</h3>
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm text-gray-600">Risk Score</span>
+                      <span className="text-sm font-medium">Medium (65/100)</span>
+                    </div>
+                    <div className="h-2 bg-gray-100 rounded-lg overflow-hidden">
+                      <div className="bg-yellow-500 h-2 rounded-lg" style={{width: "65%"}}></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm text-gray-600">Diversification</span>
+                      <span className="text-sm font-medium">Good</span>
+                    </div>
+                    <div className="h-2 bg-gray-100 rounded-lg overflow-hidden">
+                      <div className="bg-green-500 h-2 rounded-lg" style={{width: "75%"}}></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm text-gray-600">Knowledge Score</span>
+                      <span className="text-sm font-medium">Improving</span>
+                    </div>
+                    <div className="h-2 bg-gray-100 rounded-lg overflow-hidden">
+                      <div className="bg-blue-500 h-2 rounded-lg" style={{width: "45%"}}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white border border-gray-200 rounded-lg p-4">
+                <h3 className="font-medium mb-3">Activity Breakdown</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <div className="flex items-center mb-1">
+                      <span className="material-icons text-primary mr-1 text-sm">quiz</span>
+                      <span className="text-sm">Quizzes Completed</span>
+                    </div>
+                    <p className="text-xl font-medium">3</p>
+                  </div>
+                  
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <div className="flex items-center mb-1">
+                      <span className="material-icons text-primary mr-1 text-sm">forum</span>
+                      <span className="text-sm">Debates Joined</span>
+                    </div>
+                    <p className="text-xl font-medium">7</p>
+                  </div>
+                  
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <div className="flex items-center mb-1">
+                      <span className="material-icons text-primary mr-1 text-sm">visibility</span>
+                      <span className="text-sm">Watchlist Items</span>
+                    </div>
+                    <p className="text-xl font-medium">0</p>
+                  </div>
+                  
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <div className="flex items-center mb-1">
+                      <span className="material-icons text-primary mr-1 text-sm">psychology</span>
+                      <span className="text-sm">Expert Queries</span>
+                    </div>
+                    <p className="text-xl font-medium">2</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white border border-gray-200 rounded-lg p-4">
+                <h3 className="font-medium mb-3">Personalized Tips</h3>
+                <div className="space-y-3">
+                  <div className="flex items-start">
+                    <span className="material-icons text-blue-500 mr-2">lightbulb</span>
+                    <p className="text-sm text-gray-700">Your quiz results show you might benefit from reading more about basic investment principles.</p>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="material-icons text-blue-500 mr-2">lightbulb</span>
+                    <p className="text-sm text-gray-700">Consider adding items to your watchlist to track market movements in areas of interest.</p>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="material-icons text-blue-500 mr-2">lightbulb</span>
+                    <p className="text-sm text-gray-700">Join a Tribe to connect with investors who share your interests and risk profile.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         );
       case "watchlist":
         return (
@@ -183,55 +275,120 @@ const Dashboard = () => {
             </div>
           </div>
         );
-      case "tribe":
+      case "news":
         return (
           <div className="px-4 py-6">
-            <h2 className="text-xl font-semibold mb-4">Join a Tribe</h2>
-            <p className="text-gray-600 mb-4">Communities based on interest or investment identity.</p>
-            <div className="space-y-3 mb-4">
-              <div className="bg-white border border-gray-200 rounded-lg p-4 hover:border-primary transition cursor-pointer">
-                <div className="flex items-center mb-2">
-                  <div className="bg-blue-100 p-2 rounded-full mr-3">
-                    <span className="material-icons text-blue-600">verified</span>
-                  </div>
-                  <div>
-                    <h3 className="font-medium">Tech Bros</h3>
-                    <p className="text-xs text-gray-500">1.2K members</p>
-                  </div>
-                  <Button variant="outline" size="sm" className="ml-auto">Join</Button>
+            <h2 className="text-xl font-semibold mb-4">News Pulse</h2>
+            <p className="text-gray-600 mb-4">Smart, personalized financial news hub.</p>
+            
+            <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center">
+                  <span className="material-icons text-primary mr-2">trending_up</span>
+                  <h3 className="font-medium">Market Movers</h3>
                 </div>
-                <p className="text-sm text-gray-600">For tech enthusiasts investing in innovation and disruption.</p>
+                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Top Stories</span>
               </div>
               
-              <div className="bg-white border border-gray-200 rounded-lg p-4 hover:border-primary transition cursor-pointer">
-                <div className="flex items-center mb-2">
-                  <div className="bg-blue-100 p-2 rounded-full mr-3">
-                    <span className="material-icons text-blue-600">nightlight</span>
+              <div className="space-y-4">
+                <div className="border-b border-gray-100 pb-3">
+                  <h4 className="font-medium text-sm mb-1">Fed signals possible rate cuts later this year</h4>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center">
+                      <span className="text-green-600 text-xs font-medium bg-green-50 px-1.5 py-0.5 rounded mr-2">Bullish</span>
+                      <span className="text-xs text-gray-500">2 hours ago</span>
+                    </div>
+                    <span className="text-xs text-blue-600">3 from your watchlist</span>
                   </div>
-                  <div>
-                    <h3 className="font-medium">Cautious Owls</h3>
-                    <p className="text-xs text-gray-500">843 members</p>
+                  <div className="text-xs text-gray-600 mb-2">
+                    <p><span className="font-medium">What happened:</span> Federal Reserve Chair Powell indicated the central bank is preparing for interest rate cuts.</p>
+                    <p className="mt-1"><span className="font-medium">Why it matters:</span> Lower rates could boost equities, particularly growth stocks that benefit from cheaper borrowing.</p>
                   </div>
-                  <Button variant="outline" size="sm" className="ml-auto">Join</Button>
+                  <div className="flex text-xs">
+                    <button className="text-primary flex items-center mr-3">
+                      <span className="material-icons text-xs mr-1">add_circle</span>
+                      Add to Watchlist
+                    </button>
+                    <button className="text-primary flex items-center mr-3">
+                      <span className="material-icons text-xs mr-1">forum</span>
+                      Debate
+                    </button>
+                    <button className="text-primary flex items-center">
+                      <span className="material-icons text-xs mr-1">share</span>
+                      Share
+                    </button>
+                  </div>
                 </div>
-                <p className="text-sm text-gray-600">Risk-averse investors focused on steady, consistent returns.</p>
+                
+                <div className="border-b border-gray-100 pb-3">
+                  <h4 className="font-medium text-sm mb-1">Tech giants face new AI regulations in EU</h4>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center">
+                      <span className="text-red-600 text-xs font-medium bg-red-50 px-1.5 py-0.5 rounded mr-2">Bearish</span>
+                      <span className="text-xs text-gray-500">5 hours ago</span>
+                    </div>
+                    <span className="text-xs text-blue-600">Tech sector</span>
+                  </div>
+                  <div className="text-xs text-gray-600 mb-2">
+                    <p><span className="font-medium">What happened:</span> EU parliament approved stricter regulations on AI development and deployment.</p>
+                    <p className="mt-1"><span className="font-medium">Why it matters:</span> Could increase compliance costs for tech companies leading AI development.</p>
+                  </div>
+                  <div className="flex text-xs">
+                    <button className="text-primary flex items-center mr-3">
+                      <span className="material-icons text-xs mr-1">add_circle</span>
+                      Add to Watchlist
+                    </button>
+                    <button className="text-primary flex items-center mr-3">
+                      <span className="material-icons text-xs mr-1">forum</span>
+                      Debate
+                    </button>
+                    <button className="text-primary flex items-center">
+                      <span className="material-icons text-xs mr-1">share</span>
+                      Share
+                    </button>
+                  </div>
+                </div>
               </div>
               
-              <div className="bg-white border border-gray-200 rounded-lg p-4 hover:border-primary transition cursor-pointer">
-                <div className="flex items-center mb-2">
-                  <div className="bg-blue-100 p-2 rounded-full mr-3">
-                    <span className="material-icons text-blue-600">trending_up</span>
-                  </div>
-                  <div>
-                    <h3 className="font-medium">Gen Z Investors</h3>
-                    <p className="text-xs text-gray-500">2.4K members</p>
-                  </div>
-                  <Button variant="outline" size="sm" className="ml-auto">Join</Button>
-                </div>
-                <p className="text-sm text-gray-600">Young investors navigating financial markets and building wealth.</p>
-              </div>
+              <button className="w-full text-center text-primary text-sm mt-4">
+                View more market news
+              </button>
             </div>
-            <Button className="w-full">Create a Tribe</Button>
+            
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center">
+                  <span className="material-icons text-primary mr-2">psychology</span>
+                  <h3 className="font-medium">Think Like a Pro</h3>
+                </div>
+                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Expert Analysis</span>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="border-b border-gray-100 pb-3">
+                  <h4 className="font-medium text-sm mb-1">Why commodities might outperform in H2 2025</h4>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center">
+                      <div className="w-4 h-4 rounded-full bg-blue-100 flex items-center justify-center mr-1">
+                        <span className="material-icons text-blue-600 text-[10px]">verified</span>
+                      </div>
+                      <span className="text-xs text-gray-500">Ravi Mehta, CFA</span>
+                    </div>
+                    <span className="text-xs text-gray-500">Yesterday</span>
+                  </div>
+                  <p className="text-xs text-gray-600 mb-2">
+                    Global supply constraints combined with increasing industrial demand could create a perfect storm for commodity prices in the second half of the year.
+                  </p>
+                  <button className="text-primary text-xs">
+                    Read full analysis
+                  </button>
+                </div>
+              </div>
+              
+              <button className="w-full text-center text-primary text-sm mt-4">
+                View more expert insights
+              </button>
+            </div>
           </div>
         );
       case "ask-expert":

@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 // Define feature types for our top navigation
-type FeatureType = "home" | "watchlist" | "debate" | "quiz" | "tribe" | "ask-expert";
+type FeatureType = "watchlist" | "analytics" | "debate" | "quiz" | "news";
 
 interface FeatureNavigationProps {
   activeFeature: FeatureType;
@@ -11,12 +11,11 @@ interface FeatureNavigationProps {
 
 const FeatureNavigation = ({ activeFeature, onFeatureSelect }: FeatureNavigationProps) => {
   const features = [
-    { id: "home" as FeatureType, icon: "home", label: "Home" },
     { id: "watchlist" as FeatureType, icon: "bookmark", label: "Watchlist" },
+    { id: "analytics" as FeatureType, icon: "analytics", label: "Analytics" },
     { id: "debate" as FeatureType, icon: "forum", label: "Debate" },
     { id: "quiz" as FeatureType, icon: "quiz", label: "Quiz" },
-    { id: "tribe" as FeatureType, icon: "groups", label: "Tribe" },
-    { id: "ask-expert" as FeatureType, icon: "psychology", label: "Ask Expert" },
+    { id: "news" as FeatureType, icon: "feed", label: "News" },
   ];
 
   return (
