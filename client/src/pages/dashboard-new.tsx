@@ -411,8 +411,20 @@ const Dashboard = () => {
         return (
           <div className="px-4 py-6">
             <h2 className="text-xl font-semibold mb-4">Welcome to WealthDost</h2>
-            <p className="text-gray-600 mb-4">Select a feature to get started.</p>
-            <ContentFeed posts={typedPosts} isLoading={isLoadingPosts} />
+            <p className="text-gray-600 mb-4">Your personalized financial community feed.</p>
+            <WelcomeCard />
+            <div className="mt-4">
+              <h3 className="font-semibold mb-3">Recent Community Posts</h3>
+              <ContentFeed posts={typedPosts} isLoading={isLoadingPosts} />
+              {(!typedPosts || typedPosts.length === 0) && !isLoadingPosts && (
+                <div className="bg-gray-50 p-4 rounded-lg text-center mt-4">
+                  <span className="material-icons text-4xl text-gray-400 mb-2">feed</span>
+                  <h3 className="font-medium mb-1">No posts yet</h3>
+                  <p className="text-sm text-gray-500 mb-4">Be the first to share insights or questions with the community.</p>
+                  <Button>Create a Post</Button>
+                </div>
+              )}
+            </div>
           </div>
         );
     }
