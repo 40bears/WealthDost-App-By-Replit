@@ -1,13 +1,22 @@
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
-const FeatureNavigation = () => {
+// Define feature types for our top navigation
+type FeatureType = "home" | "watchlist" | "debate" | "quiz" | "tribe" | "ask-expert";
+
+interface FeatureNavigationProps {
+  activeFeature: FeatureType;
+  onFeatureSelect: (feature: FeatureType) => void;
+}
+
+const FeatureNavigation = ({ activeFeature, onFeatureSelect }: FeatureNavigationProps) => {
   const features = [
-    { id: "watchlist", icon: "bookmark", label: "Watchlist" },
-    { id: "debate", icon: "forum", label: "Debate" },
-    { id: "quiz", icon: "quiz", label: "Quiz" },
-    { id: "tribe", icon: "groups", label: "Tribe" },
-    { id: "ask-expert", icon: "psychology", label: "Ask Expert", active: true },
+    { id: "home" as FeatureType, icon: "home", label: "Home" },
+    { id: "watchlist" as FeatureType, icon: "bookmark", label: "Watchlist" },
+    { id: "debate" as FeatureType, icon: "forum", label: "Debate" },
+    { id: "quiz" as FeatureType, icon: "quiz", label: "Quiz" },
+    { id: "tribe" as FeatureType, icon: "groups", label: "Tribe" },
+    { id: "ask-expert" as FeatureType, icon: "psychology", label: "Ask Expert" },
   ];
 
   return (
@@ -18,15 +27,16 @@ const FeatureNavigation = () => {
             key={feature.id}
             variant="ghost"
             className="flex flex-col items-center px-0 py-2 h-auto space-y-1 min-w-[64px]"
+            onClick={() => onFeatureSelect(feature.id)}
           >
             <div
               className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                feature.active ? "bg-primary" : "bg-gray-100"
+                activeFeature === feature.id ? "bg-primary" : "bg-gray-100"
               }`}
             >
               <span
                 className={`material-icons ${
-                  feature.active ? "text-white" : "text-gray-700"
+                  activeFeature === feature.id ? "text-white" : "text-gray-700"
                 }`}
               >
                 {feature.icon}
@@ -34,7 +44,7 @@ const FeatureNavigation = () => {
             </div>
             <span
               className={`text-xs ${
-                feature.active ? "text-primary font-medium" : "text-gray-700"
+                activeFeature === feature.id ? "text-primary font-medium" : "text-gray-700"
               }`}
             >
               {feature.label}
