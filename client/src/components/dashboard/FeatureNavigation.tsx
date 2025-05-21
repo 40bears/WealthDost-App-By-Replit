@@ -25,12 +25,12 @@ const FeatureNavigation = ({ activeFeature, onFeatureSelect }: FeatureNavigation
           <Button
             key={feature.id}
             variant="ghost"
-            className="flex flex-col items-center px-0 py-2 h-auto space-y-1 min-w-[64px]"
+            className="flex flex-col items-center px-0 py-2 h-auto space-y-1 min-w-[64px] click-bounce feature-btn"
             onClick={() => onFeatureSelect(feature.id)}
           >
             <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                activeFeature === feature.id ? "bg-primary" : "bg-gray-100"
+              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 transform ${
+                activeFeature === feature.id ? "bg-primary scale-105" : "bg-gray-100 hover:scale-110"
               }`}
             >
               <span
@@ -42,7 +42,7 @@ const FeatureNavigation = ({ activeFeature, onFeatureSelect }: FeatureNavigation
               </span>
             </div>
             <span
-              className={`text-xs ${
+              className={`text-xs transition-colors duration-300 ${
                 activeFeature === feature.id ? "text-primary font-medium" : "text-gray-700"
               }`}
             >

@@ -21,13 +21,17 @@ const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => 
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            className={`flex flex-col items-center px-3 py-1 ${
-              activeTab === tab.id ? "text-primary" : "text-gray-500"
+            className={`flex flex-col items-center px-3 py-1 tab-slide btn-pulse ${
+              activeTab === tab.id ? "text-primary active" : "text-gray-500"
             }`}
             onClick={() => onTabChange(tab.id as Tab)}
           >
-            <span className="material-icons">{tab.icon}</span>
-            <span className="text-xs mt-0.5">{tab.label}</span>
+            <span className={`material-icons transition-transform duration-200 ${
+              activeTab === tab.id ? "scale-110" : "scale-100"
+            }`}>{tab.icon}</span>
+            <span className={`text-xs mt-0.5 transition-all duration-300 ${
+              activeTab === tab.id ? "font-medium" : ""
+            }`}>{tab.label}</span>
           </button>
         ))}
       </div>

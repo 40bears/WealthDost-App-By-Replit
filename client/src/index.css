@@ -113,4 +113,68 @@
   .checkbox-container .checkmark:after {
     @apply left-[7px] top-[3px] w-[6px] h-[10px] border-r-2 border-b-2 border-white rotate-45;
   }
+  
+  /* Button Animation Classes */
+  .btn-pulse {
+    @apply transition-all duration-200 transform active:scale-95 hover:brightness-105;
+  }
+  
+  .btn-ripple {
+    position: relative;
+    overflow: hidden;
+    transform: translate3d(0, 0, 0);
+  }
+  
+  .btn-ripple:after {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+    background-repeat: no-repeat;
+    background-position: 50%;
+    transform: scale(10, 10);
+    opacity: 0;
+    transition: transform .5s, opacity 1s;
+  }
+  
+  .btn-ripple:active:after {
+    transform: scale(0, 0);
+    opacity: 0.3;
+    transition: 0s;
+  }
+  
+  .click-bounce {
+    @apply transition-transform duration-150 active:scale-95;
+  }
+  
+  .tab-slide {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  
+  .tab-slide::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: hsl(var(--primary));
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+  }
+  
+  .tab-slide:hover::after,
+  .tab-slide.active::after {
+    width: 70%;
+  }
+  
+  .feature-btn {
+    @apply transition-all duration-200 hover:shadow-md active:shadow-inner active:translate-y-0.5;
+  }
 }
