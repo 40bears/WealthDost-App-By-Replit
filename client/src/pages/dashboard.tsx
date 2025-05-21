@@ -43,8 +43,8 @@ const Dashboard = () => {
         return (
           <>
             <WelcomeCard />
-            <MarketOverview data={marketData} isLoading={isLoadingMarketData} />
-            <ContentFeed posts={posts} isLoading={isLoadingPosts} />
+            <MarketOverview data={typedMarketData} isLoading={isLoadingMarketData} />
+            <ContentFeed posts={typedPosts} isLoading={isLoadingPosts} />
           </>
         );
       case "watchlist":
@@ -273,12 +273,16 @@ const Dashboard = () => {
         return (
           <>
             <WelcomeCard />
-            <MarketOverview data={marketData} isLoading={isLoadingMarketData} />
-            <ContentFeed posts={posts} isLoading={isLoadingPosts} />
+            <MarketOverview data={typedMarketData} isLoading={isLoadingMarketData} />
+            <ContentFeed posts={typedPosts} isLoading={isLoadingPosts} />
           </>
         );
     }
   };
+
+  // Type assertions for data to fix typescript issues
+  const typedMarketData = marketData as any[];
+  const typedPosts = posts as any[];
 
   return (
     <div className="flex flex-col h-full relative">
