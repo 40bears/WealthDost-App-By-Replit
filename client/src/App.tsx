@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import SignUp from "@/pages/signup";
-import Dashboard from "@/pages/dashboard-new";
+import Dashboard from "@/pages/dashboard-fixed";
 
 function Router() {
   return (

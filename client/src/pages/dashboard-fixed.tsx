@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 // Define feature types for our top navigation
-type FeatureType = "watchlist" | "analytics" | "debate" | "quiz" | "news" | "";
+type FeatureType = "watchlist" | "analytics" | "debate" | "quiz" | "news";
 
 // Define bottom tab types
 type Tab = "home" | "experts" | "explore" | "invroom";
@@ -20,8 +20,7 @@ type ExpertsTabType = "topAnalysts" | "ask";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState<Tab>("home");
-  // Set default to "" to show posts feed first instead of a specific feature
-  const [activeFeature, setActiveFeature] = useState<FeatureType | "">("");
+  const [activeFeature, setActiveFeature] = useState<FeatureType | null>(null);
   const [expertsTab, setExpertsTab] = useState<ExpertsTabType>("topAnalysts");
 
   // Fetch market data
@@ -48,33 +47,36 @@ const Dashboard = () => {
     setActiveTab(tab);
     // When Home tab is clicked, reset to show posts feed
     if (tab === "home") {
-      setActiveFeature("");
+      setActiveFeature(null);
     }
   };
+
+  // Function to render posts feed
+  const renderPostsFeed = () => (
+    <div className="px-4 py-6">
+      <h2 className="text-xl font-semibold mb-4">Welcome to WealthDost</h2>
+      <p className="text-gray-600 mb-4">Your personalized financial community feed.</p>
+      <WelcomeCard />
+      <div className="mt-4">
+        <h3 className="font-semibold mb-3">Recent Community Posts</h3>
+        <ContentFeed posts={typedPosts} isLoading={isLoadingPosts} />
+        {(!typedPosts || typedPosts.length === 0) && !isLoadingPosts && (
+          <div className="bg-gray-50 p-4 rounded-lg text-center mt-4">
+            <span className="material-icons text-4xl text-gray-400 mb-2">feed</span>
+            <h3 className="font-medium mb-1">No posts yet</h3>
+            <p className="text-sm text-gray-500 mb-4">Be the first to share insights or questions with the community.</p>
+            <Button className="btn-pulse">Create a Post</Button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
   // Render content based on selected feature
   const renderFeatureContent = () => {
     // If no feature is selected, show posts feed first
-    if (activeFeature === "") {
-      return (
-        <div className="px-4 py-6">
-          <h2 className="text-xl font-semibold mb-4">Welcome to WealthDost</h2>
-          <p className="text-gray-600 mb-4">Your personalized financial community feed.</p>
-          <WelcomeCard />
-          <div className="mt-4">
-            <h3 className="font-semibold mb-3">Recent Community Posts</h3>
-            <ContentFeed posts={typedPosts} isLoading={isLoadingPosts} />
-            {(!typedPosts || typedPosts.length === 0) && !isLoadingPosts && (
-              <div className="bg-gray-50 p-4 rounded-lg text-center mt-4">
-                <span className="material-icons text-4xl text-gray-400 mb-2">feed</span>
-                <h3 className="font-medium mb-1">No posts yet</h3>
-                <p className="text-sm text-gray-500 mb-4">Be the first to share insights or questions with the community.</p>
-                <Button className="btn-pulse">Create a Post</Button>
-              </div>
-            )}
-          </div>
-        </div>
-      );
+    if (activeFeature === null) {
+      return renderPostsFeed();
     }
     
     switch (activeFeature) {
@@ -88,7 +90,7 @@ const Dashboard = () => {
                 <span className="material-icons text-4xl text-gray-400 mb-2">visibility</span>
                 <h3 className="font-medium mb-1">Add stocks, crypto, or funds</h3>
                 <p className="text-sm text-gray-500">Your watchlist is empty. Start adding assets to track.</p>
-                <Button className="mt-4">Add Assets</Button>
+                <Button className="mt-4 btn-pulse">Add Assets</Button>
               </div>
             </div>
             <div className="space-y-2 mb-4">
@@ -247,13 +249,13 @@ const Dashboard = () => {
                 </div>
                 
                 <div className="flex space-x-2">
-                  <Button className="flex-1">Vote Bull</Button>
-                  <Button variant="secondary" className="flex-1">Vote Bear</Button>
+                  <Button className="flex-1 btn-ripple">Vote Bull</Button>
+                  <Button variant="secondary" className="flex-1 btn-ripple">Vote Bear</Button>
                 </div>
               </CardContent>
             </Card>
             
-            <Button className="w-full mt-4">Start New Debate</Button>
+            <Button className="w-full mt-4 btn-pulse">Start New Debate</Button>
           </div>
         );
         
@@ -277,26 +279,26 @@ const Dashboard = () => {
                 <div className="bg-gray-50 p-3 rounded-lg mb-4">
                   <h4 className="font-medium text-sm mb-2">What is the primary goal of value investing?</h4>
                   <div className="space-y-2">
-                    <div className="flex items-center p-2 rounded hover:bg-gray-100 cursor-pointer">
+                    <div className="flex items-center p-2 rounded hover:bg-gray-100 cursor-pointer click-bounce">
                       <input type="radio" name="investing" id="short-term" className="mr-3" />
                       <label htmlFor="short-term" className="cursor-pointer text-sm">Quick short-term profits</label>
                     </div>
-                    <div className="flex items-center p-2 rounded hover:bg-gray-100 cursor-pointer">
+                    <div className="flex items-center p-2 rounded hover:bg-gray-100 cursor-pointer click-bounce">
                       <input type="radio" name="investing" id="undervalued" className="mr-3" />
                       <label htmlFor="undervalued" className="cursor-pointer text-sm">Finding undervalued stocks with long-term potential</label>
                     </div>
-                    <div className="flex items-center p-2 rounded hover:bg-gray-100 cursor-pointer">
+                    <div className="flex items-center p-2 rounded hover:bg-gray-100 cursor-pointer click-bounce">
                       <input type="radio" name="investing" id="timing" className="mr-3" />
                       <label htmlFor="timing" className="cursor-pointer text-sm">Timing market movements precisely</label>
                     </div>
-                    <div className="flex items-center p-2 rounded hover:bg-gray-100 cursor-pointer">
+                    <div className="flex items-center p-2 rounded hover:bg-gray-100 cursor-pointer click-bounce">
                       <input type="radio" name="investing" id="diversifying" className="mr-3" />
                       <label htmlFor="diversifying" className="cursor-pointer text-sm">Diversifying across all sectors equally</label>
                     </div>
                   </div>
                 </div>
                 
-                <Button className="w-full">Submit Answer</Button>
+                <Button className="w-full btn-pulse">Submit Answer</Button>
               </CardContent>
             </Card>
             
@@ -348,15 +350,15 @@ const Dashboard = () => {
                     <p className="mt-1"><span className="font-medium">Why it matters:</span> Lower rates could boost equities, particularly growth stocks that benefit from cheaper borrowing.</p>
                   </div>
                   <div className="flex text-xs">
-                    <button className="text-primary flex items-center mr-3">
+                    <button className="text-primary flex items-center mr-3 click-bounce">
                       <span className="material-icons text-xs mr-1">add_circle</span>
                       Add to Watchlist
                     </button>
-                    <button className="text-primary flex items-center mr-3">
+                    <button className="text-primary flex items-center mr-3 click-bounce">
                       <span className="material-icons text-xs mr-1">forum</span>
                       Debate
                     </button>
-                    <button className="text-primary flex items-center">
+                    <button className="text-primary flex items-center click-bounce">
                       <span className="material-icons text-xs mr-1">share</span>
                       Share
                     </button>
@@ -377,15 +379,15 @@ const Dashboard = () => {
                     <p className="mt-1"><span className="font-medium">Why it matters:</span> Could increase compliance costs for tech companies leading AI development.</p>
                   </div>
                   <div className="flex text-xs">
-                    <button className="text-primary flex items-center mr-3">
+                    <button className="text-primary flex items-center mr-3 click-bounce">
                       <span className="material-icons text-xs mr-1">add_circle</span>
                       Add to Watchlist
                     </button>
-                    <button className="text-primary flex items-center mr-3">
+                    <button className="text-primary flex items-center mr-3 click-bounce">
                       <span className="material-icons text-xs mr-1">forum</span>
                       Debate
                     </button>
-                    <button className="text-primary flex items-center">
+                    <button className="text-primary flex items-center click-bounce">
                       <span className="material-icons text-xs mr-1">share</span>
                       Share
                     </button>
@@ -422,7 +424,7 @@ const Dashboard = () => {
                   <p className="text-xs text-gray-600 mb-2">
                     Global supply constraints combined with increasing industrial demand could create a perfect storm for commodity prices in the second half of the year.
                   </p>
-                  <button className="text-primary text-xs">
+                  <button className="text-primary text-xs click-bounce">
                     Read full analysis
                   </button>
                 </div>
@@ -436,25 +438,7 @@ const Dashboard = () => {
         );
         
       default:
-        return (
-          <div className="px-4 py-6">
-            <h2 className="text-xl font-semibold mb-4">Welcome to WealthDost</h2>
-            <p className="text-gray-600 mb-4">Your personalized financial community feed.</p>
-            <WelcomeCard />
-            <div className="mt-4">
-              <h3 className="font-semibold mb-3">Recent Community Posts</h3>
-              <ContentFeed posts={typedPosts} isLoading={isLoadingPosts} />
-              {(!typedPosts || typedPosts.length === 0) && !isLoadingPosts && (
-                <div className="bg-gray-50 p-4 rounded-lg text-center mt-4">
-                  <span className="material-icons text-4xl text-gray-400 mb-2">feed</span>
-                  <h3 className="font-medium mb-1">No posts yet</h3>
-                  <p className="text-sm text-gray-500 mb-4">Be the first to share insights or questions with the community.</p>
-                  <Button>Create a Post</Button>
-                </div>
-              )}
-            </div>
-          </div>
-        );
+        return renderPostsFeed();
     }
   };
 
@@ -467,13 +451,13 @@ const Dashboard = () => {
           <div className="flex space-x-2">
             <button 
               onClick={() => setExpertsTab("topAnalysts")} 
-              className={`px-3 py-1 text-sm rounded-full font-medium ${expertsTab === "topAnalysts" ? "bg-primary text-white" : "bg-gray-100 text-gray-700"}`}
+              className={`px-3 py-1 text-sm rounded-full font-medium click-bounce ${expertsTab === "topAnalysts" ? "bg-primary text-white" : "bg-gray-100 text-gray-700"}`}
             >
               Top Analysts
             </button>
             <button 
               onClick={() => setExpertsTab("ask")} 
-              className={`px-3 py-1 text-sm rounded-full font-medium ${expertsTab === "ask" ? "bg-primary text-white" : "bg-gray-100 text-gray-700"}`}
+              className={`px-3 py-1 text-sm rounded-full font-medium click-bounce ${expertsTab === "ask" ? "bg-primary text-white" : "bg-gray-100 text-gray-700"}`}
             >
               Ask
             </button>
@@ -503,7 +487,7 @@ const Dashboard = () => {
                         <span>Pro</span>
                       </div>
                       <div className="ml-auto">
-                        <Button variant="outline" size="sm">Follow</Button>
+                        <Button variant="outline" size="sm" className="btn-pulse">Follow</Button>
                       </div>
                     </div>
                     <p className="text-xs text-gray-500 mt-1">Technical Analysis • 94% accuracy</p>
@@ -530,7 +514,7 @@ const Dashboard = () => {
                         <span>Fundamental</span>
                       </div>
                       <div className="ml-auto">
-                        <Button variant="outline" size="sm">Follow</Button>
+                        <Button variant="outline" size="sm" className="btn-pulse">Follow</Button>
                       </div>
                     </div>
                     <p className="text-xs text-gray-500 mt-1">Fundamental Analysis • 87% accuracy</p>
@@ -544,7 +528,7 @@ const Dashboard = () => {
                 </div>
               </div>
               
-              <button className="w-full text-center text-primary text-sm mt-4">
+              <button className="w-full text-center text-primary text-sm mt-4 btn-pulse">
                 View full leaderboard
               </button>
             </div>
@@ -562,7 +546,7 @@ const Dashboard = () => {
                 placeholder="What would you like to ask our experts?"
               />
               <div className="flex mb-3">
-                <Button className="w-full">Submit Question</Button>
+                <Button className="w-full btn-pulse">Submit Question</Button>
               </div>
               <p className="text-xs text-gray-500">Our verified experts typically respond within 24 hours</p>
             </div>
@@ -579,7 +563,7 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <p className="text-sm text-gray-600">Start with a mix of liquid funds, index funds, and maybe 1-2 blue-chip stocks. Focus on learning the basics of diversification while...</p>
-                <Button variant="ghost" size="sm" className="mt-2 text-primary">Read full answer</Button>
+                <Button variant="ghost" size="sm" className="mt-2 text-primary btn-pulse">Read full answer</Button>
               </div>
             </div>
           </div>
@@ -602,7 +586,7 @@ const Dashboard = () => {
           </div>
           
           <div className="space-y-3">
-            <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer click-bounce">
               <div className="flex items-center">
                 <span className="material-icons text-primary mr-2">trending_up</span>
                 <span>#AIStocks</span>
@@ -610,7 +594,7 @@ const Dashboard = () => {
               <span className="text-xs text-gray-500">1,243 posts</span>
             </div>
             
-            <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer click-bounce">
               <div className="flex items-center">
                 <span className="material-icons text-primary mr-2">trending_up</span>
                 <span>#FedRateDecision</span>
@@ -637,9 +621,9 @@ const Dashboard = () => {
             <p className="text-sm text-gray-500 mb-4">Collaborate on mock portfolios, discuss investment strategies, and learn together.</p>
             
             <div className="flex flex-col space-y-3">
-              <Button>Create New Room</Button>
-              <Button variant="outline">Browse Public Rooms</Button>
-              <Button variant="ghost">Enter Room Code</Button>
+              <Button className="btn-pulse">Create New Room</Button>
+              <Button variant="outline" className="btn-pulse">Browse Public Rooms</Button>
+              <Button variant="ghost" className="btn-pulse">Enter Room Code</Button>
             </div>
           </div>
         </div>
@@ -648,7 +632,7 @@ const Dashboard = () => {
           <h3 className="font-medium mb-3">Featured Rooms</h3>
           
           <div className="space-y-3">
-            <div className="border border-gray-100 rounded-lg p-3 hover:border-primary transition cursor-pointer">
+            <div className="border border-gray-100 rounded-lg p-3 hover:border-primary transition cursor-pointer click-bounce">
               <div className="flex items-center justify-between mb-2">
                 <h4 className="font-medium">Growth Investors Club</h4>
                 <span className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded">+18.4% YTD</span>
@@ -677,12 +661,7 @@ const Dashboard = () => {
       case "invroom":
         return renderInvRoomContent();
       default:
-        return (
-          <div className="px-4 py-6">
-            <h2 className="text-xl font-semibold mb-4">Dashboard</h2>
-            <p className="text-gray-600 mb-4">Select a tab to view content.</p>
-          </div>
-        );
+        return renderPostsFeed();
     }
   };
 
@@ -692,10 +671,10 @@ const Dashboard = () => {
       <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
         <h1 className="text-xl font-bold text-primary">WealthDost</h1>
         <div className="flex items-center space-x-3">
-          <Button variant="ghost" size="icon" className="text-gray-500">
+          <Button variant="ghost" size="icon" className="text-gray-500 click-bounce">
             <span className="material-icons">notifications_none</span>
           </Button>
-          <Avatar className="h-8 w-8">
+          <Avatar className="h-8 w-8 click-bounce">
             <AvatarFallback className="bg-gray-200">
               <span className="material-icons text-gray-500">person</span>
             </AvatarFallback>
@@ -707,7 +686,7 @@ const Dashboard = () => {
       <div className="flex-grow overflow-auto pb-16">
         {/* Quick Nav Tabs (only visible on home tab) */}
         {activeTab === "home" && (
-          <FeatureNavigation activeFeature={activeFeature} onFeatureSelect={handleFeatureSelect} />
+          <FeatureNavigation activeFeature={activeFeature || ""} onFeatureSelect={handleFeatureSelect} />
         )}
 
         {/* Dynamic Content Area based on selected tab */}

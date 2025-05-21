@@ -19,13 +19,13 @@ const FeatureNavigation = ({ activeFeature, onFeatureSelect }: FeatureNavigation
   ];
 
   return (
-    <ScrollArea className="w-full px-4 py-3">
-      <div className="flex space-x-6">
+    <div className="w-full px-4 py-3 overflow-x-auto">
+      <div className="flex space-x-4 w-max mx-auto">
         {features.map((feature) => (
           <Button
             key={feature.id}
             variant="ghost"
-            className="flex flex-col items-center px-0 py-2 h-auto space-y-1 min-w-[64px] click-bounce feature-btn"
+            className="flex flex-col items-center px-0 py-2 h-auto space-y-1 w-[60px] click-bounce feature-btn"
             onClick={() => onFeatureSelect(feature.id)}
           >
             <div
@@ -51,8 +51,7 @@ const FeatureNavigation = ({ activeFeature, onFeatureSelect }: FeatureNavigation
           </Button>
         ))}
       </div>
-      <ScrollBar orientation="horizontal" />
-    </ScrollArea>
+    </div>
   );
 };
 
