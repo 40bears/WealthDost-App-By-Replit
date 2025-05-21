@@ -117,33 +117,33 @@ const Dashboard = () => {
             <div className="bg-white rounded-lg border border-gray-200 p-2 shadow-sm">
               <div className="flex justify-between items-center">
                 <span className="text-xs font-medium">NIFTY</span>
-                <span className="text-green-600 text-xs font-medium">+0.8%</span>
+                <span className="text-purple-600 text-xs font-medium">+0.8%</span>
               </div>
               <div className="text-sm font-semibold my-0.5">24,305</div>
               <div className="w-full h-1 bg-gray-100 rounded-sm overflow-hidden">
-                <div className="bg-green-500 h-full" style={{width: '70%'}}></div>
+                <div className="bg-purple-600 h-full" style={{width: '70%'}}></div>
               </div>
             </div>
             
             <div className="bg-white rounded-lg border border-gray-200 p-2 shadow-sm">
               <div className="flex justify-between items-center">
                 <span className="text-xs font-medium">SENSEX</span>
-                <span className="text-green-600 text-xs font-medium">+0.6%</span>
+                <span className="text-purple-600 text-xs font-medium">+0.6%</span>
               </div>
               <div className="text-sm font-semibold my-0.5">80,245</div>
               <div className="w-full h-1 bg-gray-100 rounded-sm overflow-hidden">
-                <div className="bg-green-500 h-full" style={{width: '65%'}}></div>
+                <div className="bg-purple-600 h-full" style={{width: '65%'}}></div>
               </div>
             </div>
             
             <div className="bg-white rounded-lg border border-gray-200 p-2 shadow-sm">
               <div className="flex justify-between items-center">
                 <span className="text-xs font-medium">BNKNIFTY</span>
-                <span className="text-red-600 text-xs font-medium">-0.2%</span>
+                <span className="text-purple-600 text-xs font-medium">-0.2%</span>
               </div>
               <div className="text-sm font-semibold my-0.5">52,187</div>
               <div className="w-full h-1 bg-gray-100 rounded-sm overflow-hidden">
-                <div className="bg-red-500 h-full" style={{width: '40%'}}></div>
+                <div className="bg-purple-600 h-full" style={{width: '40%'}}></div>
               </div>
             </div>
           </div>

@@ -24,7 +24,7 @@ const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => 
             key={tab.id}
             className={`flex flex-col items-center px-2 py-1 tab-slide btn-pulse ${
               activeTab === tab.id ? "text-primary active" : 
-              tab.id === "create" ? "text-primary" : "text-gray-500"
+              tab.id === "create" ? "text-purple-600" : "text-gray-500"
             }`}
             onClick={() => onTabChange(tab.id as Tab)}
           >
