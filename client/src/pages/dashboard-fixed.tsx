@@ -682,13 +682,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Welcome Banner - Only on Home */}
-      {activeTab === "home" && (
-        <div className="px-4 py-2 bg-gradient-to-r from-primary/10 to-blue-50 border-b border-gray-200">
-          <h2 className="text-sm font-medium text-primary">Welcome to WealthDost</h2>
-          <p className="text-xs text-gray-600">Your personalized financial community</p>
-        </div>
-      )}
+      {/* No banner here - removed as requested */}
 
       {/* Quick Nav Tabs (only visible on home tab) - Fixed */}
       {activeTab === "home" && (
