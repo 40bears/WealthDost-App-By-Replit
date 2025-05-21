@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
-// Define feature types for our top navigation
-type FeatureType = "watchlist" | "analytics" | "debate" | "quiz" | "news" | "";
+// Define feature types for our top navigation with empty string for default home feed
+type FeatureType = "" | "watchlist" | "analytics" | "debate" | "quiz" | "news";
 
 // Define bottom tab types
 type Tab = "home" | "experts" | "explore" | "invroom" | "create";
@@ -54,7 +54,7 @@ const Dashboard = () => {
     setActiveTab(tab);
     // When Home tab is clicked, reset to show posts feed
     if (tab === "home") {
-      setActiveFeature(null);
+      setActiveFeature("");
     }
   };
 
@@ -158,10 +158,7 @@ const Dashboard = () => {
             </div>
           )}
           
-          {/* Floating Post Button */}
-          <Button className="fixed bottom-20 right-4 rounded-full w-14 h-14 p-0 btn-pulse shadow-lg flex items-center justify-center" variant="default">
-            <span className="material-icons text-2xl">add</span>
-          </Button>
+          {/* No floating button needed since we have it in the bottom navigation */}
         </div>
       </div>
     );
@@ -170,7 +167,7 @@ const Dashboard = () => {
   // Render content based on selected feature
   const renderFeatureContent = () => {
     // If no feature is selected, show posts feed first
-    if (activeFeature === null) {
+    if (activeFeature === "") {
       return renderPostsFeed();
     }
     
