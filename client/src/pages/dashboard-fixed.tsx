@@ -666,9 +666,9 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex flex-col h-full relative">
-      {/* Top App Bar */}
-      <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+    <div className="flex flex-col h-screen max-h-[800px] max-w-md mx-auto relative overflow-hidden">
+      {/* Top App Bar - Fixed */}
+      <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white z-20">
         <h1 className="text-xl font-bold text-primary">WealthDost</h1>
         <div className="flex items-center space-x-3">
           <Button variant="ghost" size="icon" className="text-gray-500 click-bounce">
@@ -682,19 +682,31 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Main Content Area */}
-      <div className="flex-grow overflow-auto pb-16">
-        {/* Quick Nav Tabs (only visible on home tab) */}
-        {activeTab === "home" && (
-          <FeatureNavigation activeFeature={activeFeature || ""} onFeatureSelect={handleFeatureSelect} />
-        )}
+      {/* Welcome Banner - Only on Home */}
+      {activeTab === "home" && (
+        <div className="px-4 py-2 bg-gradient-to-r from-primary/10 to-blue-50 border-b border-gray-200">
+          <h2 className="text-sm font-medium text-primary">Welcome to WealthDost</h2>
+          <p className="text-xs text-gray-600">Your personalized financial community</p>
+        </div>
+      )}
 
+      {/* Quick Nav Tabs (only visible on home tab) - Fixed */}
+      {activeTab === "home" && (
+        <div className="sticky top-[60px] z-10 bg-white">
+          <FeatureNavigation activeFeature={activeFeature || ""} onFeatureSelect={handleFeatureSelect} />
+        </div>
+      )}
+
+      {/* Main Content Area - Scrollable */}
+      <div className="flex-grow overflow-auto pb-16">
         {/* Dynamic Content Area based on selected tab */}
         {renderTabContent()}
       </div>
 
-      {/* Bottom Navigation */}
-      <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
+      {/* Bottom Navigation - Fixed */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white z-20 max-w-md mx-auto">
+        <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
+      </div>
     </div>
   );
 };
