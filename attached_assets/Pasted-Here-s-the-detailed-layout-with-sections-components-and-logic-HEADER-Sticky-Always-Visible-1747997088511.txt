@@ -1,0 +1,140 @@
+Here's the detailed layout with sections, components, and logic:
+
+🔷 HEADER (Sticky / Always Visible)
+Expert Name + Badge(s)
+
+Short Bio / Tags (e.g., "Value Investor | 10Y Exp | NISM Certified")
+
+Profile Picture
+
+Follow / Unfollow Button
+
+Rating (e.g., ⭐ 4.7 | 120 reviews)
+
+“Subscribe” or “Book a Session” CTA
+
+Share Icon
+
+🧱 MAIN BODY (Tabbed View – Like LinkedIn/TipRanks)
+🟢 Tab 1: Performance Overview
+Show at-a-glance data visualization and credibility metrics.
+
+Sections:
+
+📊 Overall Return: “+18.2% avg return vs Nifty +11.4%”
+
+✅ Accuracy Rate: “72.3% of calls hit target or returned positive”
+
+⏳ Avg Holding Period: 14 days / 3 months
+
+🧬 Risk Profile: Aggressive / Balanced / Defensive
+
+🧭 Top Winning Picks (Carousel or mini-cards)
+
+🧪 Sector Strengths (Bar graph – e.g., 30% in IT, 20% in Banking)
+
+🟠 Tab 2: Track Record (Table + Visual View)
+Show complete call history, sortable and filterable.
+
+Components:
+
+📅 Filters:
+
+Timeframe (1M, 3M, 6M, 1Y, Custom)
+
+Type (Buy/Sell/Hold)
+
+Sector, Market Cap
+
+📁 Track Record Table (scrollable):
+| Date | Stock | Call Type | Entry Price | Exit/Target | Current Price | Gain/Loss | Duration |
+|------|-------|-----------|-------------|-------------|----------------|------------|----------|
+| 12 Jan 2025 | TCS | Buy | ₹3,200 | ₹3,600 | ₹3,550 | +10.9% | 2 Months |
+
+📈 Graph View Option:
+
+Plot ROI over time vs Nifty or sector index
+
+Compare stock’s movement vs expert’s call
+
+🔵 Tab 3: Live Recommendations
+For current followers or subscribers.
+
+📌 Highlight latest actionable ideas:
+
+Stock | Buy @ ₹X | Target ₹Y | SL ₹Z | Reason (short)
+
+📄 “Read More” CTA for deep analysis with charts
+
+📬 Notify subscribers of new picks
+
+Lock premium picks behind paywall if monetizing
+
+🟣 Tab 4: Expert Insights / Posts
+Feeds like blog + tweets
+
+Post types: Chart, Opinion, Macro News Reaction
+
+Filter: Educational / Analysis / Macro View / Sentiment
+
+Include:
+
+📊 Charts (TradingView widget or static image)
+
+📹 Video (embedded reels/YouTube)
+
+📚 Tags & sentiment rating (Bullish/Bearish/Neutral)
+
+💸 MONETIZATION COMPONENTS
+Integrate these as cards, pop-ups, or modals across the profile:
+
+🛒 Subscription Tiers
+Free Plan: Access to limited posts, 1 monthly pick
+
+Pro Plan: ₹199/mo — Full live recommendations, performance insights
+
+VIP Plan: ₹499/mo — Includes webinars, 1-on-1 session
+
+Each plan card should have:
+
+Features bullet list
+
+Price (monthly/yearly toggle)
+
+Subscribe Button (linked to Razorpay/Stripe)
+
+“What You Get” comparison chart
+
+🧑‍🏫 1-on-1 Consultation Booking
+Calendar picker (slot booking)
+
+15 min / 30 min / 60 min options
+
+Price per session
+
+Payment before booking confirmation
+
+🧾 Courses / Paid Reports
+Carousel of available paid reports
+
+“Buy Now” CTA
+
+Option to bundle with subscription
+
+⭐ USER FEEDBACK AREA
+Scrollable testimonials
+
+Average Rating per post and overall
+
+Thumbs up/down on individual calls
+
+Comments + “Was this helpful?” toggle
+
+📲 CTA Buttons (Floating or Footer)
+Follow Expert
+
+Share Profile
+
+Book Consultation
+
+Subscribe
