@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "wouter";
 import MarketOverview from "@/components/dashboard/MarketOverview";
 import FeatureNavigation from "@/components/dashboard/FeatureNavigation";
 import BottomNavigation from "@/components/dashboard/BottomNavigation";
@@ -666,9 +667,11 @@ const Dashboard = () => {
                 </div>
               </div>
               
-              <button className="w-full text-center text-primary text-sm mt-4 btn-pulse">
-                View full leaderboard
-              </button>
+              <Link href="/expert/1">
+                <button className="w-full text-center text-primary text-sm mt-4 btn-pulse">
+                  View Expert Profile
+                </button>
+              </Link>
             </div>
           </div>
         )}

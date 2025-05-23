@@ -5,6 +5,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import SignUp from "@/pages/signup";
 import Dashboard from "@/pages/dashboard-fixed";
+import ExpertProfile from "@/pages/expert-profile";
 
 function Router() {
   return (
@@ -12,6 +13,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/signup" component={SignUp} />
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/expert/:id" component={ExpertProfile} />
       <Route component={NotFound} />
     </Switch>
   );
