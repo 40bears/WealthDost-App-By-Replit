@@ -161,6 +161,20 @@ const ExpertProfile = () => {
                 <span>{expertData.followers.toLocaleString()} followers</span>
               </div>
             </div>
+            
+            <div className="flex flex-col space-y-2">
+              <Button
+                size="sm"
+                className={`text-xs ${isFollowing ? 'bg-gray-200 text-gray-700' : 'bg-purple-600 text-white'}`}
+                onClick={() => setIsFollowing(!isFollowing)}
+              >
+                {isFollowing ? 'Following' : 'Follow'}
+              </Button>
+              <Button variant="outline" size="sm" className="text-xs">
+                <span className="material-icons text-sm mr-1">share</span>
+                Share
+              </Button>
+            </div>
           </div>
         </div>
       </div>
