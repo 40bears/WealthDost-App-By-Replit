@@ -260,11 +260,8 @@ const ExpertsList = () => {
                       <Badge className={`text-xs px-1.5 py-0.5 ${getSectorColor(expert.sector)}`}>
                         {expert.sector.charAt(0).toUpperCase() + expert.sector.slice(1)}
                       </Badge>
-                      <span className="text-xs text-green-600 font-medium" title="Success Rate">
-                        {expert.successRate}% success
-                      </span>
-                      <span className="text-xs text-purple-600 font-medium" title="Average Return">
-                        {expert.avgReturn} avg
+                      <span className="text-xs text-purple-600 font-medium">
+                        {expert.avgReturn} returns
                       </span>
                     </div>
                   </div>
@@ -292,10 +289,6 @@ const ExpertsList = () => {
                       style={{ width: `${expert.successRate}%` }}
                       title={`Success Rate: ${expert.successRate}%`}
                     ></div>
-                  </div>
-                  <div className="flex justify-between text-xs text-gray-400 mt-1">
-                    <span>Performance Track Record</span>
-                    <span className="text-green-600 font-medium">{expert.successRate}% successful predictions</span>
                   </div>
                 </div>
               </div>
