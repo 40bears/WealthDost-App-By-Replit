@@ -185,157 +185,137 @@ const ExpertsList = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="sticky top-0 bg-white border-b border-gray-200 z-20 shadow-sm">
-        <div className="max-w-md mx-auto p-4">
-          <div className="flex items-center mb-4">
+      <div className="sticky top-0 bg-white border-b border-gray-100 z-20">
+        <div className="max-w-md mx-auto px-4 py-3">
+          <div className="flex items-center justify-between mb-3">
             <Link href="/dashboard">
-              <Button variant="ghost" size="sm" className="mr-3 p-1">
-                <span className="material-icons">arrow_back</span>
+              <Button variant="ghost" size="sm" className="p-1 text-gray-600">
+                <span className="material-icons text-lg">arrow_back</span>
               </Button>
             </Link>
-            <h1 className="text-lg font-semibold">Financial Experts</h1>
+            <h1 className="text-base font-medium">Experts ({filteredExperts.length})</h1>
+            <div></div>
           </div>
           
-          {/* Filters */}
-          <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs text-gray-600 mb-1 block">Sector Guru</label>
-                <Select value={selectedSector} onValueChange={setSelectedSector}>
-                  <SelectTrigger className="h-8 text-xs">
-                    <SelectValue placeholder="Select sector" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {sectors.map((sector) => (
-                      <SelectItem key={sector.value} value={sector.value}>
-                        {sector.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div>
-                <label className="text-xs text-gray-600 mb-1 block">Expert Type</label>
-                <Select value={selectedExpertType} onValueChange={setSelectedExpertType}>
-                  <SelectTrigger className="h-8 text-xs">
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {expertTypes.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
-                        {type.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+          {/* Simplified Filters */}
+          <div className="flex gap-2">
+            <Select value={selectedSector} onValueChange={setSelectedSector}>
+              <SelectTrigger className="h-8 text-xs bg-gray-50 border-gray-200">
+                <SelectValue placeholder="Sector" />
+              </SelectTrigger>
+              <SelectContent>
+                {sectors.map((sector) => (
+                  <SelectItem key={sector.value} value={sector.value}>
+                    {sector.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             
-            <div className="text-xs text-gray-500">
-              Showing {filteredExperts.length} experts
-            </div>
+            <Select value={selectedExpertType} onValueChange={setSelectedExpertType}>
+              <SelectTrigger className="h-8 text-xs bg-gray-50 border-gray-200">
+                <SelectValue placeholder="Type" />
+              </SelectTrigger>
+              <SelectContent>
+                {expertTypes.map((type) => (
+                  <SelectItem key={type.value} value={type.value}>
+                    {type.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
 
       {/* Experts List */}
-      <div className="max-w-md mx-auto p-4 space-y-3">
+      <div className="max-w-md mx-auto">
         {filteredExperts.map((expert, index) => (
-          <Card key={expert.id} className="border border-gray-200 hover:shadow-md transition-shadow">
-            <CardContent className="p-4">
-              <div className="flex items-start space-x-3">
-                {/* Rank Number */}
-                <div className="flex-shrink-0 w-6 text-center">
-                  <span className="text-sm font-semibold text-gray-600">{index + 1}</span>
-                </div>
+          <div key={expert.id} className="border-b border-gray-100 px-4 py-3 hover:bg-gray-50 transition-colors">
+            <div className="flex items-center space-x-3">
+              {/* Rank and Avatar */}
+              <div className="flex items-center space-x-2">
+                <span className="text-xs font-medium text-gray-500 w-4">{index + 1}</span>
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback className="bg-purple-100 text-purple-600 text-xs font-medium">
+                    {expert.name.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
 
-                {/* Avatar and Basic Info */}
-                <div className="flex-shrink-0">
-                  <Avatar className="h-10 w-10">
-                    <AvatarFallback className="bg-purple-100 text-purple-600 text-sm font-semibold">
-                      {expert.name.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex justify-center mt-1">
-                    {renderStars(expert.rating)}
-                  </div>
-                </div>
-
-                {/* Main Content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <h3 className="font-semibold text-sm truncate">{expert.name}</h3>
-                      <p className="text-xs text-gray-600 truncate">{expert.researchFirm}</p>
-                      <Badge className={`text-xs mt-1 ${getSectorColor(expert.sector)}`}>
+              {/* Main Content */}
+              <div className="flex-1 min-w-0">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2">
+                      <h3 className="font-medium text-sm truncate">{expert.name}</h3>
+                      <div className="flex">
+                        {renderStars(expert.rating)}
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-500 truncate">{expert.researchFirm}</p>
+                    <div className="flex items-center space-x-3 mt-1">
+                      <Badge className={`text-xs px-1.5 py-0.5 ${getSectorColor(expert.sector)}`}>
                         {expert.sector.charAt(0).toUpperCase() + expert.sector.slice(1)}
                       </Badge>
+                      <span className="text-xs text-green-600 font-medium">{expert.successRate}%</span>
+                      <span className="text-xs text-purple-600 font-medium">{expert.avgReturn}</span>
                     </div>
-                    
+                  </div>
+                  
+                  <Link href={`/expert/${expert.id}`}>
                     <Button
                       size="sm"
-                      variant={expert.isFollowing ? "secondary" : "default"}
-                      className="text-xs px-3 py-1 bg-purple-600 text-white"
+                      variant="outline"
+                      className="text-xs px-2 py-1 h-6 border-purple-200 text-purple-600 hover:bg-purple-50"
                     >
-                      {expert.isFollowing ? "Following" : "Follow"}
-                    </Button>
-                  </div>
-
-                  {/* Distribution Bar */}
-                  <div className="mb-2">
-                    <div className="flex justify-between text-xs text-gray-600 mb-1">
-                      <span>Buy {expert.distribution.buy}%</span>
-                      <span>Hold {expert.distribution.hold}%</span>
-                      <span>Sell {expert.distribution.sell}%</span>
-                    </div>
-                    {renderDistributionBar(expert.distribution)}
-                  </div>
-
-                  {/* Stats */}
-                  <div className="grid grid-cols-3 gap-2 text-center">
-                    <div>
-                      <div className="text-lg font-semibold text-green-600">{expert.successRate}%</div>
-                      <div className="text-xs text-gray-500">Success Rate</div>
-                    </div>
-                    <div>
-                      <div className="text-lg font-semibold text-purple-600">{expert.avgReturn}</div>
-                      <div className="text-xs text-gray-500">Avg Return</div>
-                    </div>
-                    <div>
-                      <div className="text-lg font-semibold text-gray-700">{expert.followers.toLocaleString()}</div>
-                      <div className="text-xs text-gray-500">Followers</div>
-                    </div>
-                  </div>
-
-                  {/* View Profile Link */}
-                  <Link href={`/expert/${expert.id}`}>
-                    <Button variant="outline" size="sm" className="w-full mt-3 text-xs">
-                      View Full Profile
+                      View
                     </Button>
                   </Link>
                 </div>
+
+                {/* Compact Distribution Bar */}
+                <div className="mt-2">
+                  <div className="flex w-full h-1.5 rounded-full overflow-hidden bg-gray-100">
+                    <div 
+                      className="bg-green-500" 
+                      style={{ width: `${expert.distribution.buy}%` }}
+                    ></div>
+                    <div 
+                      className="bg-gray-400" 
+                      style={{ width: `${expert.distribution.hold}%` }}
+                    ></div>
+                    <div 
+                      className="bg-red-500" 
+                      style={{ width: `${expert.distribution.sell}%` }}
+                    ></div>
+                  </div>
+                  <div className="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>Buy {expert.distribution.buy}%</span>
+                    <span>{expert.followers.toLocaleString()} followers</span>
+                  </div>
+                </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ))}
 
         {filteredExperts.length === 0 && (
-          <div className="text-center py-8">
-            <span className="material-icons text-4xl text-gray-400 mb-2">search_off</span>
-            <p className="text-gray-600">No experts found for the selected filters</p>
+          <div className="text-center py-12">
+            <span className="material-icons text-3xl text-gray-300 mb-2">person_search</span>
+            <p className="text-gray-500 text-sm">No experts found</p>
             <Button 
-              variant="outline" 
+              variant="ghost" 
               size="sm" 
-              className="mt-3"
+              className="mt-2 text-xs"
               onClick={() => {
                 setSelectedSector("all");
                 setSelectedExpertType("all");
               }}
             >
-              Clear Filters
+              Clear filters
             </Button>
           </div>
         )}
