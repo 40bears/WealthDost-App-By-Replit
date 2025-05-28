@@ -9,12 +9,20 @@ interface BottomNavigationProps {
 
 const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => {
   const tabs = [
-    { id: "home", icon: "home", label: "Home" },
-    { id: "create", icon: "add_circle", label: "Create" },
-    { id: "explore", icon: "search", label: "Explore" },
-    { id: "experts", icon: "psychology", label: "Experts" },
-    { id: "invroom", icon: "meeting_room", label: "Inv.Room" },
+    { id: "home", icon: "home", label: "Home", href: "/dashboard" },
+    { id: "create", icon: "add_circle", label: "Create", href: null },
+    { id: "explore", icon: "search", label: "Explore", href: null },
+    { id: "experts", icon: "psychology", label: "Experts", href: "/experts" },
+    { id: "invroom", icon: "meeting_room", label: "Inv.Room", href: null },
   ];
+
+  const handleTabClick = (tab: any) => {
+    if (tab.href) {
+      window.location.href = tab.href;
+    } else {
+      onTabChange(tab.id as Tab);
+    }
+  };
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10 safe-bottom">
@@ -26,7 +34,7 @@ const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => 
               activeTab === tab.id ? "text-primary active" : 
               tab.id === "create" ? "text-purple-600" : "text-gray-500"
             }`}
-            onClick={() => onTabChange(tab.id as Tab)}
+            onClick={() => handleTabClick(tab)}
           >
             <span className={`material-icons transition-transform duration-200 ${
               activeTab === tab.id ? "scale-110" : "scale-100"
