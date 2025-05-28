@@ -276,44 +276,22 @@ const ExpertsList = () => {
                   </Link>
                 </div>
 
-                {/* Recommendation Distribution */}
+                {/* Success Rate Bar */}
                 <div className="mt-2">
                   <div className="flex justify-between text-xs text-gray-500 mb-1">
-                    <span>Recommendations:</span>
+                    <span>Success Rate: {expert.successRate}%</span>
                     <span>{expert.followers.toLocaleString()} followers</span>
                   </div>
                   <div className="flex w-full h-1.5 rounded-full overflow-hidden bg-gray-100">
                     <div 
                       className="bg-green-500" 
-                      style={{ width: `${expert.distribution.buy}%` }}
-                      title={`Buy: ${expert.distribution.buy}%`}
-                    ></div>
-                    <div 
-                      className="bg-gray-400" 
-                      style={{ width: `${expert.distribution.hold}%` }}
-                      title={`Hold: ${expert.distribution.hold}%`}
-                    ></div>
-                    <div 
-                      className="bg-red-500" 
-                      style={{ width: `${expert.distribution.sell}%` }}
-                      title={`Sell: ${expert.distribution.sell}%`}
+                      style={{ width: `${expert.successRate}%` }}
+                      title={`Success Rate: ${expert.successRate}%`}
                     ></div>
                   </div>
                   <div className="flex justify-between text-xs text-gray-400 mt-1">
-                    <div className="flex items-center space-x-3">
-                      <span className="flex items-center">
-                        <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
-                        Buy {expert.distribution.buy}%
-                      </span>
-                      <span className="flex items-center">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full mr-1"></div>
-                        Hold {expert.distribution.hold}%
-                      </span>
-                      <span className="flex items-center">
-                        <div className="w-2 h-2 bg-red-500 rounded-full mr-1"></div>
-                        Sell {expert.distribution.sell}%
-                      </span>
-                    </div>
+                    <span>Performance Track Record</span>
+                    <span className="text-green-600 font-medium">{expert.successRate}% successful predictions</span>
                   </div>
                 </div>
               </div>
