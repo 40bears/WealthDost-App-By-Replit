@@ -127,24 +127,6 @@ const ExpertProfile = () => {
       popular: true
     },
     {
-      title: "Build Your First Investment Portfolio",
-      price: "₹399",
-      duration: "30 min",
-      format: "Video Call",
-      description: "Create a personalized investment strategy based on your goals and risk profile. Perfect for beginners.",
-      includes: ["Portfolio allocation", "Risk assessment", "Investment roadmap PDF", "Goal setting framework"],
-      popular: false
-    },
-    {
-      title: "Banking Sector Deep Dive",
-      price: "₹599",
-      duration: "60 min",
-      format: "Video Call",
-      description: "Learn how I analyze bank stocks, key metrics to watch, and current opportunities in the banking sector.",
-      includes: ["Sector analysis method", "Key metrics explanation", "Banking stock template", "Current picks discussion"],
-      popular: false
-    },
-    {
       title: "Quick Portfolio Review",
       price: "₹299",
       duration: "20 min",
@@ -220,10 +202,10 @@ const ExpertProfile = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-md mx-auto pb-24">
+      <div className="max-w-md mx-auto pb-20">
         <Tabs defaultValue="performance" className="w-full">
-          <div className="sticky top-[140px] bg-gray-50 z-10 px-4 pt-3">
-            <TabsList className="grid w-full grid-cols-3 mb-3">
+          <div className="sticky top-[140px] bg-gray-50 z-10 px-4 pt-2">
+            <TabsList className="grid w-full grid-cols-3 mb-2">
               <TabsTrigger value="performance" className="text-xs">Performance</TabsTrigger>
               <TabsTrigger value="picks" className="text-xs">Live Picks</TabsTrigger>
               <TabsTrigger value="about" className="text-xs">About</TabsTrigger>
@@ -253,21 +235,21 @@ const ExpertProfile = () => {
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div className="grid grid-cols-2 gap-3 mb-3">
                     <div className="text-center">
-                      <div className="text-lg font-semibold text-green-600">{expertData.overallReturn}</div>
+                      <div className="text-base font-semibold text-green-600">{expertData.overallReturn}</div>
                       <div className="text-xs text-gray-500">Overall Return</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-semibold text-blue-600">{expertData.niftyReturn}</div>
+                      <div className="text-base font-semibold text-blue-600">{expertData.niftyReturn}</div>
                       <div className="text-xs text-gray-500">vs Nifty 50</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-semibold text-purple-600">{expertData.accuracy}</div>
+                      <div className="text-base font-semibold text-purple-600">{expertData.accuracy}</div>
                       <div className="text-xs text-gray-500">Accuracy</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-semibold text-orange-600">{expertData.avgHolding}</div>
+                      <div className="text-base font-semibold text-orange-600">{expertData.avgHolding}</div>
                       <div className="text-xs text-gray-500">Avg Holding</div>
                     </div>
                   </div>
@@ -515,61 +497,50 @@ const ExpertProfile = () => {
               <p className="text-sm text-gray-600 mt-1">Choose from {expertData.name}'s custom sessions</p>
             </div>
             
-            <div className="p-4 max-h-96 overflow-y-auto">
-              <div className="space-y-4">
+            <div className="p-4">
+              {/* Compact Session Options */}
+              <div className="space-y-3 mb-4">
                 {customSessions.map((session, index) => (
-                  <div key={index} className={`border rounded-lg p-4 ${session.popular ? 'border-purple-500 bg-purple-50' : 'border-gray-200'}`}>
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-sm mb-1">{session.title}</h4>
-                        {session.popular && (
-                          <Badge className="text-xs mb-2 bg-purple-600 text-white">Most Popular</Badge>
-                        )}
-                        <div className="flex items-center space-x-3 text-xs text-gray-600 mb-2">
-                          <span className="flex items-center">
-                            <span className="material-icons text-sm mr-1">schedule</span>
-                            {session.duration}
-                          </span>
-                          <span className="flex items-center">
-                            <span className="material-icons text-sm mr-1">videocam</span>
-                            {session.format}
-                          </span>
+                  <div key={index} className={`border rounded-lg p-3 ${session.popular ? 'border-purple-500 bg-purple-50' : 'border-gray-200'}`}>
+                    <div className="flex justify-between items-center mb-2">
+                      <div>
+                        <h4 className="font-semibold text-sm">{session.title}</h4>
+                        <div className="flex items-center space-x-2 text-xs text-gray-600 mt-1">
+                          <span>{session.duration}</span>
+                          <span>•</span>
+                          <span>{session.format}</span>
                         </div>
                       </div>
-                      <div className="text-right ml-3">
+                      <div className="text-right">
                         <span className="text-lg font-bold text-purple-600">{session.price}</span>
+                        {session.popular && (
+                          <div className="text-xs text-purple-600 font-medium">Popular</div>
+                        )}
                       </div>
-                    </div>
-                    
-                    <p className="text-xs text-gray-700 mb-3">{session.description}</p>
-                    
-                    <div className="mb-3">
-                      <h5 className="text-xs font-medium text-gray-800 mb-1">What's included:</h5>
-                      <ul className="text-xs text-gray-600 space-y-1">
-                        {session.includes.map((item, idx) => (
-                          <li key={idx} className="flex items-start">
-                            <span className="material-icons text-green-500 text-sm mr-1">check_circle</span>
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
                     </div>
                     
                     <Button 
-                      className={`w-full text-xs ${session.popular ? 'bg-purple-600 text-white' : 'bg-purple-600 text-white'}`} 
+                      className="w-full text-xs bg-purple-600 text-white" 
                       size="sm"
                     >
-                      Book Now - {session.price}
+                      Book Now
                     </Button>
                   </div>
                 ))}
               </div>
+
+              {/* Create Custom Session Option */}
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                <span className="material-icons text-gray-400 text-2xl mb-2">add_circle_outline</span>
+                <h4 className="font-medium text-sm text-gray-700 mb-1">Create Custom Session</h4>
+                <p className="text-xs text-gray-500 mb-3">Define your own session with custom pricing, duration and format</p>
+                <Button variant="outline" size="sm" className="text-xs">
+                  + Create Session
+                </Button>
+              </div>
               
-              <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                <div className="flex items-center text-xs text-gray-600">
-                  <span className="material-icons text-sm mr-1">info</span>
-                  All sessions are scheduled based on mutual availability. Payment is processed securely.
-                </div>
+              <div className="mt-3 p-2 bg-gray-50 rounded text-xs text-gray-600 text-center">
+                Sessions are scheduled based on mutual availability
               </div>
             </div>
           </div>
