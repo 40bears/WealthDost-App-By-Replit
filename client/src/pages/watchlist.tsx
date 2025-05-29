@@ -373,45 +373,42 @@ const Watchlist = () => {
                             )}
 
                             {/* Action Buttons */}
-                            <div className="flex items-center space-x-2">
+                            <div className="flex items-center space-x-1">
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="text-xs"
+                                className="text-xs px-2 py-1"
                                 onClick={() => {
                                   setSelectedAsset(asset);
                                   setShowCreateAlert(true);
                                 }}
                               >
-                                <Bell size={12} className="mr-1" />
-                                Alert
+                                <Bell size={10} />
                               </Button>
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="text-xs"
+                                className="text-xs px-2 py-1"
                               >
-                                <BarChart3 size={12} className="mr-1" />
-                                Chart
+                                <BarChart3 size={10} />
                               </Button>
                             </div>
 
                             {/* CTAs */}
-                            <div className="grid grid-cols-2 gap-2">
-                              <Button variant="outline" size="sm" className="text-xs">
-                                <MessageCircle size={12} className="mr-1" />
-                                Discuss in Tribe
+                            <div className="grid grid-cols-3 gap-1">
+                              <Button variant="outline" size="sm" className="text-xs px-2 py-1">
+                                <MessageCircle size={10} className="mr-1" />
+                                Discuss
                               </Button>
-                              <Button variant="outline" size="sm" className="text-xs">
-                                <Plus size={12} className="mr-1" />
-                                Add to Portfolio
+                              <Button variant="outline" size="sm" className="text-xs px-2 py-1">
+                                <Plus size={10} className="mr-1" />
+                                Portfolio
+                              </Button>
+                              <Button variant="outline" size="sm" className="text-xs px-2 py-1">
+                                <Star size={10} className="mr-1" />
+                                Expert
                               </Button>
                             </div>
-                            
-                            <Button variant="outline" size="sm" className="w-full text-xs">
-                              <Star size={12} className="mr-1" />
-                              Expert View
-                            </Button>
                           </div>
                         )}
                       </div>
