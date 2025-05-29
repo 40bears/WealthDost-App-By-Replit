@@ -4,6 +4,11 @@ import {
   expertProfiles,
   posts,
   marketData,
+  watchlistAssets,
+  priceAlerts,
+  watchlistThemes,
+  assetSentiment,
+  tribeAssetTracking,
   type User,
   type InsertUser,
   type InvestorProfile,
@@ -14,6 +19,16 @@ import {
   type InsertPost,
   type MarketData,
   type InsertMarketData,
+  type WatchlistAsset,
+  type InsertWatchlistAsset,
+  type PriceAlert,
+  type InsertPriceAlert,
+  type WatchlistTheme,
+  type InsertWatchlistTheme,
+  type AssetSentiment,
+  type InsertAssetSentiment,
+  type TribeAssetTracking,
+  type InsertTribeAssetTracking,
 } from "@shared/schema";
 
 // Interface for storage operations
@@ -44,6 +59,31 @@ export interface IStorage {
   getMarketDataBySymbol(symbol: string): Promise<MarketData | undefined>;
   updateMarketData(symbol: string, data: Partial<InsertMarketData>): Promise<MarketData | undefined>;
   insertMarketData(data: InsertMarketData): Promise<MarketData>;
+
+  // Watchlist operations
+  getUserWatchlist(userId: number): Promise<WatchlistAsset[]>;
+  addToWatchlist(asset: InsertWatchlistAsset): Promise<WatchlistAsset>;
+  removeFromWatchlist(userId: number, assetId: number): Promise<boolean>;
+  updateAssetPrice(symbol: string, price: number, change: number, changePercent: number): Promise<void>;
+  
+  // Price alerts operations
+  getUserAlerts(userId: number): Promise<PriceAlert[]>;
+  createAlert(alert: InsertPriceAlert): Promise<PriceAlert>;
+  deleteAlert(alertId: number): Promise<boolean>;
+  
+  // Watchlist themes operations
+  getPublicThemes(): Promise<WatchlistTheme[]>;
+  getUserThemes(userId: number): Promise<WatchlistTheme[]>;
+  createTheme(theme: InsertWatchlistTheme): Promise<WatchlistTheme>;
+  followTheme(userId: number, themeId: number): Promise<boolean>;
+  
+  // Sentiment operations
+  getAssetSentiment(symbol: string): Promise<AssetSentiment | undefined>;
+  updateAssetSentiment(sentiment: InsertAssetSentiment): Promise<AssetSentiment>;
+  
+  // Tribe tracking operations
+  getTribeAssets(roomId: number): Promise<TribeAssetTracking[]>;
+  updateTribeAssetTracking(roomId: number, symbol: string, watcherCount: number): Promise<void>;
 }
 
 export class MemStorage implements IStorage {

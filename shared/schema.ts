@@ -143,6 +143,78 @@ export const userBadges = pgTable("user_badges", {
   roomId: integer("room_id").references(() => investmentRooms.id),
 });
 
+// Watchlist Assets
+export const watchlistAssets = pgTable("watchlist_assets", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  symbol: varchar("symbol", { length: 50 }).notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  assetType: varchar("asset_type", { length: 50 }).notNull(), // stock, mutual_fund, etf, crypto
+  exchange: varchar("exchange", { length: 50 }).notNull(), // NSE, BSE, NYSE, NASDAQ, CRYPTO
+  currentPrice: decimal("current_price", { precision: 15, scale: 4 }),
+  priceChange: decimal("price_change", { precision: 15, scale: 4 }),
+  priceChangePercent: decimal("price_change_percent", { precision: 10, scale: 4 }),
+  theme: varchar("theme", { length: 100 }),
+  tags: text("tags").array(),
+  addedAt: timestamp("added_at").defaultNow(),
+  lastUpdated: timestamp("last_updated").defaultNow(),
+});
+
+// Price Alerts
+export const priceAlerts = pgTable("price_alerts", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  assetId: integer("asset_id").notNull().references(() => watchlistAssets.id),
+  alertType: varchar("alert_type", { length: 50 }).notNull(), // price_above, price_below, volume_spike, news_keyword
+  targetValue: decimal("target_value", { precision: 15, scale: 4 }),
+  keyword: varchar("keyword", { length: 255 }),
+  isActive: boolean("is_active").default(true),
+  notificationMethod: varchar("notification_method", { length: 50 }).default("in_app"), // in_app, push, email
+  createdAt: timestamp("created_at").defaultNow(),
+  triggeredAt: timestamp("triggered_at"),
+});
+
+// Watchlist Themes
+export const watchlistThemes = pgTable("watchlist_themes", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  createdBy: integer("created_by").references(() => users.id),
+  isPublic: boolean("is_public").default(false),
+  followerCount: integer("follower_count").default(0),
+  assetCount: integer("asset_count").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Theme Followers
+export const themeFollowers = pgTable("theme_followers", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  themeId: integer("theme_id").notNull().references(() => watchlistThemes.id),
+  followedAt: timestamp("followed_at").defaultNow(),
+});
+
+// Asset Sentiment
+export const assetSentiment = pgTable("asset_sentiment", {
+  id: serial("id").primaryKey(),
+  symbol: varchar("symbol", { length: 50 }).notNull(),
+  sentimentScore: decimal("sentiment_score", { precision: 5, scale: 2 }), // -1 to 1
+  sentimentLabel: varchar("sentiment_label", { length: 20 }), // positive, neutral, negative
+  summary: text("summary"),
+  source: varchar("source", { length: 100 }), // twitter, news, reddit
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Tribe Asset Tracking
+export const tribeAssetTracking = pgTable("tribe_asset_tracking", {
+  id: serial("id").primaryKey(),
+  roomId: integer("room_id").notNull().references(() => investmentRooms.id),
+  symbol: varchar("symbol", { length: 50 }).notNull(),
+  watcherCount: integer("watcher_count").default(0),
+  trendingScore: decimal("trending_score", { precision: 10, scale: 2 }).default("0"),
+  lastUpdated: timestamp("last_updated").defaultNow(),
+});
+
 // Schemas for data insertion/validation
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -203,6 +275,38 @@ export const insertUserBadgeSchema = createInsertSchema(userBadges).omit({
   earnedAt: true,
 });
 
+export const insertWatchlistAssetSchema = createInsertSchema(watchlistAssets).omit({
+  id: true,
+  addedAt: true,
+  lastUpdated: true,
+});
+
+export const insertPriceAlertSchema = createInsertSchema(priceAlerts).omit({
+  id: true,
+  createdAt: true,
+  triggeredAt: true,
+});
+
+export const insertWatchlistThemeSchema = createInsertSchema(watchlistThemes).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertThemeFollowerSchema = createInsertSchema(themeFollowers).omit({
+  id: true,
+  followedAt: true,
+});
+
+export const insertAssetSentimentSchema = createInsertSchema(assetSentiment).omit({
+  id: true,
+  updatedAt: true,
+});
+
+export const insertTribeAssetTrackingSchema = createInsertSchema(tribeAssetTracking).omit({
+  id: true,
+  lastUpdated: true,
+});
+
 // Types for data insertion/selection
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -237,3 +341,22 @@ export type Transaction = typeof transactions.$inferSelect;
 
 export type InsertUserBadge = z.infer<typeof insertUserBadgeSchema>;
 export type UserBadge = typeof userBadges.$inferSelect;
+
+// Watchlist types
+export type InsertWatchlistAsset = z.infer<typeof insertWatchlistAssetSchema>;
+export type WatchlistAsset = typeof watchlistAssets.$inferSelect;
+
+export type InsertPriceAlert = z.infer<typeof insertPriceAlertSchema>;
+export type PriceAlert = typeof priceAlerts.$inferSelect;
+
+export type InsertWatchlistTheme = z.infer<typeof insertWatchlistThemeSchema>;
+export type WatchlistTheme = typeof watchlistThemes.$inferSelect;
+
+export type InsertThemeFollower = z.infer<typeof insertThemeFollowerSchema>;
+export type ThemeFollower = typeof themeFollowers.$inferSelect;
+
+export type InsertAssetSentiment = z.infer<typeof insertAssetSentimentSchema>;
+export type AssetSentiment = typeof assetSentiment.$inferSelect;
+
+export type InsertTribeAssetTracking = z.infer<typeof insertTribeAssetTrackingSchema>;
+export type TribeAssetTracking = typeof tribeAssetTracking.$inferSelect;
