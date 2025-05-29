@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { TrendingUp, TrendingDown, Bell, Search, Plus, Users, Eye, Heart, MessageCircle, BarChart3, Newspaper, Star, ArrowLeft, X } from "lucide-react";
+import { TrendingUp, TrendingDown, Bell, Search, Plus, Users, Eye, Heart, MessageCircle, BarChart3, Newspaper, Star, ArrowLeft, X, ChevronDown, ChevronUp } from "lucide-react";
 
 interface WatchlistAsset {
   id: number;
@@ -53,6 +53,7 @@ const Watchlist = () => {
   const [showCreateAlert, setShowCreateAlert] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<WatchlistAsset | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [expandedAssets, setExpandedAssets] = useState<Set<number>>(new Set());
 
   // Mock data - replace with real API calls
   const watchlistAssets: WatchlistAsset[] = [
@@ -173,6 +174,16 @@ const Watchlist = () => {
     }
   };
 
+  const toggleAssetExpansion = (assetId: number) => {
+    const newExpanded = new Set(expandedAssets);
+    if (newExpanded.has(assetId)) {
+      newExpanded.delete(assetId);
+    } else {
+      newExpanded.add(assetId);
+    }
+    setExpandedAssets(newExpanded);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -247,141 +258,168 @@ const Watchlist = () => {
       <div className="max-w-md mx-auto p-4">
         {activeTab === "my-watchlist" && (
           <div className="space-y-3">
-            {watchlistAssets.map((asset) => (
-              <Card key={asset.id} className="border border-gray-200">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <h3 className="font-semibold text-sm">{asset.symbol}</h3>
-                        <Badge variant="outline" className="text-xs">
-                          {asset.exchange}
-                        </Badge>
-                        {asset.hasAlert && (
-                          <Bell size={12} className="text-orange-500" />
-                        )}
-                        {asset.tribeStats?.trending && (
-                          <span className="text-xs">🔥</span>
-                        )}
-                      </div>
-                      <p className="text-xs text-gray-600 mb-2">{asset.name}</p>
-                      
-                      {/* Price Info */}
-                      <div className="flex items-center space-x-2 mb-2">
-                        <span className="font-semibold">
-                          {asset.assetType === "crypto" ? "$" : "₹"}{asset.currentPrice.toLocaleString()}
-                        </span>
-                        <div className={`flex items-center space-x-1 ${
-                          asset.priceChange >= 0 ? "text-green-600" : "text-red-600"
-                        }`}>
-                          {asset.priceChange >= 0 ? (
-                            <TrendingUp size={12} />
-                          ) : (
-                            <TrendingDown size={12} />
-                          )}
-                          <span className="text-xs">
-                            {asset.priceChange >= 0 ? "+" : ""}{asset.priceChangePercent.toFixed(2)}%
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Tags */}
-                      <div className="flex flex-wrap gap-1 mb-2">
-                        {asset.tags.map((tag, index) => (
-                          <Badge key={index} variant="secondary" className="text-xs">
-                            {tag}
+            {watchlistAssets.map((asset) => {
+              const isExpanded = expandedAssets.has(asset.id);
+              return (
+                <Card key={asset.id} className="border border-gray-200">
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <h3 className="font-semibold text-sm">{asset.symbol}</h3>
+                          <Badge variant="outline" className="text-xs">
+                            {asset.exchange}
                           </Badge>
-                        ))}
-                      </div>
-
-                      {/* Sentiment */}
-                      {asset.sentiment && (
-                        <div className="flex items-center space-x-2 mb-2">
-                          <span className="text-sm">{getSentimentIcon(asset.sentiment.label)}</span>
-                          <span className={`text-xs ${getSentimentColor(asset.sentiment.label)}`}>
-                            {asset.sentiment.summary}
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Tribe Stats */}
-                      {asset.tribeStats && (
-                        <div className="flex items-center space-x-3 text-xs text-gray-500 mb-2">
-                          <div className="flex items-center space-x-1">
-                            <Users size={12} />
-                            <span>{asset.tribeStats.watcherCount} watching</span>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <Eye size={12} />
-                            <span>{asset.tribeStats.tribePercentage}% of tribe</span>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* News Highlight */}
-                      {asset.news && (
-                        <div className="bg-blue-50 p-2 rounded text-xs mb-2">
-                          <div className="flex items-center space-x-1">
-                            <Newspaper size={12} className="text-blue-600" />
-                            <span className="text-blue-800">{asset.news.headline}</span>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Technical Indicators */}
-                      {asset.technicals && (
-                        <div className="flex items-center space-x-3 text-xs text-gray-500 mb-2">
-                          <span>RSI: {asset.technicals.rsi}</span>
-                          {asset.technicals.isNear52High && (
-                            <Badge variant="outline" className="text-xs text-orange-600">
-                              Near 52W High
-                            </Badge>
+                          {asset.hasAlert && (
+                            <Bell size={12} className="text-orange-500" />
+                          )}
+                          {asset.tribeStats?.trending && (
+                            <span className="text-xs">🔥</span>
                           )}
                         </div>
-                      )}
-                    </div>
+                        <p className="text-xs text-gray-600 mb-2">{asset.name}</p>
+                        
+                        {/* Price Info */}
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center space-x-2">
+                            <span className="font-semibold">
+                              {asset.assetType === "crypto" ? "$" : "₹"}{asset.currentPrice.toLocaleString()}
+                            </span>
+                            <div className={`flex items-center space-x-1 ${
+                              asset.priceChange >= 0 ? "text-green-600" : "text-red-600"
+                            }`}>
+                              {asset.priceChange >= 0 ? (
+                                <TrendingUp size={12} />
+                              ) : (
+                                <TrendingDown size={12} />
+                              )}
+                              <span className="text-xs">
+                                {asset.priceChange >= 0 ? "+" : ""}{asset.priceChangePercent.toFixed(2)}%
+                              </span>
+                            </div>
+                          </div>
+                          
+                          {/* Expand/Collapse Button */}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="p-1"
+                            onClick={() => toggleAssetExpansion(asset.id)}
+                          >
+                            {isExpanded ? (
+                              <ChevronUp size={16} className="text-gray-400" />
+                            ) : (
+                              <ChevronDown size={16} className="text-gray-400" />
+                            )}
+                          </Button>
+                        </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex flex-col space-y-2 ml-3">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-xs"
-                        onClick={() => {
-                          setSelectedAsset(asset);
-                          setShowCreateAlert(true);
-                        }}
-                      >
-                        <Bell size={12} />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-xs"
-                      >
-                        <BarChart3 size={12} />
-                      </Button>
-                    </div>
-                  </div>
+                        {/* Expandable Details */}
+                        {isExpanded && (
+                          <div className="space-y-3">
+                            {/* Tags */}
+                            <div className="flex flex-wrap gap-1">
+                              {asset.tags.map((tag, index) => (
+                                <Badge key={index} variant="secondary" className="text-xs">
+                                  {tag}
+                                </Badge>
+                              ))}
+                            </div>
 
-                  {/* CTAs */}
-                  <div className="flex space-x-2 mt-3">
-                    <Button variant="outline" size="sm" className="flex-1 text-xs">
-                      <MessageCircle size={12} className="mr-1" />
-                      Discuss in Tribe
-                    </Button>
-                    <Button variant="outline" size="sm" className="flex-1 text-xs">
-                      <Plus size={12} className="mr-1" />
-                      Add to Portfolio
-                    </Button>
-                    <Button variant="outline" size="sm" className="flex-1 text-xs">
-                      <Star size={12} className="mr-1" />
-                      Expert View
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                            {/* Sentiment */}
+                            {asset.sentiment && (
+                              <div className="flex items-center space-x-2">
+                                <span className="text-sm">{getSentimentIcon(asset.sentiment.label)}</span>
+                                <span className={`text-xs ${getSentimentColor(asset.sentiment.label)}`}>
+                                  {asset.sentiment.summary}
+                                </span>
+                              </div>
+                            )}
+
+                            {/* Tribe Stats */}
+                            {asset.tribeStats && (
+                              <div className="flex items-center space-x-3 text-xs text-gray-500">
+                                <div className="flex items-center space-x-1">
+                                  <Users size={12} />
+                                  <span>{asset.tribeStats.watcherCount} watching</span>
+                                </div>
+                                <div className="flex items-center space-x-1">
+                                  <Eye size={12} />
+                                  <span>{asset.tribeStats.tribePercentage}% of tribe</span>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* News Highlight */}
+                            {asset.news && (
+                              <div className="bg-blue-50 p-2 rounded text-xs">
+                                <div className="flex items-center space-x-1">
+                                  <Newspaper size={12} className="text-blue-600" />
+                                  <span className="text-blue-800">{asset.news.headline}</span>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Technical Indicators */}
+                            {asset.technicals && (
+                              <div className="flex items-center space-x-3 text-xs text-gray-500">
+                                <span>RSI: {asset.technicals.rsi}</span>
+                                {asset.technicals.isNear52High && (
+                                  <Badge variant="outline" className="text-xs text-orange-600">
+                                    Near 52W High
+                                  </Badge>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Action Buttons */}
+                            <div className="flex items-center space-x-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-xs"
+                                onClick={() => {
+                                  setSelectedAsset(asset);
+                                  setShowCreateAlert(true);
+                                }}
+                              >
+                                <Bell size={12} className="mr-1" />
+                                Alert
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-xs"
+                              >
+                                <BarChart3 size={12} className="mr-1" />
+                                Chart
+                              </Button>
+                            </div>
+
+                            {/* CTAs */}
+                            <div className="grid grid-cols-2 gap-2">
+                              <Button variant="outline" size="sm" className="text-xs">
+                                <MessageCircle size={12} className="mr-1" />
+                                Discuss in Tribe
+                              </Button>
+                              <Button variant="outline" size="sm" className="text-xs">
+                                <Plus size={12} className="mr-1" />
+                                Add to Portfolio
+                              </Button>
+                            </div>
+                            
+                            <Button variant="outline" size="sm" className="w-full text-xs">
+                              <Star size={12} className="mr-1" />
+                              Expert View
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         )}
 
