@@ -146,7 +146,7 @@ const InvestmentRooms = () => {
                   <div className="flex items-center space-x-2 mb-1">
                     <h3 className="font-semibold text-sm">{room.name}</h3>
                     {room.isSponsored && (
-                      <Badge className="text-xs bg-orange-100 text-orange-700">
+                      <Badge className="text-xs bg-blue-100 text-blue-700">
                         Sponsored by {room.sponsorName}
                       </Badge>
                     )}
@@ -197,10 +197,10 @@ const InvestmentRooms = () => {
               {/* Action Button */}
               <Link href={`/room/${room.id}`}>
                 <Button 
-                  className={`w-full text-sm ${room.isPremium ? 'bg-purple-600 text-white' : 'bg-gray-900 text-white'}`}
+                  className={`w-full text-sm ${room.isPremium ? 'bg-purple-600 text-white' : 'bg-purple-100 text-purple-700 hover:bg-purple-200'}`}
                   size="sm"
                 >
-                  {room.isPremium ? `Subscribe for ₹${room.premiumPrice}/mo` : "Join Room"}
+                  {room.isPremium ? `Subscribe for ₹${room.premiumPrice}/mo` : "Join Tribe"}
                 </Button>
               </Link>
             </CardContent>
