@@ -10,6 +10,7 @@ const ExpertProfile = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [selectedTimeframe, setSelectedTimeframe] = useState("1Y");
   const [showSubscriptionPlans, setShowSubscriptionPlans] = useState(false);
+  const [showBookingModal, setShowBookingModal] = useState(false);
 
   // Expert data
   const expertData = {
@@ -111,6 +112,45 @@ const ExpertProfile = () => {
       price: "₹599",
       duration: "month",
       features: ["Everything in Pro", "Weekly webinars", "1-on-1 session monthly"],
+      popular: false
+    }
+  ];
+
+  const customSessions = [
+    {
+      title: "Learn My Research Workflow",
+      price: "₹499",
+      duration: "45 min",
+      format: "Video Call",
+      description: "I'll walk you through how I analyze companies, structure notes, and build conviction. Includes free research checklist template.",
+      includes: ["Live screen sharing", "Q&A session", "Research template PDF", "Follow-up notes"],
+      popular: true
+    },
+    {
+      title: "Build Your First Investment Portfolio",
+      price: "₹399",
+      duration: "30 min",
+      format: "Video Call",
+      description: "Create a personalized investment strategy based on your goals and risk profile. Perfect for beginners.",
+      includes: ["Portfolio allocation", "Risk assessment", "Investment roadmap PDF", "Goal setting framework"],
+      popular: false
+    },
+    {
+      title: "Banking Sector Deep Dive",
+      price: "₹599",
+      duration: "60 min",
+      format: "Video Call",
+      description: "Learn how I analyze bank stocks, key metrics to watch, and current opportunities in the banking sector.",
+      includes: ["Sector analysis method", "Key metrics explanation", "Banking stock template", "Current picks discussion"],
+      popular: false
+    },
+    {
+      title: "Quick Portfolio Review",
+      price: "₹299",
+      duration: "20 min",
+      format: "Chat + Voice",
+      description: "Share your portfolio and get expert feedback on allocation, stock selection, and improvement suggestions.",
+      includes: ["Portfolio analysis", "Improvement suggestions", "Risk evaluation", "Action items list"],
       popular: false
     }
   ];
@@ -387,7 +427,12 @@ const ExpertProfile = () => {
             >
               Subscribe
             </Button>
-            <Button variant="outline" className="flex-1 text-sm" size="sm">
+            <Button 
+              variant="outline" 
+              className="flex-1 text-sm" 
+              size="sm"
+              onClick={() => setShowBookingModal(true)}
+            >
               Book Session
             </Button>
           </div>
@@ -446,6 +491,85 @@ const ExpertProfile = () => {
                     </Button>
                   </div>
                 ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Sessions Booking Modal */}
+      {showBookingModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end">
+          <div className="bg-white w-full max-w-md mx-auto rounded-t-lg">
+            <div className="p-4 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">Book a Session</h3>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setShowBookingModal(false)}
+                >
+                  <span className="material-icons">close</span>
+                </Button>
+              </div>
+              <p className="text-sm text-gray-600 mt-1">Choose from {expertData.name}'s custom sessions</p>
+            </div>
+            
+            <div className="p-4 max-h-96 overflow-y-auto">
+              <div className="space-y-4">
+                {customSessions.map((session, index) => (
+                  <div key={index} className={`border rounded-lg p-4 ${session.popular ? 'border-purple-500 bg-purple-50' : 'border-gray-200'}`}>
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-sm mb-1">{session.title}</h4>
+                        {session.popular && (
+                          <Badge className="text-xs mb-2 bg-purple-600 text-white">Most Popular</Badge>
+                        )}
+                        <div className="flex items-center space-x-3 text-xs text-gray-600 mb-2">
+                          <span className="flex items-center">
+                            <span className="material-icons text-sm mr-1">schedule</span>
+                            {session.duration}
+                          </span>
+                          <span className="flex items-center">
+                            <span className="material-icons text-sm mr-1">videocam</span>
+                            {session.format}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-right ml-3">
+                        <span className="text-lg font-bold text-purple-600">{session.price}</span>
+                      </div>
+                    </div>
+                    
+                    <p className="text-xs text-gray-700 mb-3">{session.description}</p>
+                    
+                    <div className="mb-3">
+                      <h5 className="text-xs font-medium text-gray-800 mb-1">What's included:</h5>
+                      <ul className="text-xs text-gray-600 space-y-1">
+                        {session.includes.map((item, idx) => (
+                          <li key={idx} className="flex items-start">
+                            <span className="material-icons text-green-500 text-sm mr-1">check_circle</span>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    
+                    <Button 
+                      className={`w-full text-xs ${session.popular ? 'bg-purple-600 text-white' : 'bg-purple-600 text-white'}`} 
+                      size="sm"
+                    >
+                      Book Now - {session.price}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center text-xs text-gray-600">
+                  <span className="material-icons text-sm mr-1">info</span>
+                  All sessions are scheduled based on mutual availability. Payment is processed securely.
+                </div>
               </div>
             </div>
           </div>
