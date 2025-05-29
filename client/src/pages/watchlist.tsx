@@ -299,19 +299,41 @@ const Watchlist = () => {
                             </div>
                           </div>
                           
-                          {/* Expand/Collapse Button */}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="p-1"
-                            onClick={() => toggleAssetExpansion(asset.id)}
-                          >
-                            {isExpanded ? (
-                              <ChevronUp size={16} className="text-gray-400" />
-                            ) : (
-                              <ChevronDown size={16} className="text-gray-400" />
-                            )}
-                          </Button>
+                          <div className="flex items-center space-x-1">
+                            {/* Alert and Chart Buttons */}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-xs px-2 py-1"
+                              onClick={() => {
+                                setSelectedAsset(asset);
+                                setShowCreateAlert(true);
+                              }}
+                            >
+                              <Bell size={10} />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-xs px-2 py-1"
+                            >
+                              <BarChart3 size={10} />
+                            </Button>
+                            
+                            {/* Expand/Collapse Button */}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="p-1"
+                              onClick={() => toggleAssetExpansion(asset.id)}
+                            >
+                              {isExpanded ? (
+                                <ChevronUp size={16} className="text-gray-400" />
+                              ) : (
+                                <ChevronDown size={16} className="text-gray-400" />
+                              )}
+                            </Button>
+                          </div>
                         </div>
 
                         {/* Expandable Details */}
@@ -371,28 +393,6 @@ const Watchlist = () => {
                                 )}
                               </div>
                             )}
-
-                            {/* Action Buttons */}
-                            <div className="flex items-center space-x-1">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="text-xs px-2 py-1"
-                                onClick={() => {
-                                  setSelectedAsset(asset);
-                                  setShowCreateAlert(true);
-                                }}
-                              >
-                                <Bell size={10} />
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="text-xs px-2 py-1"
-                              >
-                                <BarChart3 size={10} />
-                              </Button>
-                            </div>
 
                             {/* CTAs */}
                             <div className="grid grid-cols-3 gap-1">
