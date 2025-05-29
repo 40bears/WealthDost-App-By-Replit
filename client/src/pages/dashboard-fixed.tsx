@@ -42,6 +42,11 @@ const Dashboard = () => {
 
   // Function to handle feature selection
   const handleFeatureSelect = (feature: FeatureType) => {
+    if (feature === "watchlist") {
+      // Navigate to watchlist page
+      window.location.href = "/watchlist";
+      return;
+    }
     setActiveFeature(feature);
   };
 
