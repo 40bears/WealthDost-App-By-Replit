@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { TrendingUp, TrendingDown, Bell, Search, Plus, Users, Eye, Heart, MessageCircle, BarChart3, Newspaper, Star } from "lucide-react";
+import { TrendingUp, TrendingDown, Bell, Search, Plus, Users, Eye, Heart, MessageCircle, BarChart3, Newspaper, Star, ArrowLeft, X } from "lucide-react";
 
 interface WatchlistAsset {
   id: number;
@@ -466,7 +466,7 @@ const Watchlist = () => {
                   size="sm" 
                   onClick={() => setShowAddAsset(false)}
                 >
-                  <span className="material-icons">close</span>
+                  <X size={20} />
                 </Button>
               </div>
             </div>
@@ -562,7 +562,7 @@ const Watchlist = () => {
                     setSelectedAsset(null);
                   }}
                 >
-                  <span className="material-icons">close</span>
+                  <X size={20} />
                 </Button>
               </div>
             </div>
