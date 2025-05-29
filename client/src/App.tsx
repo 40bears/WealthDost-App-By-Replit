@@ -8,6 +8,7 @@ import Dashboard from "@/pages/dashboard-fixed";
 import ExpertProfile from "@/pages/expert-profile";
 import ExpertsList from "@/pages/experts-list";
 import InvestmentRooms from "@/pages/investment-rooms";
+import Watchlist from "@/pages/watchlist";
 
 function Router() {
   return (
@@ -18,6 +19,7 @@ function Router() {
       <Route path="/experts" component={ExpertsList} />
       <Route path="/expert/:id" component={ExpertProfile} />
       <Route path="/investment-rooms" component={InvestmentRooms} />
+      <Route path="/watchlist" component={Watchlist} />
       <Route component={NotFound} />
     </Switch>
   );
