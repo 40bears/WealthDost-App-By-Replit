@@ -7,6 +7,7 @@ import SignUp from "@/pages/signup";
 import Dashboard from "@/pages/dashboard-fixed";
 import ExpertProfile from "@/pages/expert-profile";
 import ExpertsList from "@/pages/experts-list";
+import InvestmentRooms from "@/pages/investment-rooms";
 
 function Router() {
   return (
@@ -16,6 +17,7 @@ function Router() {
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/experts" component={ExpertsList} />
       <Route path="/expert/:id" component={ExpertProfile} />
+      <Route path="/investment-rooms" component={InvestmentRooms} />
       <Route component={NotFound} />
     </Switch>
   );

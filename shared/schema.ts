@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, varchar, json } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, varchar, json, decimal } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -59,6 +59,90 @@ export const marketData = pgTable("market_data", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Investment Rooms
+export const investmentRooms = pgTable("investment_rooms", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  creatorId: integer("creator_id").notNull().references(() => users.id),
+  isPremium: boolean("is_premium").default(false),
+  premiumPrice: decimal("premium_price", { precision: 10, scale: 2 }),
+  isSponsored: boolean("is_sponsored").default(false),
+  sponsorName: varchar("sponsor_name", { length: 255 }),
+  sponsorLogo: varchar("sponsor_logo", { length: 500 }),
+  category: varchar("category", { length: 100 }).notNull(),
+  memberCount: integer("member_count").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Room Subscriptions
+export const roomSubscriptions = pgTable("room_subscriptions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  roomId: integer("room_id").notNull().references(() => investmentRooms.id),
+  status: varchar("status", { length: 50 }).notNull(),
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Room Memberships
+export const roomMemberships = pgTable("room_memberships", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  roomId: integer("room_id").notNull().references(() => investmentRooms.id),
+  role: varchar("role", { length: 50 }).default("member"),
+  joinedAt: timestamp("joined_at").defaultNow(),
+  xpEarned: integer("xp_earned").default(0),
+});
+
+// User Wallet
+export const userWallet = pgTable("user_wallet", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  wealthCoins: integer("wealth_coins").default(0),
+  totalEarnings: decimal("total_earnings", { precision: 10, scale: 2 }).default("0"),
+  pendingWithdrawal: decimal("pending_withdrawal", { precision: 10, scale: 2 }).default("0"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Transactions
+export const transactions = pgTable("transactions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  type: varchar("type", { length: 50 }).notNull(),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  description: text("description"),
+  roomId: integer("room_id").references(() => investmentRooms.id),
+  status: varchar("status", { length: 50 }).default("completed"),
+  stripePaymentId: varchar("stripe_payment_id", { length: 255 }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Room Analytics
+export const roomAnalytics = pgTable("room_analytics", {
+  id: serial("id").primaryKey(),
+  roomId: integer("room_id").notNull().references(() => investmentRooms.id),
+  date: timestamp("date").notNull(),
+  activeMembers: integer("active_members").default(0),
+  newSubscriptions: integer("new_subscriptions").default(0),
+  revenue: decimal("revenue", { precision: 10, scale: 2 }).default("0"),
+  engagement: integer("engagement").default(0),
+});
+
+// User Badges
+export const userBadges = pgTable("user_badges", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  badgeType: varchar("badge_type", { length: 100 }).notNull(),
+  badgeName: varchar("badge_name", { length: 255 }).notNull(),
+  earnedAt: timestamp("earned_at").defaultNow(),
+  roomId: integer("room_id").references(() => investmentRooms.id),
+});
+
 // Schemas for data insertion/validation
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -85,6 +169,40 @@ export const insertMarketDataSchema = createInsertSchema(marketData).omit({
   updatedAt: true,
 });
 
+// Investment Rooms schemas
+export const insertInvestmentRoomSchema = createInsertSchema(investmentRooms).omit({
+  id: true,
+  memberCount: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertRoomSubscriptionSchema = createInsertSchema(roomSubscriptions).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertRoomMembershipSchema = createInsertSchema(roomMemberships).omit({
+  id: true,
+  joinedAt: true,
+  xpEarned: true,
+});
+
+export const insertUserWalletSchema = createInsertSchema(userWallet).omit({
+  id: true,
+  updatedAt: true,
+});
+
+export const insertTransactionSchema = createInsertSchema(transactions).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertUserBadgeSchema = createInsertSchema(userBadges).omit({
+  id: true,
+  earnedAt: true,
+});
+
 // Types for data insertion/selection
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -100,3 +218,22 @@ export type Post = typeof posts.$inferSelect;
 
 export type InsertMarketData = z.infer<typeof insertMarketDataSchema>;
 export type MarketData = typeof marketData.$inferSelect;
+
+// Investment Rooms types
+export type InsertInvestmentRoom = z.infer<typeof insertInvestmentRoomSchema>;
+export type InvestmentRoom = typeof investmentRooms.$inferSelect;
+
+export type InsertRoomSubscription = z.infer<typeof insertRoomSubscriptionSchema>;
+export type RoomSubscription = typeof roomSubscriptions.$inferSelect;
+
+export type InsertRoomMembership = z.infer<typeof insertRoomMembershipSchema>;
+export type RoomMembership = typeof roomMemberships.$inferSelect;
+
+export type InsertUserWallet = z.infer<typeof insertUserWalletSchema>;
+export type UserWallet = typeof userWallet.$inferSelect;
+
+export type InsertTransaction = z.infer<typeof insertTransactionSchema>;
+export type Transaction = typeof transactions.$inferSelect;
+
+export type InsertUserBadge = z.infer<typeof insertUserBadgeSchema>;
+export type UserBadge = typeof userBadges.$inferSelect;

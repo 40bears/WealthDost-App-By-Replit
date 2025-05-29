@@ -13,7 +13,7 @@ const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => 
     { id: "create", icon: "add_circle", label: "Create", href: null },
     { id: "explore", icon: "search", label: "Explore", href: null },
     { id: "experts", icon: "psychology", label: "Experts", href: "/experts" },
-    { id: "invroom", icon: "meeting_room", label: "Inv.Room", href: null },
+    { id: "invroom", icon: "meeting_room", label: "Inv.Room", href: "/investment-rooms" },
   ];
 
   const handleTabClick = (tab: any) => {
