@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "wouter";
+import { Link as RouterLink } from "wouter";
 import MarketOverview from "@/components/dashboard/MarketOverview";
 import FeatureNavigation from "@/components/dashboard/FeatureNavigation";
 import BottomNavigation from "@/components/dashboard/BottomNavigation";
@@ -10,6 +10,9 @@ import CreatePostModal from "@/components/dashboard/CreatePostModal";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ChevronRight, Upload, Link as LinkIcon } from "lucide-react";
 
 // Define feature types for our top navigation with empty string for default home feed
 type FeatureType = "home_feed" | "watchlist" | "analytics" | "debate" | "quiz" | "news";
@@ -18,7 +21,139 @@ type FeatureType = "home_feed" | "watchlist" | "analytics" | "debate" | "quiz" |
 type Tab = "home" | "experts" | "explore" | "invroom" | "create";
 
 // Define experts section tabs
-type ExpertsTabType = "topAnalysts" | "ask";
+type ExpertsTabType = "topAnalysts" | "ask" | "myPicks";
+
+// Stock Pick Form Component
+const StockPickFormComponent = () => {
+  const [stockName, setStockName] = useState("");
+  const [entryDate, setEntryDate] = useState("");
+  const [entryPrice, setEntryPrice] = useState("");
+  const [targetPrice, setTargetPrice] = useState("");
+  const [stopLoss, setStopLoss] = useState("");
+  const [timeHorizon, setTimeHorizon] = useState("");
+
+  const handleAddStock = () => {
+    if (!stockName || !entryPrice || !targetPrice) {
+      alert("Please fill in all required fields");
+      return;
+    }
+    
+    console.log({
+      stockName,
+      entryDate,
+      entryPrice,
+      targetPrice,
+      stopLoss,
+      timeHorizon
+    });
+    
+    // Clear form after adding
+    setStockName("");
+    setEntryDate("");
+    setEntryPrice("");
+    setTargetPrice("");
+    setStopLoss("");
+    setTimeHorizon("");
+    
+    alert("Stock pick added successfully!");
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <Label htmlFor="stockName" className="text-sm font-medium text-gray-700">
+          Stock Name
+        </Label>
+        <Input
+          id="stockName"
+          type="text"
+          placeholder="Enter stock symbol (e.g., RELIANCE)"
+          value={stockName}
+          onChange={(e) => setStockName(e.target.value)}
+          className="mt-1"
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <Label htmlFor="entryDate" className="text-sm font-medium text-gray-700">
+            Entry Date & Price
+          </Label>
+          <Input
+            id="entryDate"
+            type="date"
+            value={entryDate}
+            onChange={(e) => setEntryDate(e.target.value)}
+            className="mt-1"
+          />
+        </div>
+        <div>
+          <Label htmlFor="entryPrice" className="text-sm font-medium text-gray-700">
+            &nbsp;
+          </Label>
+          <Input
+            id="entryPrice"
+            type="number"
+            placeholder="0.00"
+            value={entryPrice}
+            onChange={(e) => setEntryPrice(e.target.value)}
+            className="mt-1"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <Label htmlFor="targetPrice" className="text-sm font-medium text-gray-700">
+            Target Price & SL
+          </Label>
+          <Input
+            id="targetPrice"
+            type="number"
+            placeholder="0.00"
+            value={targetPrice}
+            onChange={(e) => setTargetPrice(e.target.value)}
+            className="mt-1"
+          />
+        </div>
+        <div>
+          <Label htmlFor="stopLoss" className="text-sm font-medium text-gray-700">
+            &nbsp;
+          </Label>
+          <Input
+            id="stopLoss"
+            type="number"
+            placeholder="0.00"
+            value={stopLoss}
+            onChange={(e) => setStopLoss(e.target.value)}
+            className="mt-1"
+          />
+        </div>
+      </div>
+
+      <div>
+        <Label htmlFor="timeHorizon" className="text-sm font-medium text-gray-700">
+          Time Horizon
+        </Label>
+        <Input
+          id="timeHorizon"
+          type="text"
+          placeholder="e.g., 3-6 months, 1 year"
+          value={timeHorizon}
+          onChange={(e) => setTimeHorizon(e.target.value)}
+          className="mt-1"
+        />
+      </div>
+
+      <Button 
+        onClick={handleAddStock}
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium"
+      >
+        Add
+      </Button>
+    </div>
+  );
+};
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState<Tab>("home");
@@ -605,6 +740,12 @@ const Dashboard = () => {
             >
               Ask
             </button>
+            <button 
+              onClick={() => setExpertsTab("myPicks")} 
+              className={`px-3 py-1 text-sm rounded-full font-medium click-bounce ${expertsTab === "myPicks" ? "bg-primary text-white" : "bg-gray-100 text-gray-700"}`}
+            >
+              My Picks
+            </button>
           </div>
         </div>
         
@@ -710,6 +851,63 @@ const Dashboard = () => {
                 </div>
                 <p className="text-sm text-gray-600">Start with a mix of liquid funds, index funds, and maybe 1-2 blue-chip stocks. Focus on learning the basics of diversification while...</p>
                 <Button variant="ghost" size="sm" className="mt-2 text-primary btn-pulse">Read full answer</Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {expertsTab === "myPicks" && (
+          <div className="mb-6">
+            <p className="text-gray-600 mb-4">Upload and track your stock recommendations to showcase your expertise.</p>
+            
+            <div className="space-y-4">
+              {/* Upload Options */}
+              <div className="space-y-3">
+                <Card className="cursor-pointer hover:bg-gray-50 transition-colors">
+                  <CardContent className="p-4">
+                    <label className="flex items-center justify-between cursor-pointer">
+                      <div className="flex items-center">
+                        <Upload className="h-5 w-5 text-gray-600 mr-3" />
+                        <span className="font-medium">Upload CSV File</span>
+                      </div>
+                      <ChevronRight className="h-5 w-5 text-gray-400" />
+                      <input
+                        type="file"
+                        accept=".csv"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file && file.type === "text/csv") {
+                            alert("CSV upload feature coming soon!");
+                          } else {
+                            alert("Please select a valid CSV file");
+                          }
+                        }}
+                      />
+                    </label>
+                  </CardContent>
+                </Card>
+
+                <Card className="cursor-pointer hover:bg-gray-50 transition-colors" onClick={() => alert("Brokerage API connection feature coming soon!")}>
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <LinkIcon className="h-5 w-5 text-gray-600 mr-3" />
+                        <div>
+                          <div className="font-medium">Connect Brokerage API</div>
+                          <div className="text-sm text-gray-500">(Zerodha, Upstox)</div>
+                        </div>
+                      </div>
+                      <ChevronRight className="h-5 w-5 text-gray-400" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Add Stock Pick Form */}
+              <div className="bg-white border border-gray-200 rounded-lg p-4">
+                <h4 className="font-medium mb-4">Add Stock Pick</h4>
+                <StockPickFormComponent />
               </div>
             </div>
           </div>
