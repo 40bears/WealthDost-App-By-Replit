@@ -25,19 +25,60 @@ const ContentFeed = ({ posts, isLoading = false }: ContentFeedProps) => {
     );
   }
 
+  if (!posts || posts.length === 0) {
+    return (
+      <div className="mx-4 my-4 text-center py-8">
+        <p className="text-gray-500">No posts yet. Be the first to share something!</p>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-4 my-4 space-y-4 pb-16">
-      {/* Expert Post */}
-      <ExpertPostCard />
-
-      {/* Debate Card */}
-      <DebateCard />
-
-      {/* Quiz Card */}
-      <QuizCard />
-
-      {/* News Card */}
-      <NewsCard />
+      {posts.map((post: any) => (
+        <Card key={post.id}>
+          <CardContent className="p-4">
+            <div className="flex items-start mb-3">
+              <div className="h-10 w-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                <span className="text-purple-600 font-semibold text-sm">
+                  {post.userId === 1 ? "U" : "A"}
+                </span>
+              </div>
+              <div>
+                <h4 className="font-medium text-sm">
+                  {post.userId === 1 ? "You" : `User ${post.userId}`}
+                </h4>
+                <p className="text-xs text-gray-500">
+                  {new Date(post.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} • {new Date(post.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+            <p className="text-sm text-gray-700 mb-3">{post.content}</p>
+            {post.tags && post.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1 mb-3">
+                {post.tags.map((tag: string, index: number) => (
+                  <span key={index} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
+            <div className="flex items-center justify-between text-xs text-gray-500">
+              <button className="flex items-center hover:text-purple-600">
+                <span className="material-icons text-sm mr-1">thumb_up</span>
+                {post.likes || 0}
+              </button>
+              <button className="flex items-center hover:text-purple-600">
+                <span className="material-icons text-sm mr-1">comment</span>
+                {post.comments || 0}
+              </button>
+              <button className="flex items-center hover:text-purple-600">
+                <span className="material-icons text-sm">share</span>
+              </button>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 };
