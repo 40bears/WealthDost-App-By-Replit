@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 interface CreatePostModalProps {
   isOpen: boolean;
@@ -11,13 +14,48 @@ interface CreatePostModalProps {
 const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
   const [postContent, setPostContent] = useState("");
   const [tags, setTags] = useState("");
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const createPostMutation = useMutation({
+    mutationFn: async (postData: { content: string; tags: string[]; userId: number }) => {
+      return apiRequest("POST", "/api/posts", postData);
+    },
+    onSuccess: () => {
+      // Invalidate and refetch posts to show the new post
+      queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+      toast({
+        title: "Post created successfully!",
+        description: "Your post is now visible in the community feed.",
+      });
+      onClose();
+      setPostContent("");
+      setTags("");
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error creating post",
+        description: error.message || "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
 
   const handleSubmit = () => {
-    console.log("Submitting post:", { content: postContent, tags: tags.split(",") });
-    // Here you would submit the post to your API
-    onClose();
-    setPostContent("");
-    setTags("");
+    if (!postContent.trim()) {
+      toast({
+        title: "Content required",
+        description: "Please write something before posting.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    createPostMutation.mutate({
+      content: postContent.trim(),
+      tags: tags.split(",").map(tag => tag.trim()).filter(tag => tag.length > 0),
+      userId: 1, // Mock user ID for now
+    });
   };
 
   return (
@@ -53,11 +91,11 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
         <DialogFooter className="gap-2 sm:gap-0">
           <Button variant="outline" onClick={onClose}>Cancel</Button>
           <Button 
-            disabled={!postContent.trim()} 
+            disabled={createPostMutation.isPending || !postContent.trim()} 
             onClick={handleSubmit}
             className="btn-pulse"
           >
-            Share Post
+            {createPostMutation.isPending ? "Posting..." : "Share Post"}
           </Button>
         </DialogFooter>
       </DialogContent>
