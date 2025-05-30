@@ -114,6 +114,7 @@ export class MemStorage implements IStorage {
     
     // Initialize with some default market data
     this.initializeMarketData();
+    this.initializeUsers();
   }
   
   private initializeMarketData() {
@@ -143,6 +144,43 @@ export class MemStorage implements IStorage {
     
     defaultMarketData.forEach(data => {
       this.insertMarketData(data);
+    });
+  }
+
+  private initializeUsers() {
+    // Add some initial users for the community
+    const defaultUsers = [
+      {
+        username: "current_user",
+        password: "password123",
+        fullName: "Current User",
+        profileBio: "Investment enthusiast",
+        profileImageUrl: null,
+        userType: "investor",
+        experienceLevel: "intermediate"
+      },
+      {
+        username: "rajesh_analyst",
+        password: "password123",
+        fullName: "Rajesh Kumar",
+        profileBio: "Stock market analyst with 5 years of experience",
+        profileImageUrl: null,
+        userType: "expert",
+        experienceLevel: "advanced"
+      },
+      {
+        username: "priya_investor",
+        password: "password123",
+        fullName: "Priya Sharma",
+        profileBio: "Long-term value investor",
+        profileImageUrl: null,
+        userType: "investor",
+        experienceLevel: "beginner"
+      }
+    ];
+
+    defaultUsers.forEach(userData => {
+      this.createUser(userData);
     });
   }
 
