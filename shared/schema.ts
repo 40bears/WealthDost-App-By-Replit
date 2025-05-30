@@ -40,9 +40,9 @@ export const expertProfiles = pgTable("expert_profiles", {
 export const posts = pgTable("posts", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id),
-  title: text("title").notNull(),
   content: text("content").notNull(),
-  contentType: text("content_type").notNull(), // 'analysis', 'news', 'debate', 'quiz'
+  postType: varchar("post_type", { length: 50 }).default("discussion"),
+  tags: text("tags").array(),
   createdAt: timestamp("created_at").defaultNow(),
   likes: integer("likes").default(0),
   comments: integer("comments").default(0),

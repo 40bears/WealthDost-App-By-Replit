@@ -18,7 +18,7 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
   const { toast } = useToast();
 
   const createPostMutation = useMutation({
-    mutationFn: async (postData: { content: string; tags: string[]; userId: number }) => {
+    mutationFn: async (postData: { content: string; tags: string[]; userId: number; postType: string }) => {
       return apiRequest("POST", "/api/posts", postData);
     },
     onSuccess: () => {
@@ -54,7 +54,8 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
     createPostMutation.mutate({
       content: postContent.trim(),
       tags: tags.split(",").map(tag => tag.trim()).filter(tag => tag.length > 0),
-      userId: 1, // Mock user ID for now
+      userId: 1,
+      postType: "discussion"
     });
   };
 
