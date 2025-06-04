@@ -12,7 +12,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ChevronRight, Upload, Link as LinkIcon } from "lucide-react";
+import { ChevronRight, Upload, Link as LinkIcon, User, Settings, HelpCircle, LogOut, FileText, Heart, Activity, Bell, Shield, Globe } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuGroup,
+} from "@/components/ui/dropdown-menu";
 
 // Define feature types for our top navigation with empty string for default home feed
 type FeatureType = "home_feed" | "watchlist" | "analytics" | "debate" | "quiz" | "news";
@@ -1018,11 +1027,99 @@ const Dashboard = () => {
           <Button variant="ghost" size="icon" className="text-gray-500 click-bounce">
             <span className="material-icons">notifications_none</span>
           </Button>
-          <Avatar className="h-8 w-8 click-bounce">
-            <AvatarFallback className="bg-gray-200">
-              <span className="material-icons text-gray-500">person</span>
-            </AvatarFallback>
-          </Avatar>
+          
+          {/* User Profile Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Avatar className="h-8 w-8 click-bounce cursor-pointer hover:ring-2 hover:ring-purple-200 transition-all">
+                <AvatarFallback className="bg-gray-200">
+                  <span className="material-icons text-gray-500">person</span>
+                </AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end" forceMount>
+              {/* Profile Overview */}
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="bg-purple-100 text-purple-600">
+                        RK
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-sm font-medium leading-none">Rahul Kumar</p>
+                      <p className="text-xs leading-none text-muted-foreground mt-1">
+                        Smart Investor
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              
+              {/* Navigation Options */}
+              <DropdownMenuGroup>
+                <DropdownMenuItem className="cursor-pointer">
+                  <User className="mr-2 h-4 w-4" />
+                  <span>My Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  <FileText className="mr-2 h-4 w-4" />
+                  <span>My Posts</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/watchlist"}>
+                  <Heart className="mr-2 h-4 w-4" />
+                  <span>Watchlist</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  <Activity className="mr-2 h-4 w-4" />
+                  <span>Activity</span>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              
+              {/* Settings */}
+              <DropdownMenuGroup>
+                <DropdownMenuItem className="cursor-pointer">
+                  <Bell className="mr-2 h-4 w-4" />
+                  <span>Notification Preferences</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  <Shield className="mr-2 h-4 w-4" />
+                  <span>Privacy Settings</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  <Globe className="mr-2 h-4 w-4" />
+                  <span>Language & Region</span>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              
+              {/* Support */}
+              <DropdownMenuGroup>
+                <DropdownMenuItem className="cursor-pointer">
+                  <HelpCircle className="mr-2 h-4 w-4" />
+                  <span>Help Center</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Report Bug / Feedback</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  <span className="material-icons mr-2 text-base">support_agent</span>
+                  <span>Contact Support</span>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              
+              {/* Logout */}
+              <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600">
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Logout</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
