@@ -169,6 +169,7 @@ const Dashboard = () => {
   const [activeFeature, setActiveFeature] = useState<FeatureType>("home_feed");
   const [expertsTab, setExpertsTab] = useState<ExpertsTabType>("topAnalysts");
   const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
+  const [isPortfolioModalOpen, setIsPortfolioModalOpen] = useState(false);
 
   // Fetch market data
   const { data: marketData, isLoading: isLoadingMarketData } = useQuery({
@@ -192,8 +193,8 @@ const Dashboard = () => {
       return;
     }
     if (feature === "portfolio") {
-      // Navigate to expert profile portfolio tab
-      window.location.href = "/expert/1";
+      // Open portfolio upload modal
+      setIsPortfolioModalOpen(true);
       return;
     }
     setActiveFeature(feature);
@@ -1159,6 +1160,172 @@ const Dashboard = () => {
         isOpen={isCreatePostModalOpen}
         onClose={() => setIsCreatePostModalOpen(false)}
       />
+
+      {/* Portfolio Upload Modal */}
+      {isPortfolioModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-md rounded-lg max-h-[90vh] overflow-y-auto">
+            <div className="p-4 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">Portfolio Upload</h3>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setIsPortfolioModalOpen(false)}
+                  className="p-1"
+                >
+                  <span className="material-icons text-gray-500">close</span>
+                </Button>
+              </div>
+            </div>
+            
+            <div className="p-4">
+              {/* Upload Options */}
+              <div className="space-y-3 mb-6">
+                <Card className="cursor-pointer hover:bg-gray-50 transition-colors">
+                  <CardContent className="p-4">
+                    <label className="flex items-center justify-between cursor-pointer">
+                      <div className="flex items-center">
+                        <Upload className="h-5 w-5 text-gray-600 mr-3" />
+                        <span className="font-medium">Upload CSV File</span>
+                      </div>
+                      <ChevronRight className="h-5 w-5 text-gray-400" />
+                      <input
+                        type="file"
+                        accept=".csv"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file && file.type === "text/csv") {
+                            alert("CSV upload feature coming soon!");
+                          } else {
+                            alert("Please select a valid CSV file");
+                          }
+                        }}
+                        className="hidden"
+                      />
+                    </label>
+                  </CardContent>
+                </Card>
+
+                <Card className="cursor-pointer hover:bg-gray-50 transition-colors" onClick={() => alert("Brokerage API connection feature coming soon!")}>
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <LinkIcon className="h-5 w-5 text-gray-600 mr-3" />
+                        <div>
+                          <div className="font-medium">Connect Brokerage API</div>
+                          <div className="text-sm text-gray-500">(Zerodha, Upstox)</div>
+                        </div>
+                      </div>
+                      <ChevronRight className="h-5 w-5 text-gray-400" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Manual Entry Form */}
+              <Card>
+                <CardHeader>
+                  <h4 className="font-semibold">Add Stock Pick Manually</h4>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label htmlFor="modalStockName" className="text-sm font-medium text-gray-700">
+                      Stock Name
+                    </Label>
+                    <Input
+                      id="modalStockName"
+                      type="text"
+                      placeholder="Enter stock symbol (e.g., RELIANCE)"
+                      className="mt-1"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label htmlFor="modalEntryDate" className="text-sm font-medium text-gray-700">
+                        Entry Date
+                      </Label>
+                      <Input
+                        id="modalEntryDate"
+                        type="date"
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="modalEntryPrice" className="text-sm font-medium text-gray-700">
+                        Entry Price
+                      </Label>
+                      <Input
+                        id="modalEntryPrice"
+                        type="number"
+                        placeholder="0.00"
+                        className="mt-1"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label htmlFor="modalTargetPrice" className="text-sm font-medium text-gray-700">
+                        Target Price
+                      </Label>
+                      <Input
+                        id="modalTargetPrice"
+                        type="number"
+                        placeholder="0.00"
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="modalStopLoss" className="text-sm font-medium text-gray-700">
+                        Stop Loss
+                      </Label>
+                      <Input
+                        id="modalStopLoss"
+                        type="number"
+                        placeholder="0.00"
+                        className="mt-1"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="modalTimeHorizon" className="text-sm font-medium text-gray-700">
+                      Time Horizon
+                    </Label>
+                    <Input
+                      id="modalTimeHorizon"
+                      type="text"
+                      placeholder="e.g., 3-6 months, 1 year"
+                      className="mt-1"
+                    />
+                  </div>
+
+                  <div className="flex space-x-3 pt-4">
+                    <Button 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => setIsPortfolioModalOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button 
+                      className="flex-1 bg-purple-600 hover:bg-purple-700 text-white"
+                      onClick={() => {
+                        alert("Stock pick added successfully!");
+                        setIsPortfolioModalOpen(false);
+                      }}
+                    >
+                      Add Stock Pick
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Bottom Navigation - Fixed */}
       <div className="fixed bottom-0 left-0 right-0 bg-white z-20 max-w-md mx-auto">
