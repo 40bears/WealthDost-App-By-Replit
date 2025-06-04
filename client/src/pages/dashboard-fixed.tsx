@@ -1098,15 +1098,15 @@ const Dashboard = () => {
               
               {/* Support */}
               <DropdownMenuGroup>
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/help"}>
                   <HelpCircle className="mr-2 h-4 w-4" />
                   <span>Help Center</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/help"}>
                   <Settings className="mr-2 h-4 w-4" />
                   <span>Report Bug / Feedback</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/help"}>
                   <span className="material-icons mr-2 text-base">support_agent</span>
                   <span>Contact Support</span>
                 </DropdownMenuItem>
@@ -1114,7 +1114,18 @@ const Dashboard = () => {
               <DropdownMenuSeparator />
               
               {/* Logout */}
-              <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600">
+              <DropdownMenuItem 
+                className="cursor-pointer text-red-600 focus:text-red-600"
+                onClick={() => {
+                  if (confirm("Are you sure you want to logout?")) {
+                    // Clear any stored user data
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    // Redirect to home page
+                    window.location.href = "/";
+                  }
+                }}
+              >
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Logout</span>
               </DropdownMenuItem>
