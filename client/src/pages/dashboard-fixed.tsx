@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ChevronRight, Upload, Link as LinkIcon, User, Settings, HelpCircle, LogOut, FileText, Heart, Activity, Bell, Shield, Globe } from "lucide-react";
+import PortfolioHealthScore from "@/components/portfolio/PortfolioHealthScore";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -170,6 +171,16 @@ const Dashboard = () => {
   const [expertsTab, setExpertsTab] = useState<ExpertsTabType>("topAnalysts");
   const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
   const [isPortfolioModalOpen, setIsPortfolioModalOpen] = useState(false);
+  const [portfolioStocks, setPortfolioStocks] = useState<any[]>([]);
+  const [stockFormData, setStockFormData] = useState({
+    stockName: "",
+    entryDate: "",
+    entryPrice: "",
+    targetPrice: "",
+    stopLoss: "",
+    timeHorizon: "",
+    quantity: ""
+  });
 
   // Fetch market data
   const { data: marketData, isLoading: isLoadingMarketData } = useQuery({
@@ -198,6 +209,55 @@ const Dashboard = () => {
       return;
     }
     setActiveFeature(feature);
+  };
+
+  const handleStockFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Create new stock entry with real market data simulation
+    const newStock = {
+      symbol: stockFormData.stockName.toUpperCase(),
+      name: stockFormData.stockName,
+      quantity: parseInt(stockFormData.quantity),
+      entryPrice: parseFloat(stockFormData.entryPrice),
+      currentPrice: parseFloat(stockFormData.entryPrice) * (1 + (Math.random() - 0.5) * 0.2), // Simulate price movement
+      sector: getSectorForStock(stockFormData.stockName),
+      marketCap: getMarketCapForStock(stockFormData.stockName),
+      entryDate: stockFormData.entryDate,
+      targetPrice: parseFloat(stockFormData.targetPrice),
+      stopLoss: parseFloat(stockFormData.stopLoss),
+      timeHorizon: stockFormData.timeHorizon
+    };
+
+    setPortfolioStocks([...portfolioStocks, newStock]);
+    
+    // Reset form
+    setStockFormData({
+      stockName: "",
+      entryDate: "",
+      entryPrice: "",
+      targetPrice: "",
+      stopLoss: "",
+      timeHorizon: "",
+      quantity: ""
+    });
+  };
+
+  const getSectorForStock = (stockName: string) => {
+    const sectors = ["Technology", "Healthcare", "Financial", "Energy", "Consumer", "Industrial"];
+    return sectors[Math.floor(Math.random() * sectors.length)];
+  };
+
+  const getMarketCapForStock = (stockName: string) => {
+    const caps = ["Large Cap", "Mid Cap", "Small Cap"];
+    return caps[Math.floor(Math.random() * caps.length)];
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setStockFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   // Function to handle tab changes
