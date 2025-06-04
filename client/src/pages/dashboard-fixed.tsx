@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 // Define feature types for our top navigation with empty string for default home feed
-type FeatureType = "home_feed" | "watchlist" | "analytics" | "debate" | "quiz" | "news";
+type FeatureType = "home_feed" | "watchlist" | "portfolio" | "analytics" | "debate" | "quiz" | "news";
 
 // Define bottom tab types
 type Tab = "home" | "experts" | "explore" | "invroom" | "create";
@@ -189,6 +189,11 @@ const Dashboard = () => {
     if (feature === "watchlist") {
       // Navigate to watchlist page
       window.location.href = "/watchlist";
+      return;
+    }
+    if (feature === "portfolio") {
+      // Navigate to expert profile portfolio tab
+      window.location.href = "/expert/1";
       return;
     }
     setActiveFeature(feature);
