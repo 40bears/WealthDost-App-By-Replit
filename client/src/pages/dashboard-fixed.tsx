@@ -1289,97 +1289,160 @@ const Dashboard = () => {
                   <h4 className="font-semibold">Add Stock Pick Manually</h4>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="modalStockName" className="text-sm font-medium text-gray-700">
-                      Stock Name
-                    </Label>
-                    <Input
-                      id="modalStockName"
-                      type="text"
-                      placeholder="Enter stock symbol (e.g., RELIANCE)"
-                      className="mt-1"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
+                  <form onSubmit={handleStockFormSubmit} className="space-y-4">
                     <div>
-                      <Label htmlFor="modalEntryDate" className="text-sm font-medium text-gray-700">
-                        Entry Date
+                      <Label htmlFor="modalStockName" className="text-sm font-medium text-gray-700">
+                        Stock Name
                       </Label>
                       <Input
-                        id="modalEntryDate"
-                        type="date"
+                        id="modalStockName"
+                        type="text"
+                        placeholder="Enter stock symbol (e.g., RELIANCE)"
                         className="mt-1"
+                        value={stockFormData.stockName}
+                        onChange={(e) => handleInputChange("stockName", e.target.value)}
+                        required
                       />
                     </div>
+
                     <div>
-                      <Label htmlFor="modalEntryPrice" className="text-sm font-medium text-gray-700">
-                        Entry Price
+                      <Label htmlFor="modalQuantity" className="text-sm font-medium text-gray-700">
+                        Quantity
                       </Label>
                       <Input
-                        id="modalEntryPrice"
+                        id="modalQuantity"
                         type="number"
-                        placeholder="0.00"
+                        placeholder="Number of shares"
                         className="mt-1"
+                        value={stockFormData.quantity}
+                        onChange={(e) => handleInputChange("quantity", e.target.value)}
+                        required
                       />
                     </div>
-                  </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label htmlFor="modalEntryDate" className="text-sm font-medium text-gray-700">
+                          Entry Date
+                        </Label>
+                        <Input
+                          id="modalEntryDate"
+                          type="date"
+                          className="mt-1"
+                          value={stockFormData.entryDate}
+                          onChange={(e) => handleInputChange("entryDate", e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="modalEntryPrice" className="text-sm font-medium text-gray-700">
+                          Entry Price
+                        </Label>
+                        <Input
+                          id="modalEntryPrice"
+                          type="number"
+                          step="0.01"
+                          placeholder="0.00"
+                          className="mt-1"
+                          value={stockFormData.entryPrice}
+                          onChange={(e) => handleInputChange("entryPrice", e.target.value)}
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label htmlFor="modalTargetPrice" className="text-sm font-medium text-gray-700">
+                          Target Price
+                        </Label>
+                        <Input
+                          id="modalTargetPrice"
+                          type="number"
+                          step="0.01"
+                          placeholder="0.00"
+                          className="mt-1"
+                          value={stockFormData.targetPrice}
+                          onChange={(e) => handleInputChange("targetPrice", e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="modalStopLoss" className="text-sm font-medium text-gray-700">
+                          Stop Loss
+                        </Label>
+                        <Input
+                          id="modalStopLoss"
+                          type="number"
+                          step="0.01"
+                          placeholder="0.00"
+                          className="mt-1"
+                          value={stockFormData.stopLoss}
+                          onChange={(e) => handleInputChange("stopLoss", e.target.value)}
+                        />
+                      </div>
+                    </div>
+
                     <div>
-                      <Label htmlFor="modalTargetPrice" className="text-sm font-medium text-gray-700">
-                        Target Price
+                      <Label htmlFor="modalTimeHorizon" className="text-sm font-medium text-gray-700">
+                        Time Horizon
                       </Label>
                       <Input
-                        id="modalTargetPrice"
-                        type="number"
-                        placeholder="0.00"
+                        id="modalTimeHorizon"
+                        type="text"
+                        placeholder="e.g., 3-6 months, 1 year"
                         className="mt-1"
+                        value={stockFormData.timeHorizon}
+                        onChange={(e) => handleInputChange("timeHorizon", e.target.value)}
                       />
                     </div>
-                    <div>
-                      <Label htmlFor="modalStopLoss" className="text-sm font-medium text-gray-700">
-                        Stop Loss
-                      </Label>
-                      <Input
-                        id="modalStopLoss"
-                        type="number"
-                        placeholder="0.00"
-                        className="mt-1"
-                      />
+
+                    <div className="flex space-x-3 pt-4">
+                      <Button 
+                        type="button"
+                        variant="outline" 
+                        className="flex-1"
+                        onClick={() => setIsPortfolioModalOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button 
+                        type="submit"
+                        className="flex-1 bg-purple-600 hover:bg-purple-700 text-white"
+                      >
+                        Add Stock Pick
+                      </Button>
                     </div>
-                  </div>
+                  </form>
 
-                  <div>
-                    <Label htmlFor="modalTimeHorizon" className="text-sm font-medium text-gray-700">
-                      Time Horizon
-                    </Label>
-                    <Input
-                      id="modalTimeHorizon"
-                      type="text"
-                      placeholder="e.g., 3-6 months, 1 year"
-                      className="mt-1"
-                    />
-                  </div>
+                  {/* Portfolio Health Score Component */}
+                  {portfolioStocks.length > 0 && (
+                    <div className="mt-6 border-t pt-6">
+                      <PortfolioHealthScore portfolio={portfolioStocks} />
+                    </div>
+                  )}
 
-                  <div className="flex space-x-3 pt-4">
-                    <Button 
-                      variant="outline" 
-                      className="flex-1"
-                      onClick={() => setIsPortfolioModalOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button 
-                      className="flex-1 bg-purple-600 hover:bg-purple-700 text-white"
-                      onClick={() => {
-                        alert("Stock pick added successfully!");
-                        setIsPortfolioModalOpen(false);
-                      }}
-                    >
-                      Add Stock Pick
-                    </Button>
-                  </div>
+                  {/* Portfolio Summary */}
+                  {portfolioStocks.length > 0 && (
+                    <div className="mt-6 border-t pt-6">
+                      <h3 className="font-semibold text-gray-900 mb-4">Your Portfolio ({portfolioStocks.length} stocks)</h3>
+                      <div className="space-y-3 max-h-60 overflow-y-auto">
+                        {portfolioStocks.map((stock, index) => (
+                          <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                            <div>
+                              <div className="font-medium">{stock.symbol}</div>
+                              <div className="text-sm text-gray-500">{stock.quantity} shares</div>
+                            </div>
+                            <div className="text-right">
+                              <div className="font-medium">₹{stock.currentPrice.toFixed(2)}</div>
+                              <div className={`text-sm ${stock.currentPrice >= stock.entryPrice ? 'text-green-600' : 'text-red-600'}`}>
+                                {((stock.currentPrice - stock.entryPrice) / stock.entryPrice * 100).toFixed(1)}%
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
