@@ -10,6 +10,11 @@ import ExpertsList from "@/pages/experts-list";
 import InvestmentRooms from "@/pages/investment-rooms";
 import Watchlist from "@/pages/watchlist";
 import PortfolioUpload from "@/pages/portfolio-upload";
+import UserProfile from "@/pages/user-profile";
+import MyPosts from "@/pages/my-posts";
+import Activity from "@/pages/activity";
+import Settings from "@/pages/settings";
+import HelpCenter from "@/pages/help-center";
 
 function Router() {
   return (
@@ -22,6 +27,11 @@ function Router() {
       <Route path="/investment-rooms" component={InvestmentRooms} />
       <Route path="/watchlist" component={Watchlist} />
       <Route path="/portfolio-upload" component={PortfolioUpload} />
+      <Route path="/profile" component={UserProfile} />
+      <Route path="/my-posts" component={MyPosts} />
+      <Route path="/activity" component={Activity} />
+      <Route path="/settings" component={Settings} />
+      <Route path="/help" component={HelpCenter} />
       <Route component={NotFound} />
     </Switch>
   );

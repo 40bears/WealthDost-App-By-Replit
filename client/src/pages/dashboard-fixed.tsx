@@ -1060,11 +1060,11 @@ const Dashboard = () => {
               
               {/* Navigation Options */}
               <DropdownMenuGroup>
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/profile"}>
                   <User className="mr-2 h-4 w-4" />
                   <span>My Profile</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/my-posts"}>
                   <FileText className="mr-2 h-4 w-4" />
                   <span>My Posts</span>
                 </DropdownMenuItem>
@@ -1072,7 +1072,7 @@ const Dashboard = () => {
                   <Heart className="mr-2 h-4 w-4" />
                   <span>Watchlist</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/activity"}>
                   <Activity className="mr-2 h-4 w-4" />
                   <span>Activity</span>
                 </DropdownMenuItem>
@@ -1081,15 +1081,15 @@ const Dashboard = () => {
               
               {/* Settings */}
               <DropdownMenuGroup>
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/settings"}>
                   <Bell className="mr-2 h-4 w-4" />
                   <span>Notification Preferences</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/settings"}>
                   <Shield className="mr-2 h-4 w-4" />
                   <span>Privacy Settings</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/settings"}>
                   <Globe className="mr-2 h-4 w-4" />
                   <span>Language & Region</span>
                 </DropdownMenuItem>
