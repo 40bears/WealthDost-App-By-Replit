@@ -400,11 +400,21 @@ const Watchlist = () => {
                                 <MessageCircle size={10} className="mr-1" />
                                 Discuss
                               </Button>
-                              <Button variant="outline" size="sm" className="text-xs px-2 py-1">
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="text-xs px-2 py-1 hover:bg-purple-50 hover:text-purple-600"
+                                onClick={() => window.location.href = "/expert/1"}
+                              >
                                 <Plus size={10} className="mr-1" />
                                 Portfolio
                               </Button>
-                              <Button variant="outline" size="sm" className="text-xs px-2 py-1">
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="text-xs px-2 py-1 hover:bg-blue-50 hover:text-blue-600"
+                                onClick={() => window.location.href = "/experts"}
+                              >
                                 <Star size={10} className="mr-1" />
                                 Expert
                               </Button>
