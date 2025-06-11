@@ -43,22 +43,22 @@ const Home = () => {
       <div className="px-4 mb-6">
         <h3 className="text-lg font-semibold mb-3">What you'll get</h3>
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-gray-50 p-3 rounded-lg h-28 flex flex-col justify-center items-center text-center">
+          <div className="bg-gray-50 p-3 rounded-lg h-28 flex flex-col justify-center">
             <span className="material-icons text-primary mb-1 text-xl">connect_without_contact</span>
             <h4 className="font-medium text-sm leading-tight mb-1">Expert Connect</h4>
             <p className="text-xs text-gray-600">Get advice from certified experts</p>
           </div>
-          <div className="bg-gray-50 p-3 rounded-lg h-28 flex flex-col justify-center items-center text-center">
+          <div className="bg-gray-50 p-3 rounded-lg h-28 flex flex-col justify-center">
             <span className="material-icons text-primary mb-1 text-xl">trending_up</span>
             <h4 className="font-medium text-sm leading-tight mb-1">Market Insights</h4>
             <p className="text-xs text-gray-600">Track stocks, crypto & more</p>
           </div>
-          <div className="bg-gray-50 p-3 rounded-lg h-28 flex flex-col justify-center items-center text-center">
+          <div className="bg-gray-50 p-3 rounded-lg h-28 flex flex-col justify-center">
             <span className="material-icons text-primary mb-1 text-xl">groups</span>
             <h4 className="font-medium text-sm leading-tight mb-1">Join Tribes</h4>
             <p className="text-xs text-gray-600">Connect with like-minded investors</p>
           </div>
-          <div className="bg-gray-50 p-3 rounded-lg h-28 flex flex-col justify-center items-center text-center">
+          <div className="bg-gray-50 p-3 rounded-lg h-28 flex flex-col justify-center">
             <span className="material-icons text-primary mb-1 text-xl">quiz</span>
             <h4 className="font-medium text-sm leading-tight mb-1">Quiz & Debate</h4>
             <p className="text-xs text-gray-600">Test knowledge & discuss topics</p>
