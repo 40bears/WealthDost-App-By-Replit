@@ -9,16 +9,27 @@ import { Separator } from "@/components/ui/separator";
 type Role = "investor" | "expert" | null;
 
 export default function SignUp() {
-  const [, setLocation] = useLocation();
+  const [, navigate] = useLocation();
   const [selectedRole, setSelectedRole] = useState<Role>(null);
   const [showAccountCreation, setShowAccountCreation] = useState(true);
+  const [showProfileSetup, setShowProfileSetup] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Profile form fields
+  const [fullName, setFullName] = useState("");
+  const [age, setAge] = useState("");
+  const [userLocation, setUserLocation] = useState("");
+  const [experience, setExperience] = useState("");
 
   const handleRoleSelect = (role: Role) => {
     setSelectedRole(role);
+    setShowProfileSetup(true);
+  };
+
+  const handleProfileComplete = () => {
     setTimeout(() => {
-      setLocation("/dashboard");
+      navigate("/dashboard");
     }, 500);
   };
 
@@ -43,18 +54,121 @@ export default function SignUp() {
     }, 1500);
   };
 
-  if (selectedRole) {
+  if (showProfileSetup && selectedRole) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 flex items-center justify-center p-4">
-        <div className="text-center text-white">
-          <h2 className="text-2xl font-bold mb-4">Welcome to WealthDost!</h2>
-          <p className="mb-4">You've selected: {selectedRole === "investor" ? "Investor" : "Expert"}</p>
-          <Button 
-            onClick={() => setLocation("/dashboard")}
-            className="bg-white text-primary hover:bg-white/90"
-          >
-            Continue to Dashboard
-          </Button>
+        <div className="w-full max-w-md">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-white mb-2">Set Up Your Profile</h1>
+            <p className="text-white/80">Tell us about yourself as an {selectedRole}</p>
+          </div>
+
+          {/* Profile Setup Form */}
+          <Card className="bg-white/95 backdrop-blur-sm shadow-xl">
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-center">Complete Your Profile</CardTitle>
+              <CardDescription className="text-center">
+                Help us personalize your experience
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="fullName">Full Name</Label>
+                <Input
+                  id="fullName"
+                  type="text"
+                  placeholder="Enter your full name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="age">Age</Label>
+                <Input
+                  id="age"
+                  type="number"
+                  placeholder="Enter your age"
+                  value={age}
+                  onChange={(e) => setAge(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="userLocation">Location</Label>
+                <Input
+                  id="userLocation"
+                  type="text"
+                  placeholder="City, Country"
+                  value={userLocation}
+                  onChange={(e) => setUserLocation(e.target.value)}
+                  required
+                />
+              </div>
+
+              {selectedRole === "investor" ? (
+                <div className="space-y-2">
+                  <Label htmlFor="experience">Investment Experience</Label>
+                  <select
+                    id="experience"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    value={experience}
+                    onChange={(e) => setExperience(e.target.value)}
+                    required
+                  >
+                    <option value="">Select your experience level</option>
+                    <option value="beginner">Beginner (0-1 year)</option>
+                    <option value="intermediate">Intermediate (1-5 years)</option>
+                    <option value="advanced">Advanced (5+ years)</option>
+                  </select>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <Label htmlFor="experience">Financial Expertise</Label>
+                  <select
+                    id="experience"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    value={experience}
+                    onChange={(e) => setExperience(e.target.value)}
+                    required
+                  >
+                    <option value="">Select your area of expertise</option>
+                    <option value="stocks">Stock Market Analysis</option>
+                    <option value="crypto">Cryptocurrency</option>
+                    <option value="mutual-funds">Mutual Funds</option>
+                    <option value="financial-planning">Financial Planning</option>
+                    <option value="real-estate">Real Estate</option>
+                    <option value="trading">Day Trading</option>
+                  </select>
+                </div>
+              )}
+
+              <Button 
+                onClick={handleProfileComplete}
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                disabled={!fullName || !age || !userLocation || !experience}
+              >
+                Complete Setup
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Back Button */}
+          <div className="text-center mt-6">
+            <Button 
+              variant="ghost" 
+              className="text-white hover:text-white/80 hover:bg-white/10"
+              onClick={() => {
+                setShowProfileSetup(false);
+                setSelectedRole(null);
+              }}
+            >
+              ← Back to Role Selection
+            </Button>
+          </div>
         </div>
       </div>
     );
