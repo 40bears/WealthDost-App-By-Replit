@@ -36,25 +36,33 @@ const Home = () => {
       {/* Features Preview */}
       <div className="px-4 mb-6">
         <h3 className="text-lg font-semibold mb-3">What you'll get</h3>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-gray-50 p-3 rounded-lg h-28 flex flex-col justify-center">
-            <span className="material-icons text-primary mb-1 text-xl">connect_without_contact</span>
-            <h4 className="font-medium text-sm leading-tight mb-1">Expert Connect</h4>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-gradient-to-br from-purple-50 to-blue-50 p-4 rounded-xl border border-purple-100 shadow-sm h-32 flex flex-col justify-center transform hover:scale-105 transition-all duration-200">
+            <div className="bg-primary/10 w-10 h-10 rounded-full flex items-center justify-center mb-2">
+              <span className="material-icons text-primary text-lg">connect_without_contact</span>
+            </div>
+            <h4 className="font-semibold text-sm leading-tight mb-1">Expert Connect</h4>
             <p className="text-xs text-gray-600">Get advice from certified experts</p>
           </div>
-          <div className="bg-gray-50 p-3 rounded-lg h-28 flex flex-col justify-center">
-            <span className="material-icons text-primary mb-1 text-xl">trending_up</span>
-            <h4 className="font-medium text-sm leading-tight mb-1">Market Insights</h4>
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-xl border border-green-100 shadow-sm h-32 flex flex-col justify-center transform hover:scale-105 transition-all duration-200">
+            <div className="bg-green-500/10 w-10 h-10 rounded-full flex items-center justify-center mb-2">
+              <span className="material-icons text-green-600 text-lg">trending_up</span>
+            </div>
+            <h4 className="font-semibold text-sm leading-tight mb-1">Market Insights</h4>
             <p className="text-xs text-gray-600">Track stocks, crypto & more</p>
           </div>
-          <div className="bg-gray-50 p-3 rounded-lg h-28 flex flex-col justify-center">
-            <span className="material-icons text-primary mb-1 text-xl">groups</span>
-            <h4 className="font-medium text-sm leading-tight mb-1">Join Tribes</h4>
+          <div className="bg-gradient-to-br from-orange-50 to-yellow-50 p-4 rounded-xl border border-orange-100 shadow-sm h-32 flex flex-col justify-center transform hover:scale-105 transition-all duration-200">
+            <div className="bg-orange-500/10 w-10 h-10 rounded-full flex items-center justify-center mb-2">
+              <span className="material-icons text-orange-600 text-lg">groups</span>
+            </div>
+            <h4 className="font-semibold text-sm leading-tight mb-1">Join Tribes</h4>
             <p className="text-xs text-gray-600">Unlock your Wealth Circle</p>
           </div>
-          <div className="bg-gray-50 p-3 rounded-lg h-28 flex flex-col justify-center">
-            <span className="material-icons text-primary mb-1 text-xl">quiz</span>
-            <h4 className="font-medium text-sm leading-tight mb-1">Quiz & Debate</h4>
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100 shadow-sm h-32 flex flex-col justify-center transform hover:scale-105 transition-all duration-200">
+            <div className="bg-blue-500/10 w-10 h-10 rounded-full flex items-center justify-center mb-2">
+              <span className="material-icons text-blue-600 text-lg">quiz</span>
+            </div>
+            <h4 className="font-semibold text-sm leading-tight mb-1">Quiz & Debate</h4>
             <p className="text-xs text-gray-600">Test knowledge & discuss topics</p>
           </div>
         </div>
