@@ -5,6 +5,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import SignUp from "@/pages/signup";
 import Login from "@/pages/login";
+import CreateAccount from "@/pages/create-account";
 import Dashboard from "@/pages/dashboard-fixed";
 import ExpertProfile from "@/pages/expert-profile";
 import ExpertsList from "@/pages/experts-list";
@@ -21,6 +22,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/create-account" component={CreateAccount} />
       <Route path="/signup" component={SignUp} />
       <Route path="/login" component={Login} />
       <Route path="/dashboard" component={Dashboard} />
