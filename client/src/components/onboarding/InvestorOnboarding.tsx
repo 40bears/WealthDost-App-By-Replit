@@ -231,6 +231,45 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
           <p className="text-xs text-gray-500 mt-1">Optional: Add a finance-related tagline</p>
         </div>
 
+        {!showBioField ? (
+          <div className="text-center">
+            <Button 
+              type="button" 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setShowBioField(true)}
+              className="text-gray-600 border-gray-300 hover:bg-gray-50"
+            >
+              + Add Bio
+            </Button>
+            <p className="text-xs text-gray-500 mt-1">Tell us more about yourself (optional)</p>
+          </div>
+        ) : (
+          <div>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="detailedBio">About You</Label>
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setShowBioField(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                Remove
+              </Button>
+            </div>
+            <Textarea 
+              id="detailedBio"
+              name="detailedBio"
+              value={formData.detailedBio}
+              onChange={handleBasicProfileChange}
+              className="mt-1"
+              placeholder="Share your investment goals, experience, or what you're passionate about in finance..."
+              rows={4}
+            />
+          </div>
+        )}
+
         <div>
           <Label className="block text-sm font-medium text-gray-700 mb-3">Investment Experience Level</Label>
           <RadioGroup 
@@ -298,8 +337,8 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
             className="mr-2" 
           />
           <Label htmlFor="stocks" className="flex-1 cursor-pointer">
-            <span className="font-medium">📈 Stock Market</span>
-            <p className="text-sm text-gray-600">Equities, indices, and market analysis</p>
+            <span className="font-medium text-gray-800">📈 Stock Market</span>
+            <p className="text-sm text-gray-700">Equities, indices, and market analysis</p>
           </Label>
         </div>
         
@@ -311,8 +350,8 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
             className="mr-2" 
           />
           <Label htmlFor="crypto" className="flex-1 cursor-pointer">
-            <span className="font-medium">🚀 Crypto & Web3</span>
-            <p className="text-sm text-gray-600">Cryptocurrencies, blockchain, NFTs</p>
+            <span className="font-medium text-gray-800">🚀 Crypto & Web3</span>
+            <p className="text-sm text-gray-700">Cryptocurrencies, blockchain, NFTs</p>
           </Label>
         </div>
         
@@ -324,8 +363,8 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
             className="mr-2" 
           />
           <Label htmlFor="realestate" className="flex-1 cursor-pointer">
-            <span className="font-medium">🏠 Real Estate & Alternative Assets</span>
-            <p className="text-sm text-gray-600">Property investments, REITs, collectibles</p>
+            <span className="font-medium text-gray-800">🏠 Real Estate & Alternative Assets</span>
+            <p className="text-sm text-gray-700">Property investments, REITs, collectibles</p>
           </Label>
         </div>
         
@@ -337,8 +376,8 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
             className="mr-2" 
           />
           <Label htmlFor="macro" className="flex-1 cursor-pointer">
-            <span className="font-medium">🌍 Macroeconomics & Global Markets</span>
-            <p className="text-sm text-gray-600">Economic trends, geopolitics, policy analysis</p>
+            <span className="font-medium text-gray-800">🌍 Macroeconomics & Global Markets</span>
+            <p className="text-sm text-gray-700">Economic trends, geopolitics, policy analysis</p>
           </Label>
         </div>
         
@@ -350,8 +389,8 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
             className="mr-2" 
           />
           <Label htmlFor="personal" className="flex-1 cursor-pointer">
-            <span className="font-medium">💰 Personal Finance & Wealth Building</span>
-            <p className="text-sm text-gray-600">Budgeting, saving, retirement planning</p>
+            <span className="font-medium text-gray-800">💰 Personal Finance & Wealth Building</span>
+            <p className="text-sm text-gray-700">Budgeting, saving, retirement planning</p>
           </Label>
         </div>
       </div>
