@@ -42,7 +42,8 @@ const SignUp = () => {
 
         {/* Landing Hero Section */}
         <div className="bg-primary rounded-xl p-6 text-white mb-6">
-          <h1 className="text-3xl font-bold mb-4">WealthDost</h1>
+          <h1 className="text-3xl font-bold mb-2">WealthDost</h1>
+          <p className="text-sm text-white/80 mb-4">Scroll · Learn · Connect</p>
           <p className="mb-6">Join a community of investors and experts to learn, debate, and grow your financial knowledge.</p>
           <Button onClick={handleStartOnboarding} className="w-full bg-white text-primary hover:bg-white/90 font-semibold mb-3">
             Sign Up
@@ -59,25 +60,25 @@ const SignUp = () => {
         <div className="mb-6">
           <h3 className="text-lg font-semibold mb-3">What you'll get</h3>
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-gray-50 p-3 rounded-lg">
-              <span className="material-icons text-primary mb-2">connect_without_contact</span>
-              <h4 className="font-medium mb-1">Expert Connect</h4>
-              <p className="text-sm text-gray-600">Get advice from certified experts</p>
+            <div className="bg-gray-50 p-4 rounded-lg h-24 flex flex-col justify-center">
+              <span className="material-icons text-primary mb-1 text-lg">connect_without_contact</span>
+              <h4 className="font-medium text-sm leading-tight">Expert Connect</h4>
+              <p className="text-xs text-gray-600 mt-1">Get advice from certified experts</p>
             </div>
-            <div className="bg-gray-50 p-3 rounded-lg">
-              <span className="material-icons text-primary mb-2">trending_up</span>
-              <h4 className="font-medium mb-1">Market Insights</h4>
-              <p className="text-sm text-gray-600">Track stocks, crypto & more</p>
+            <div className="bg-gray-50 p-4 rounded-lg h-24 flex flex-col justify-center">
+              <span className="material-icons text-primary mb-1 text-lg">trending_up</span>
+              <h4 className="font-medium text-sm leading-tight">Market Insights</h4>
+              <p className="text-xs text-gray-600 mt-1">Track stocks, crypto & more</p>
             </div>
-            <div className="bg-gray-50 p-3 rounded-lg">
-              <span className="material-icons text-primary mb-2">groups</span>
-              <h4 className="font-medium mb-1">Join Tribes</h4>
-              <p className="text-sm text-gray-600">Connect with like-minded investors</p>
+            <div className="bg-gray-50 p-4 rounded-lg h-24 flex flex-col justify-center">
+              <span className="material-icons text-primary mb-1 text-lg">groups</span>
+              <h4 className="font-medium text-sm leading-tight">Join Tribes</h4>
+              <p className="text-xs text-gray-600 mt-1">Connect with like-minded investors</p>
             </div>
-            <div className="bg-gray-50 p-3 rounded-lg">
-              <span className="material-icons text-primary mb-2">quiz</span>
-              <h4 className="font-medium mb-1">Financial Quiz & Community Debates</h4>
-              <p className="text-sm text-gray-600">Test knowledge & discuss topics</p>
+            <div className="bg-gray-50 p-4 rounded-lg h-24 flex flex-col justify-center">
+              <span className="material-icons text-primary mb-1 text-lg">quiz</span>
+              <h4 className="font-medium text-sm leading-tight">Financial Quiz & Community Debates</h4>
+              <p className="text-xs text-gray-600 mt-1">Test knowledge & discuss topics</p>
             </div>
           </div>
         </div>
