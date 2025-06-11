@@ -25,10 +25,18 @@ const Home = () => {
           <h1 className="text-3xl font-bold mb-1">WealthDost</h1>
           <p className="text-sm text-white/80 mb-5">Scroll · Learn · Connect</p>
         </div>
-        <p className="mb-8">Join a community of investors and experts to learn, debate, and grow your financial knowledge.</p>
+        <p className="mb-6">Join a community of investors and experts to learn, debate, and grow your financial knowledge.</p>
         <Link href="/signup">
-          <Button className="w-full bg-white text-primary hover:bg-white/90 font-semibold py-4 text-lg transition-all duration-200 transform hover:scale-[1.02]">
-            Get Started
+          <Button className="w-full bg-white text-primary hover:bg-white/90 font-semibold mb-3 transition-all duration-200 transform hover:scale-[1.02]">
+            Sign Up
+          </Button>
+        </Link>
+        <Link href="/login">
+          <Button 
+            className="w-full bg-transparent border border-white text-white hover:bg-white/10 transition-all duration-200"
+            variant="outline"
+          >
+            Log In
           </Button>
         </Link>
       </div>
