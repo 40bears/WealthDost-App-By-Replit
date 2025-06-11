@@ -175,12 +175,12 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
 
   // Step 1: Basic Profile
   const renderBasicProfile = () => (
-    <div className="px-4 py-6 flex flex-col w-full">
+    <div className="px-4 py-6 flex flex-col w-full min-h-screen">
       <div className="flex items-center mb-6">
         <Button variant="ghost" size="icon" onClick={onBack} className="text-gray-500">
           <span className="material-icons">arrow_back</span>
         </Button>
-        <h2 className="text-xl font-semibold ml-2">Basic Profile</h2>
+        <h2 className="text-lg sm:text-xl font-semibold ml-2">Wealth Enthusiast Profile</h2>
       </div>
 
       {/* Progress Bar */}
@@ -315,12 +315,12 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
 
   // Step 2: Content Preferences
   const renderContentPreferences = () => (
-    <div className="px-4 py-6 flex flex-col w-full">
+    <div className="px-4 py-6 flex flex-col w-full min-h-screen">
       <div className="flex items-center mb-6">
         <Button variant="ghost" size="icon" onClick={goToPreviousStep} className="text-gray-500">
           <span className="material-icons">arrow_back</span>
         </Button>
-        <h2 className="text-xl font-semibold ml-2">Content Preferences</h2>
+        <h2 className="text-lg sm:text-xl font-semibold ml-2">Content Preferences</h2>
       </div>
 
       {/* Progress Bar */}
@@ -577,7 +577,7 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
           <div className="flex">
             <span className={`material-icons text-${personaColor}-500 mr-3`}>tips_and_updates</span>
             <div>
-              <h4 className={`font-medium text-${personaColor}-700`}>Your Investor Persona: The {personaName}</h4>
+              <h4 className={`font-medium text-${personaColor}-700`}>Your Wealth Persona: The {personaName}</h4>
               {formData.riskPersona === "owl" && (
                 <p className="text-sm text-blue-700">You're a cautious investor who prioritizes safety and stability in your investments. You prefer proven, established assets with reliable returns.</p>
               )}
