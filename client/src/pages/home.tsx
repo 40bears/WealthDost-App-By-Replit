@@ -31,12 +31,14 @@ const Home = () => {
             Sign Up
           </Button>
         </Link>
-        <Button 
-          className="w-full bg-transparent border border-white text-white hover:bg-white/10"
-          variant="outline"
-        >
-          Log In
-        </Button>
+        <Link href="/dashboard">
+          <Button 
+            className="w-full bg-transparent border border-white text-white hover:bg-white/10"
+            variant="outline"
+          >
+            Log In
+          </Button>
+        </Link>
       </div>
 
       {/* Features Preview */}

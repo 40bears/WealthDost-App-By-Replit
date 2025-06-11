@@ -50,12 +50,14 @@ const SignUp = () => {
           <Button onClick={handleStartOnboarding} className="w-full bg-white text-primary hover:bg-white/90 font-semibold mb-3">
             Sign Up
           </Button>
-          <Button 
-            className="w-full bg-transparent border border-white text-white hover:bg-white/10"
-            variant="outline"
-          >
-            Log In
-          </Button>
+          <Link href="/dashboard">
+            <Button 
+              className="w-full bg-transparent border border-white text-white hover:bg-white/10"
+              variant="outline"
+            >
+              Log In
+            </Button>
+          </Link>
         </div>
 
         {/* Features Preview */}
