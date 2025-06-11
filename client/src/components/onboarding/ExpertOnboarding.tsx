@@ -25,10 +25,12 @@ export const ExpertOnboarding = ({ onBack }: ExpertOnboardingProps) => {
   
   // State for form data
   const [step, setStep] = useState<number>(1);
+  const [showBioField, setShowBioField] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     username: "",
     profileBio: "",
+    detailedBio: "",
     education: "",
     achievements: [] as string[],
     specializations: [] as string[],
@@ -224,6 +226,45 @@ export const ExpertOnboarding = ({ onBack }: ExpertOnboardingProps) => {
           />
         </div>
 
+        {!showBioField ? (
+          <div className="text-center">
+            <Button 
+              type="button" 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setShowBioField(true)}
+              className="text-gray-600 border-gray-300 hover:bg-gray-50"
+            >
+              + Add Bio
+            </Button>
+            <p className="text-xs text-gray-500 mt-1">Tell us more about yourself (optional)</p>
+          </div>
+        ) : (
+          <div>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="detailedBio">About You</Label>
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setShowBioField(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                Remove
+              </Button>
+            </div>
+            <Textarea 
+              id="detailedBio"
+              name="detailedBio"
+              value={formData.detailedBio}
+              onChange={handleBasicProfileChange}
+              className="mt-1"
+              placeholder="Share your investment philosophy, experience, achievements, or anything that makes you unique as a financial expert..."
+              rows={4}
+            />
+          </div>
+        )}
+
         <div>
           <Label htmlFor="education" className="block text-sm font-medium text-gray-700 mb-1">Educational Background</Label>
           <Select value={formData.education} onValueChange={handleEducationChange}>
@@ -352,8 +393,8 @@ export const ExpertOnboarding = ({ onBack }: ExpertOnboardingProps) => {
             disabled={formData.specializations.length >= 3 && !formData.specializations.includes("stocks")}
           />
           <Label htmlFor="stocks" className="flex-1 cursor-pointer">
-            <span className="font-medium">📈 Stock Market & Equity Research</span>
-            <p className="text-sm text-gray-600">Stock analysis, valuations, and market strategies</p>
+            <span className="font-medium text-gray-800">📈 Stock Market & Equity Research</span>
+            <p className="text-sm text-gray-700">Stock analysis, valuations, and market strategies</p>
           </Label>
         </div>
         
@@ -366,8 +407,8 @@ export const ExpertOnboarding = ({ onBack }: ExpertOnboardingProps) => {
             disabled={formData.specializations.length >= 3 && !formData.specializations.includes("crypto")}
           />
           <Label htmlFor="crypto" className="flex-1 cursor-pointer">
-            <span className="font-medium">🚀 Crypto & Web3</span>
-            <p className="text-sm text-gray-600">Blockchain technology, DeFi, and token economics</p>
+            <span className="font-medium text-gray-800">🚀 Crypto & Web3</span>
+            <p className="text-sm text-gray-700">Blockchain technology, DeFi, and token economics</p>
           </Label>
         </div>
         
@@ -380,8 +421,8 @@ export const ExpertOnboarding = ({ onBack }: ExpertOnboardingProps) => {
             disabled={formData.specializations.length >= 3 && !formData.specializations.includes("privateequity")}
           />
           <Label htmlFor="privateequity" className="flex-1 cursor-pointer">
-            <span className="font-medium">🏦 Private Equity & Venture Capital</span>
-            <p className="text-sm text-gray-600">Startup investing, PE deals, and fundraising</p>
+            <span className="font-medium text-gray-800">🏦 Private Equity & Venture Capital</span>
+            <p className="text-sm text-gray-700">Startup investing, PE deals, and fundraising</p>
           </Label>
         </div>
         
@@ -394,8 +435,8 @@ export const ExpertOnboarding = ({ onBack }: ExpertOnboardingProps) => {
             disabled={formData.specializations.length >= 3 && !formData.specializations.includes("macro")}
           />
           <Label htmlFor="macro" className="flex-1 cursor-pointer">
-            <span className="font-medium">🌍 Macroeconomics & Global Markets</span>
-            <p className="text-sm text-gray-600">Economic analysis, geopolitics, and policy impacts</p>
+            <span className="font-medium text-gray-800">🌍 Macroeconomics & Global Markets</span>
+            <p className="text-sm text-gray-700">Economic analysis, geopolitics, and policy impacts</p>
           </Label>
         </div>
         
@@ -408,8 +449,8 @@ export const ExpertOnboarding = ({ onBack }: ExpertOnboardingProps) => {
             disabled={formData.specializations.length >= 3 && !formData.specializations.includes("wealth")}
           />
           <Label htmlFor="wealth" className="flex-1 cursor-pointer">
-            <span className="font-medium">💰 Wealth Planning & Financial Advisory</span>
-            <p className="text-sm text-gray-600">Comprehensive financial planning and advisory services</p>
+            <span className="font-medium text-gray-800">💰 Wealth Planning & Financial Advisory</span>
+            <p className="text-sm text-gray-700">Comprehensive financial planning and advisory services</p>
           </Label>
         </div>
         
@@ -422,8 +463,8 @@ export const ExpertOnboarding = ({ onBack }: ExpertOnboardingProps) => {
             disabled={formData.specializations.length >= 3 && !formData.specializations.includes("realestate")}
           />
           <Label htmlFor="realestate" className="flex-1 cursor-pointer">
-            <span className="font-medium">🏠 Real Estate & Alternative Investments</span>
-            <p className="text-sm text-gray-600">Property markets, REITs, and non-traditional assets</p>
+            <span className="font-medium text-gray-800">🏠 Real Estate & Alternative Investments</span>
+            <p className="text-sm text-gray-700">Property markets, REITs, and non-traditional assets</p>
           </Label>
         </div>
       </div>

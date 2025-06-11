@@ -24,10 +24,12 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
   
   // State for form data
   const [step, setStep] = useState<number>(1);
+  const [showBioField, setShowBioField] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     username: "",
     profileBio: "",
+    detailedBio: "",
     experienceLevel: "",
     interests: [] as string[],
     riskLevel: "",
