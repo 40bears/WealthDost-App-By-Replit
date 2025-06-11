@@ -83,7 +83,7 @@ const SignUp = () => {
             </div>
           ) : (
             <Button onClick={handleStartOnboarding} className="w-full bg-white text-primary hover:bg-white/90 font-semibold transition-all duration-200 transform hover:scale-[1.02]">
-              Continue as {selectedRole === "investor" ? "Investor" : "Expert"}
+              Continue as {role === "investor" ? "Investor" : "Expert"}
             </Button>
           )}
         </div>
