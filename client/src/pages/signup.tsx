@@ -75,7 +75,7 @@ const SignUp = () => {
             <div className="bg-gray-50 p-3 rounded-lg h-28 flex flex-col justify-center">
               <span className="material-icons text-primary mb-1 text-xl">groups</span>
               <h4 className="font-medium text-sm leading-tight mb-1">Join Tribes</h4>
-              <p className="text-xs text-gray-600">Connect with like-minded investors</p>
+              <p className="text-xs text-gray-600">Unlock your Wealth Circle</p>
             </div>
             <div className="bg-gray-50 p-3 rounded-lg h-28 flex flex-col justify-center">
               <span className="material-icons text-primary mb-1 text-xl">quiz</span>
