@@ -12,7 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ChevronRight, Upload, Link as LinkIcon, User, Settings, HelpCircle, LogOut, FileText, Heart, Activity, Bell, Shield, Globe } from "lucide-react";
+import { ChevronRight, Upload, Link as LinkIcon, User, Settings, HelpCircle, LogOut, FileText, Heart, Activity, Bell, Shield, Globe, BarChart3 } from "lucide-react";
 import { Link } from "wouter";
 import PortfolioHealthScore from "@/components/portfolio/PortfolioHealthScore";
 import {
@@ -1130,6 +1130,10 @@ const Dashboard = () => {
                 <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/profile"}>
                   <User className="mr-2 h-4 w-4" />
                   <span>My Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer" onClick={() => {setActiveTab("home"); setActiveFeature("analytics");}}>
+                  <BarChart3 className="mr-2 h-4 w-4" />
+                  <span>Analytics</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/my-posts"}>
                   <FileText className="mr-2 h-4 w-4" />
