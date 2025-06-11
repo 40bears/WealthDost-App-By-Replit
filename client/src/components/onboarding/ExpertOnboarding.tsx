@@ -170,18 +170,18 @@ export const ExpertOnboarding = ({ onBack }: ExpertOnboardingProps) => {
 
   // Step 1: Basic Profile & Expertise
   const renderBasicProfile = () => (
-    <div className="px-4 py-6 flex flex-col w-full min-h-screen">
-      <div className="flex items-center mb-6">
+    <div className="px-4 py-4 flex flex-col w-full h-screen overflow-auto">
+      <div className="flex items-center mb-4">
         <Button variant="ghost" size="icon" onClick={onBack} className="text-gray-500">
           <span className="material-icons">arrow_back</span>
         </Button>
-        <h2 className="text-lg sm:text-xl font-semibold ml-2">Expert Profile</h2>
+        <h2 className="text-lg font-semibold ml-2">Expert Profile</h2>
       </div>
 
       {/* Progress Bar */}
-      <Progress value={getProgressPercentage()} className="h-1 mb-6" />
+      <Progress value={getProgressPercentage()} className="h-1 mb-4" />
 
-      <form className="space-y-6 mb-6">
+      <form className="space-y-4 flex-1">
         <div>
           <Label htmlFor="fullName">Full Name</Label>
           <Input 
@@ -332,20 +332,20 @@ export const ExpertOnboarding = ({ onBack }: ExpertOnboardingProps) => {
 
   // Step 2: Investment Specialization
   const renderSpecializations = () => (
-    <div className="px-4 py-6 flex flex-col w-full min-h-screen">
-      <div className="flex items-center mb-6">
+    <div className="px-4 py-4 flex flex-col w-full h-screen overflow-auto">
+      <div className="flex items-center mb-4">
         <Button variant="ghost" size="icon" onClick={goToPreviousStep} className="text-gray-500">
           <span className="material-icons">arrow_back</span>
         </Button>
-        <h2 className="text-lg sm:text-xl font-semibold ml-2">Your Specialization</h2>
+        <h2 className="text-lg font-semibold ml-2">Your Specialization</h2>
       </div>
 
       {/* Progress Bar */}
-      <Progress value={getProgressPercentage()} className="h-1 mb-6" />
+      <Progress value={getProgressPercentage()} className="h-1 mb-4" />
 
-      <p className="text-gray-600 mb-6">Select your investment specializations (up to 3):</p>
+      <p className="text-gray-600 mb-4 text-sm">Select your investment specializations (up to 3):</p>
 
-      <div className="space-y-3 mb-6">
+      <div className="space-y-2 mb-4 flex-1">
         <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
           <Checkbox 
             id="stocks" 

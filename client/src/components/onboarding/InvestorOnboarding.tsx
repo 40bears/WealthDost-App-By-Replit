@@ -174,18 +174,18 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
 
   // Step 1: Basic Profile
   const renderBasicProfile = () => (
-    <div className="px-4 py-6 flex flex-col w-full min-h-screen">
-      <div className="flex items-center mb-6">
+    <div className="px-4 py-4 flex flex-col w-full h-screen overflow-auto">
+      <div className="flex items-center mb-4">
         <Button variant="ghost" size="icon" onClick={onBack} className="text-gray-500">
           <span className="material-icons">arrow_back</span>
         </Button>
-        <h2 className="text-lg sm:text-xl font-semibold ml-2">Wealth Enthusiast Profile</h2>
+        <h2 className="text-lg font-semibold ml-2">Wealth Enthusiast Profile</h2>
       </div>
 
       {/* Progress Bar */}
-      <Progress value={getProgressPercentage()} className="h-1 mb-6" />
+      <Progress value={getProgressPercentage()} className="h-1 mb-4" />
 
-      <form className="space-y-6 flex-1">
+      <form className="space-y-4 flex-1">
         <div>
           <Label htmlFor="fullName">Full Name</Label>
           <Input 
@@ -277,20 +277,20 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
 
   // Step 2: Content Preferences
   const renderContentPreferences = () => (
-    <div className="px-4 py-6 flex flex-col w-full min-h-screen">
-      <div className="flex items-center mb-6">
+    <div className="px-4 py-4 flex flex-col w-full h-screen overflow-auto">
+      <div className="flex items-center mb-4">
         <Button variant="ghost" size="icon" onClick={goToPreviousStep} className="text-gray-500">
           <span className="material-icons">arrow_back</span>
         </Button>
-        <h2 className="text-lg sm:text-xl font-semibold ml-2">Content Preferences</h2>
+        <h2 className="text-lg font-semibold ml-2">Content Preferences</h2>
       </div>
 
       {/* Progress Bar */}
-      <Progress value={getProgressPercentage()} className="h-1 mb-6" />
+      <Progress value={getProgressPercentage()} className="h-1 mb-4" />
 
-      <p className="text-gray-600 mb-6">Select topics you're interested in:</p>
+      <p className="text-gray-600 mb-4 text-sm">Select topics you're interested in:</p>
 
-      <div className="space-y-3 mb-6">
+      <div className="space-y-2 mb-4 flex-1">
         <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
           <Checkbox 
             id="stocks" 
@@ -370,16 +370,16 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
 
   // Step 3: Risk Profile
   const renderRiskProfile = () => (
-    <div className="px-4 py-6 flex flex-col w-full min-h-screen">
-      <div className="flex items-center mb-6">
+    <div className="px-4 py-4 flex flex-col w-full h-screen overflow-auto">
+      <div className="flex items-center mb-4">
         <Button variant="ghost" size="icon" onClick={goToPreviousStep} className="text-gray-500">
           <span className="material-icons">arrow_back</span>
         </Button>
-        <h2 className="text-lg sm:text-xl font-semibold ml-2">Risk Profile Assessment</h2>
+        <h2 className="text-lg font-semibold ml-2">Risk Profile Assessment</h2>
       </div>
 
       {/* Progress Bar */}
-      <Progress value={getProgressPercentage()} className="h-1 mb-6" />
+      <Progress value={getProgressPercentage()} className="h-1 mb-4" />
 
       <div className="bg-gray-50 p-4 rounded-xl mb-6">
         <h3 className="font-semibold mb-2">How do you react to market volatility & what's your return target?</h3>
