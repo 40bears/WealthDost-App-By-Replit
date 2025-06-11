@@ -171,12 +171,12 @@ export const ExpertOnboarding = ({ onBack }: ExpertOnboardingProps) => {
 
   // Step 1: Basic Profile & Expertise
   const renderBasicProfile = () => (
-    <div className="px-4 py-6 flex flex-col w-full">
+    <div className="px-4 py-6 flex flex-col w-full min-h-screen">
       <div className="flex items-center mb-6">
         <Button variant="ghost" size="icon" onClick={onBack} className="text-gray-500">
           <span className="material-icons">arrow_back</span>
         </Button>
-        <h2 className="text-xl font-semibold ml-2">Expert Profile</h2>
+        <h2 className="text-lg sm:text-xl font-semibold ml-2">Expert Profile</h2>
       </div>
 
       {/* Progress Bar */}
@@ -370,12 +370,12 @@ export const ExpertOnboarding = ({ onBack }: ExpertOnboardingProps) => {
 
   // Step 2: Investment Specialization
   const renderSpecializations = () => (
-    <div className="px-4 py-6 flex flex-col w-full">
+    <div className="px-4 py-6 flex flex-col w-full min-h-screen">
       <div className="flex items-center mb-6">
         <Button variant="ghost" size="icon" onClick={goToPreviousStep} className="text-gray-500">
           <span className="material-icons">arrow_back</span>
         </Button>
-        <h2 className="text-xl font-semibold ml-2">Your Specialization</h2>
+        <h2 className="text-lg sm:text-xl font-semibold ml-2">Your Specialization</h2>
       </div>
 
       {/* Progress Bar */}

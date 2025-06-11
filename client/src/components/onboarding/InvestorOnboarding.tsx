@@ -408,12 +408,12 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
 
   // Step 3: Risk Profile
   const renderRiskProfile = () => (
-    <div className="px-4 py-6 flex flex-col w-full">
+    <div className="px-4 py-6 flex flex-col w-full min-h-screen">
       <div className="flex items-center mb-6">
         <Button variant="ghost" size="icon" onClick={goToPreviousStep} className="text-gray-500">
           <span className="material-icons">arrow_back</span>
         </Button>
-        <h2 className="text-xl font-semibold ml-2">Risk Profile Assessment</h2>
+        <h2 className="text-lg sm:text-xl font-semibold ml-2">Risk Profile Assessment</h2>
       </div>
 
       {/* Progress Bar */}
@@ -495,12 +495,12 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
     }
     
     return (
-      <div className="px-4 py-6 flex flex-col w-full">
+      <div className="px-4 py-6 flex flex-col w-full min-h-screen">
         <div className="flex items-center mb-6">
           <Button variant="ghost" size="icon" onClick={goToPreviousStep} className="text-gray-500">
             <span className="material-icons">arrow_back</span>
           </Button>
-          <h2 className="text-xl font-semibold ml-2">Your Investor Profile</h2>
+          <h2 className="text-lg sm:text-xl font-semibold ml-2">Your Wealth Enthusiast Profile</h2>
         </div>
 
         {/* Progress Bar */}
