@@ -60,24 +60,24 @@ const SignUp = () => {
           <h3 className="text-lg font-semibold mb-3">What you'll get</h3>
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-gray-50 p-3 rounded-lg">
+              <span className="material-icons text-primary mb-2">connect_without_contact</span>
+              <h4 className="font-medium mb-1">Expert Connect</h4>
+              <p className="text-sm text-gray-600">Get advice from certified experts</p>
+            </div>
+            <div className="bg-gray-50 p-3 rounded-lg">
               <span className="material-icons text-primary mb-2">trending_up</span>
               <h4 className="font-medium mb-1">Market Insights</h4>
               <p className="text-sm text-gray-600">Track stocks, crypto & more</p>
             </div>
             <div className="bg-gray-50 p-3 rounded-lg">
-              <span className="material-icons text-primary mb-2">forum</span>
-              <h4 className="font-medium mb-1">Community Debates</h4>
-              <p className="text-sm text-gray-600">Discuss financial topics</p>
-            </div>
-            <div className="bg-gray-50 p-3 rounded-lg">
-              <span className="material-icons text-primary mb-2">school</span>
-              <h4 className="font-medium mb-1">Financial Quizzes</h4>
-              <p className="text-sm text-gray-600">Test your knowledge</p>
-            </div>
-            <div className="bg-gray-50 p-3 rounded-lg">
               <span className="material-icons text-primary mb-2">groups</span>
               <h4 className="font-medium mb-1">Join Tribes</h4>
               <p className="text-sm text-gray-600">Connect with like-minded investors</p>
+            </div>
+            <div className="bg-gray-50 p-3 rounded-lg">
+              <span className="material-icons text-primary mb-2">quiz</span>
+              <h4 className="font-medium mb-1">Financial Quiz & Community Debates</h4>
+              <p className="text-sm text-gray-600">Test knowledge & discuss topics</p>
             </div>
           </div>
         </div>
