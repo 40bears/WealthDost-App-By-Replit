@@ -665,28 +665,28 @@ export const ExpertOnboarding = ({ onBack }: ExpertOnboardingProps) => {
               <div className="text-sm text-gray-500 mb-1">Specializations</div>
               <div className="flex flex-wrap gap-2">
                 {formData.specializations.includes("stocks") && (
-                  <span className="bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-lg text-sm">📈 Stock Market</span>
+                  <span className="bg-primary text-white px-2 py-1 rounded-lg text-sm">📈 Stock Market</span>
                 )}
                 {formData.specializations.includes("macro") && (
-                  <span className="bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-lg text-sm">🌍 Macroeconomics</span>
+                  <span className="bg-primary text-white px-2 py-1 rounded-lg text-sm">🌍 Macroeconomics</span>
                 )}
                 {formData.specializations.includes("wealth") && (
-                  <span className="bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-lg text-sm">💰 Wealth Planning</span>
+                  <span className="bg-primary text-white px-2 py-1 rounded-lg text-sm">💰 Wealth Planning</span>
                 )}
                 {formData.specializations.includes("crypto") && (
-                  <span className="bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-lg text-sm">🚀 Crypto & Web3</span>
+                  <span className="bg-primary text-white px-2 py-1 rounded-lg text-sm">🚀 Crypto & Web3</span>
                 )}
                 {formData.specializations.includes("privateequity") && (
-                  <span className="bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-lg text-sm">🏦 Private Equity</span>
+                  <span className="bg-primary text-white px-2 py-1 rounded-lg text-sm">🏦 Private Equity</span>
                 )}
                 {formData.specializations.includes("realestate") && (
-                  <span className="bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-lg text-sm">🏠 Real Estate</span>
+                  <span className="bg-primary text-white px-2 py-1 rounded-lg text-sm">🏠 Real Estate</span>
                 )}
                 {formData.specializations.length === 0 && (
                   <>
-                    <span className="bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-lg text-sm">📈 Stock Market</span>
-                    <span className="bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-lg text-sm">🌍 Macroeconomics</span>
-                    <span className="bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-lg text-sm">💰 Wealth Planning</span>
+                    <span className="bg-primary text-white px-2 py-1 rounded-lg text-sm">📈 Stock Market</span>
+                    <span className="bg-primary text-white px-2 py-1 rounded-lg text-sm">🌍 Macroeconomics</span>
+                    <span className="bg-primary text-white px-2 py-1 rounded-lg text-sm">💰 Wealth Planning</span>
                   </>
                 )}
               </div>

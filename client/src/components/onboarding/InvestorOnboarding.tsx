@@ -547,25 +547,25 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
               <div className="text-sm text-gray-500 mb-1">Interests</div>
               <div className="flex flex-wrap gap-2">
                 {formData.interests.includes("stocks") && (
-                  <span className="bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-lg text-sm">📈 Stock Market</span>
+                  <span className="bg-primary text-white px-2 py-1 rounded-lg text-sm">📈 Stock Market</span>
                 )}
                 {formData.interests.includes("crypto") && (
-                  <span className="bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-lg text-sm">🚀 Crypto & Web3</span>
+                  <span className="bg-primary text-white px-2 py-1 rounded-lg text-sm">🚀 Crypto & Web3</span>
                 )}
                 {formData.interests.includes("realestate") && (
-                  <span className="bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-lg text-sm">🏠 Real Estate</span>
+                  <span className="bg-primary text-white px-2 py-1 rounded-lg text-sm">🏠 Real Estate</span>
                 )}
                 {formData.interests.includes("macro") && (
-                  <span className="bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-lg text-sm">🌍 Macroeconomics</span>
+                  <span className="bg-primary text-white px-2 py-1 rounded-lg text-sm">🌍 Macroeconomics</span>
                 )}
                 {formData.interests.includes("personal") && (
-                  <span className="bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-lg text-sm">💰 Personal Finance</span>
+                  <span className="bg-primary text-white px-2 py-1 rounded-lg text-sm">💰 Personal Finance</span>
                 )}
                 {formData.interests.length === 0 && (
                   <>
-                    <span className="bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-lg text-sm">📈 Stock Market</span>
-                    <span className="bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-lg text-sm">🚀 Crypto & Web3</span>
-                    <span className="bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-lg text-sm">💰 Personal Finance</span>
+                    <span className="bg-primary text-white px-2 py-1 rounded-lg text-sm">📈 Stock Market</span>
+                    <span className="bg-primary text-white px-2 py-1 rounded-lg text-sm">🚀 Crypto & Web3</span>
+                    <span className="bg-primary text-white px-2 py-1 rounded-lg text-sm">💰 Personal Finance</span>
                   </>
                 )}
               </div>
