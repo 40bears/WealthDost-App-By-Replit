@@ -186,7 +186,7 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
       {/* Progress Bar */}
       <Progress value={getProgressPercentage()} className="h-1 mb-6" />
 
-      <form className="space-y-6 mb-6">
+      <form className="space-y-6 flex-1">
         <div>
           <Label htmlFor="fullName">Full Name</Label>
           <Input 

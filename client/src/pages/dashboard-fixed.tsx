@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ChevronRight, Upload, Link as LinkIcon, User, Settings, HelpCircle, LogOut, FileText, Heart, Activity, Bell, Shield, Globe } from "lucide-react";
+import { Link } from "wouter";
 import PortfolioHealthScore from "@/components/portfolio/PortfolioHealthScore";
 import {
   DropdownMenu,
@@ -1085,7 +1086,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen max-h-[800px] max-w-md mx-auto relative overflow-hidden">
+    <div className="flex flex-col min-h-screen max-w-md mx-auto relative bg-gray-50">
       {/* Top App Bar - Fixed */}
       <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white z-20">
         <h1 className="text-xl font-bold text-primary">WealthDost</h1>
@@ -1205,12 +1206,12 @@ const Dashboard = () => {
       {/* Quick Nav Tabs (only visible on home tab) - Fixed */}
       {activeTab === "home" && (
         <div className="sticky top-[60px] z-10 bg-white">
-          <FeatureNavigation activeFeature={activeFeature || ""} onFeatureSelect={handleFeatureSelect} />
+          <FeatureNavigation activeFeature={activeFeature as any} onFeatureSelect={handleFeatureSelect} />
         </div>
       )}
 
       {/* Main Content Area - Scrollable */}
-      <div className="flex-grow overflow-auto pb-16">
+      <div className="flex-1 overflow-auto pb-20 min-h-0">
         {/* Dynamic Content Area based on selected tab */}
         {renderTabContent()}
       </div>
