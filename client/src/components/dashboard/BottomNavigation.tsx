@@ -26,13 +26,12 @@ const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => 
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10 safe-bottom">
-      <div className="max-w-md mx-auto flex justify-between px-4 py-2">
+      <div className="max-w-md mx-auto flex justify-around px-4 py-2">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             className={`flex flex-col items-center px-2 py-1 tab-slide btn-pulse ${
-              activeTab === tab.id ? "text-primary active" : 
-              tab.id === "create" ? "text-purple-600" : "text-gray-500"
+              activeTab === tab.id ? "text-primary active" : "text-gray-500"
             }`}
             onClick={() => handleTabClick(tab)}
           >
@@ -40,7 +39,7 @@ const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => 
               activeTab === tab.id ? "scale-110" : "scale-100"
             }`}>{tab.icon}</span>
             <span className={`text-xs mt-0.5 transition-all duration-300 ${
-              activeTab === tab.id || tab.id === "create" ? "font-medium" : ""
+              activeTab === tab.id ? "font-medium" : ""
             }`}>{tab.label}</span>
           </button>
         ))}

@@ -19,13 +19,13 @@ const FeatureNavigation = ({ activeFeature, onFeatureSelect }: FeatureNavigation
   ];
 
   return (
-    <div className="w-full px-4 py-3 overflow-x-auto">
-      <div className="flex space-x-4 w-max mx-auto">
+    <div className="w-full px-4 py-3">
+      <div className="flex justify-between items-center max-w-sm mx-auto">
         {features.map((feature) => (
           <Button
             key={feature.id}
             variant="ghost"
-            className="flex flex-col items-center px-0 py-2 h-auto space-y-1 w-[60px] click-bounce feature-btn"
+            className="flex flex-col items-center px-2 py-2 h-auto space-y-1 flex-1 click-bounce feature-btn"
             onClick={() => onFeatureSelect(feature.id)}
           >
             <div
