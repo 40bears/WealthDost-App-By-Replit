@@ -24,7 +24,6 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
   
   // State for form data
   const [step, setStep] = useState<number>(1);
-  const [showBioField, setShowBioField] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     username: "",
@@ -231,44 +230,7 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
           <p className="text-xs text-gray-500 mt-1">Optional: Add a finance-related tagline</p>
         </div>
 
-        {!showBioField ? (
-          <div className="text-center">
-            <Button 
-              type="button" 
-              variant="outline" 
-              size="sm" 
-              onClick={() => setShowBioField(true)}
-              className="text-gray-600 border-gray-300 hover:bg-gray-50"
-            >
-              + Add Bio
-            </Button>
-            <p className="text-xs text-gray-500 mt-1">Tell us more about yourself (optional)</p>
-          </div>
-        ) : (
-          <div>
-            <div className="flex items-center justify-between">
-              <Label htmlFor="detailedBio">About You</Label>
-              <Button 
-                type="button" 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => setShowBioField(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                Remove
-              </Button>
-            </div>
-            <Textarea 
-              id="detailedBio"
-              name="detailedBio"
-              value={formData.detailedBio}
-              onChange={handleBasicProfileChange}
-              className="mt-1"
-              placeholder="Share your investment goals, experience, or what you're passionate about in finance..."
-              rows={4}
-            />
-          </div>
-        )}
+
 
         <div>
           <Label className="block text-sm font-medium text-gray-700 mb-3">Investment Experience Level</Label>
