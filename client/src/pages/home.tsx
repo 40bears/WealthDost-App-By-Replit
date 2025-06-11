@@ -21,9 +21,7 @@ const Home = () => {
 
       {/* Landing Hero Section */}
       <div className="bg-primary rounded-xl p-6 text-white mx-4 mb-6">
-        <h1 className="text-3xl font-bold mb-2">WealthDost</h1>
-        <p className="mb-4">Your community-powered financial companion</p>
-        <h2 className="text-xl font-semibold mb-2">Welcome to Financial Wisdom</h2>
+        <h1 className="text-3xl font-bold mb-4">WealthDost</h1>
         <p className="mb-6">Join a community of investors and experts to learn, debate, and grow your financial knowledge.</p>
         <Link href="/signup">
           <Button className="w-full bg-white text-primary hover:bg-white/90 font-semibold mb-3">
