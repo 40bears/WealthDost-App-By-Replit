@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 
 const Home = () => {
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       {/* Top Navigation Bar */}
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center">

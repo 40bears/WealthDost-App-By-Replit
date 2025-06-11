@@ -25,7 +25,7 @@ const SignUp = () => {
   // Render welcome screen
   if (showWelcome) {
     return (
-      <div className="px-4 py-6 flex flex-col h-full">
+      <div className="px-4 py-6 flex flex-col min-h-screen">
         {/* Top Navigation Bar */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center">
@@ -41,8 +41,8 @@ const SignUp = () => {
         </div>
 
         {/* Role Selection Section */}
-        <div className="bg-primary rounded-xl p-6 text-white mb-6">
-          <div className="text-center mb-6">
+        <div className="bg-primary rounded-xl p-6 text-white mb-6 flex-1 flex flex-col justify-center">
+          <div className="text-center mb-8">
             <h1 className="text-3xl font-bold mb-2">Choose Your Role</h1>
             <p className="text-white/80">Select how you want to engage with the WealthDost community</p>
           </div>
@@ -105,7 +105,7 @@ const SignUp = () => {
   }
 
   return (
-    <div className="h-full">
+    <div className="min-h-screen bg-gray-50">
       {/* Render role selection if no role selected */}
       {!role && <RoleSelection onSelect={handleRoleSelect} />}
       
