@@ -20,10 +20,12 @@ const Home = () => {
       </div>
 
       {/* Landing Hero Section */}
-      <div className="bg-primary rounded-xl p-6 text-white mx-4 mb-6 text-center">
-        <h1 className="text-3xl font-bold mb-1">WealthDost</h1>
-        <p className="text-sm text-white/80 mb-5">Scroll · Learn · Connect</p>
-        <p className="mb-6 text-left">Join a community of investors and experts to learn, debate, and grow your financial knowledge.</p>
+      <div className="bg-primary rounded-xl p-6 text-white mx-4 mb-6">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold mb-1">WealthDost</h1>
+          <p className="text-sm text-white/80 mb-5">Scroll · Learn · Connect</p>
+        </div>
+        <p className="mb-6">Join a community of investors and experts to learn, debate, and grow your financial knowledge.</p>
         <Link href="/signup">
           <Button className="w-full bg-white text-primary hover:bg-white/90 font-semibold mb-3">
             Sign Up
