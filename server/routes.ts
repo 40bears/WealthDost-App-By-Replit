@@ -30,7 +30,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.get('/api/users/:id', async (req, res) => {
     try {
-      const userId = parseInt(req.params.id);
+      const userId = req.params.id;
       const user = await storage.getUser(userId);
       
       if (!user) {
@@ -46,20 +46,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Investor profile routes
   app.post('/api/investor-profile', async (req, res) => {
     try {
-      const profileData = insertInvestorProfileSchema.parse(req.body);
-      const user = await storage.getUser(profileData.userId);
+      const { userId, ...profileData } = req.body;
+      const validatedProfile = insertInvestorProfileSchema.parse(profileData);
       
+      const user = await storage.getUser(userId);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
       
       // Check if profile already exists
-      const existingProfile = await storage.getInvestorProfile(profileData.userId);
+      const existingProfile = await storage.getInvestorProfile(userId);
       if (existingProfile) {
         return res.status(409).json({ message: 'Investor profile already exists for this user' });
       }
       
-      const profile = await storage.createInvestorProfile(profileData);
+      const profile = await storage.createInvestorProfile(userId, validatedProfile);
       res.status(201).json(profile);
     } catch (error) {
       res.status(400).json({ message: 'Invalid profile data', error });
@@ -68,7 +69,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.get('/api/investor-profile/:userId', async (req, res) => {
     try {
-      const userId = parseInt(req.params.userId);
+      const userId = req.params.userId;
       const profile = await storage.getInvestorProfile(userId);
       
       if (!profile) {
@@ -83,7 +84,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.patch('/api/investor-profile/:userId', async (req, res) => {
     try {
-      const userId = parseInt(req.params.userId);
+      const userId = req.params.userId;
       const profileData = req.body;
       
       const updatedProfile = await storage.updateInvestorProfile(userId, profileData);
@@ -101,20 +102,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Expert profile routes
   app.post('/api/expert-profile', async (req, res) => {
     try {
-      const profileData = insertExpertProfileSchema.parse(req.body);
-      const user = await storage.getUser(profileData.userId);
+      const { userId, ...profileData } = req.body;
+      const validatedProfile = insertExpertProfileSchema.parse(profileData);
       
+      const user = await storage.getUser(userId);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
       
       // Check if profile already exists
-      const existingProfile = await storage.getExpertProfile(profileData.userId);
+      const existingProfile = await storage.getExpertProfile(userId);
       if (existingProfile) {
         return res.status(409).json({ message: 'Expert profile already exists for this user' });
       }
       
-      const profile = await storage.createExpertProfile(profileData);
+      const profile = await storage.createExpertProfile(userId, validatedProfile);
       res.status(201).json(profile);
     } catch (error) {
       res.status(400).json({ message: 'Invalid profile data', error });
@@ -123,7 +125,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.get('/api/expert-profile/:userId', async (req, res) => {
     try {
-      const userId = parseInt(req.params.userId);
+      const userId = req.params.userId;
       const profile = await storage.getExpertProfile(userId);
       
       if (!profile) {
@@ -138,7 +140,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.patch('/api/expert-profile/:userId', async (req, res) => {
     try {
-      const userId = parseInt(req.params.userId);
+      const userId = req.params.userId;
       const profileData = req.body;
       
       const updatedProfile = await storage.updateExpertProfile(userId, profileData);
@@ -165,7 +167,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.get('/api/posts/:id', async (req, res) => {
     try {
-      const postId = parseInt(req.params.id);
+      const postId = req.params.id;
       const post = await storage.getPostById(postId);
       
       if (!post) {
@@ -180,7 +182,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.get('/api/posts/user/:userId', async (req, res) => {
     try {
-      const userId = parseInt(req.params.userId);
+      const userId = req.params.userId;
       const posts = await storage.getPostsByUserId(userId);
       res.json(posts);
     } catch (error) {

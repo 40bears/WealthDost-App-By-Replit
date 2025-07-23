@@ -1,362 +1,335 @@
-import { pgTable, text, serial, integer, boolean, timestamp, varchar, json, decimal } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
+import mongoose, { Schema, Document, Types } from "mongoose";
 import { z } from "zod";
 
-// User profile table
-export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
-  fullName: text("full_name"),
-  profileBio: text("profile_bio"),
-  profileImageUrl: text("profile_image_url"),
-  userType: text("user_type").notNull(), // 'investor' or 'expert'
-  experienceLevel: text("experience_level"), // 'beginner', 'intermediate', 'advanced'
-  createdAt: timestamp("created_at").defaultNow(),
+// Base interfaces for TypeScript types
+export interface BaseUser {
+  username: string;
+  password: string;
+  fullName?: string;
+  profileBio?: string;
+  profileImageUrl?: string;
+  userType: 'investor' | 'expert';
+  experienceLevel?: 'beginner' | 'intermediate' | 'advanced';
+  createdAt: Date;
+}
+
+export interface InvestorData {
+  interests?: string[];
+  riskPersona?: 'owl' | 'fox' | 'shark';
+  riskLevel?: 'low' | 'moderate' | 'high';
+  returnTarget?: '5-8%' | '10-15%' | '20%+';
+}
+
+export interface ExpertData {
+  education?: string;
+  achievements?: string[];
+  specializations?: string[];
+  expertPersona?: 'owl' | 'fox' | 'shark';
+  isVerified: boolean;
+}
+
+// User document interface with embedded profile data
+export interface User extends BaseUser, Document {
+  _id: Types.ObjectId;
+  investorProfile?: InvestorData;
+  expertProfile?: ExpertData;
+}
+
+// Post interface
+export interface Post extends Document {
+  _id: Types.ObjectId;
+  userId: Types.ObjectId;
+  content: string;
+  postType: string;
+  tags?: string[];
+  createdAt: Date;
+  likes: number;
+  comments: number;
+}
+
+// Market data interface
+export interface MarketData extends Document {
+  _id: Types.ObjectId;
+  symbol: string;
+  name: string;
+  price: string;
+  change: string;
+  changePercent: string;
+  updatedAt: Date;
+}
+
+// Investment rooms interface
+export interface InvestmentRoom extends Document {
+  _id: Types.ObjectId;
+  name: string;
+  description?: string;
+  creatorId: Types.ObjectId;
+  isPremium: boolean;
+  premiumPrice?: number;
+  isSponsored: boolean;
+  sponsorName?: string;
+  sponsorLogo?: string;
+  category: string;
+  memberCount: number;
+  createdAt: Date;
+}
+
+// Watchlist assets interface
+export interface WatchlistAsset extends Document {
+  _id: Types.ObjectId;
+  userId: Types.ObjectId;
+  symbol: string;
+  name: string;
+  price: number;
+  change: number;
+  changePercent: number;
+  addedAt: Date;
+}
+
+// Price alerts interface
+export interface PriceAlert extends Document {
+  _id: Types.ObjectId;
+  userId: Types.ObjectId;
+  symbol: string;
+  targetPrice: number;
+  alertType: 'above' | 'below';
+  isActive: boolean;
+  createdAt: Date;
+}
+
+// Watchlist themes interface
+export interface WatchlistTheme extends Document {
+  _id: Types.ObjectId;
+  name: string;
+  description: string;
+  assets: string[];
+  isPublic: boolean;
+  createdBy: Types.ObjectId;
+  createdAt: Date;
+}
+
+// Asset sentiment interface
+export interface AssetSentiment extends Document {
+  _id: Types.ObjectId;
+  symbol: string;
+  sentiment: 'bullish' | 'bearish' | 'neutral';
+  confidence: number;
+  updatedAt: Date;
+}
+
+// Tribe asset tracking interface
+export interface TribeAssetTracking extends Document {
+  _id: Types.ObjectId;
+  tribeId: Types.ObjectId;
+  symbol: string;
+  trackingStarted: Date;
+  isActive: boolean;
+}
+
+// Mongoose Schemas
+const userSchema = new Schema<User>({
+  username: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  fullName: { type: String },
+  profileBio: { type: String },
+  profileImageUrl: { type: String },
+  userType: { type: String, required: true, enum: ['investor', 'expert'] },
+  experienceLevel: { type: String, enum: ['beginner', 'intermediate', 'advanced'] },
+  
+  // Embedded investor profile data
+  investorProfile: {
+    interests: [{ type: String }],
+    riskPersona: { type: String, enum: ['owl', 'fox', 'shark'] },
+    riskLevel: { type: String, enum: ['low', 'moderate', 'high'] },
+    returnTarget: { type: String, enum: ['5-8%', '10-15%', '20%+'] }
+  },
+  
+  // Embedded expert profile data
+  expertProfile: {
+    education: { type: String },
+    achievements: [{ type: String }],
+    specializations: [{ type: String }],
+    expertPersona: { type: String, enum: ['owl', 'fox', 'shark'] },
+    isVerified: { type: Boolean, default: false }
+  },
+  
+  createdAt: { type: Date, default: Date.now }
 });
 
-// Investor profile table
-export const investorProfiles = pgTable("investor_profiles", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
-  interests: text("interests").array(), // Array of financial interests
-  riskPersona: text("risk_persona"), // 'owl', 'fox', 'shark'
-  riskLevel: text("risk_level"), // 'low', 'moderate', 'high'
-  returnTarget: text("return_target"), // '5-8%', '10-15%', '20%+'
+const postSchema = new Schema<Post>({
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  content: { type: String, required: true },
+  postType: { type: String, default: 'discussion' },
+  tags: [{ type: String }],
+  likes: { type: Number, default: 0 },
+  comments: { type: Number, default: 0 },
+  createdAt: { type: Date, default: Date.now }
 });
 
-// Expert profile table
-export const expertProfiles = pgTable("expert_profiles", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
-  education: text("education"), // Educational background
-  achievements: text("achievements").array(), // Array of achievements
-  specializations: text("specializations").array(), // Array of specializations
-  expertPersona: text("expert_persona"), // 'owl', 'fox', 'shark'
-  isVerified: boolean("is_verified").default(false), // Expert verification status
+const marketDataSchema = new Schema<MarketData>({
+  symbol: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  price: { type: String, required: true },
+  change: { type: String, required: true },
+  changePercent: { type: String, required: true },
+  updatedAt: { type: Date, default: Date.now }
 });
 
-// Financial feed posts
-export const posts = pgTable("posts", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
-  content: text("content").notNull(),
-  postType: varchar("post_type", { length: 50 }).default("discussion"),
-  tags: text("tags").array(),
-  createdAt: timestamp("created_at").defaultNow(),
-  likes: integer("likes").default(0),
-  comments: integer("comments").default(0),
+const investmentRoomSchema = new Schema<InvestmentRoom>({
+  name: { type: String, required: true },
+  description: { type: String },
+  creatorId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  isPremium: { type: Boolean, default: false },
+  premiumPrice: { type: Number },
+  isSponsored: { type: Boolean, default: false },
+  sponsorName: { type: String },
+  sponsorLogo: { type: String },
+  category: { type: String, required: true },
+  memberCount: { type: Number, default: 0 },
+  createdAt: { type: Date, default: Date.now }
 });
 
-// Market data
-export const marketData = pgTable("market_data", {
-  id: serial("id").primaryKey(),
-  symbol: text("symbol").notNull(),
-  name: text("name").notNull(),
-  price: text("price").notNull(),
-  change: text("change").notNull(),
-  changePercent: text("change_percent").notNull(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+const watchlistAssetSchema = new Schema<WatchlistAsset>({
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  symbol: { type: String, required: true },
+  name: { type: String, required: true },
+  price: { type: Number, required: true },
+  change: { type: Number, required: true },
+  changePercent: { type: Number, required: true },
+  addedAt: { type: Date, default: Date.now }
 });
 
-// Investment Rooms
-export const investmentRooms = pgTable("investment_rooms", {
-  id: serial("id").primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
-  description: text("description"),
-  creatorId: integer("creator_id").notNull().references(() => users.id),
-  isPremium: boolean("is_premium").default(false),
-  premiumPrice: decimal("premium_price", { precision: 10, scale: 2 }),
-  isSponsored: boolean("is_sponsored").default(false),
-  sponsorName: varchar("sponsor_name", { length: 255 }),
-  sponsorLogo: varchar("sponsor_logo", { length: 500 }),
-  category: varchar("category", { length: 100 }).notNull(),
-  memberCount: integer("member_count").default(0),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+const priceAlertSchema = new Schema<PriceAlert>({
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  symbol: { type: String, required: true },
+  targetPrice: { type: Number, required: true },
+  alertType: { type: String, required: true, enum: ['above', 'below'] },
+  isActive: { type: Boolean, default: true },
+  createdAt: { type: Date, default: Date.now }
 });
 
-// Room Subscriptions
-export const roomSubscriptions = pgTable("room_subscriptions", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
-  roomId: integer("room_id").notNull().references(() => investmentRooms.id),
-  status: varchar("status", { length: 50 }).notNull(),
-  startDate: timestamp("start_date").notNull(),
-  endDate: timestamp("end_date").notNull(),
-  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
-  stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }),
-  createdAt: timestamp("created_at").defaultNow(),
+const watchlistThemeSchema = new Schema<WatchlistTheme>({
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  assets: [{ type: String }],
+  isPublic: { type: Boolean, default: false },
+  createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  createdAt: { type: Date, default: Date.now }
 });
 
-// Room Memberships
-export const roomMemberships = pgTable("room_memberships", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
-  roomId: integer("room_id").notNull().references(() => investmentRooms.id),
-  role: varchar("role", { length: 50 }).default("member"),
-  joinedAt: timestamp("joined_at").defaultNow(),
-  xpEarned: integer("xp_earned").default(0),
+const assetSentimentSchema = new Schema<AssetSentiment>({
+  symbol: { type: String, required: true, unique: true },
+  sentiment: { type: String, required: true, enum: ['bullish', 'bearish', 'neutral'] },
+  confidence: { type: Number, required: true, min: 0, max: 1 },
+  updatedAt: { type: Date, default: Date.now }
 });
 
-// User Wallet
-export const userWallet = pgTable("user_wallet", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
-  wealthCoins: integer("wealth_coins").default(0),
-  totalEarnings: decimal("total_earnings", { precision: 10, scale: 2 }).default("0"),
-  pendingWithdrawal: decimal("pending_withdrawal", { precision: 10, scale: 2 }).default("0"),
-  updatedAt: timestamp("updated_at").defaultNow(),
+const tribeAssetTrackingSchema = new Schema<TribeAssetTracking>({
+  tribeId: { type: Schema.Types.ObjectId, required: true },
+  symbol: { type: String, required: true },
+  trackingStarted: { type: Date, default: Date.now },
+  isActive: { type: Boolean, default: true }
 });
 
-// Transactions
-export const transactions = pgTable("transactions", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
-  type: varchar("type", { length: 50 }).notNull(),
-  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
-  description: text("description"),
-  roomId: integer("room_id").references(() => investmentRooms.id),
-  status: varchar("status", { length: 50 }).default("completed"),
-  stripePaymentId: varchar("stripe_payment_id", { length: 255 }),
-  createdAt: timestamp("created_at").defaultNow(),
+// Export Mongoose models
+export const UserModel = mongoose.model<User>('User', userSchema);
+export const PostModel = mongoose.model<Post>('Post', postSchema);
+export const MarketDataModel = mongoose.model<MarketData>('MarketData', marketDataSchema);
+export const InvestmentRoomModel = mongoose.model<InvestmentRoom>('InvestmentRoom', investmentRoomSchema);
+export const WatchlistAssetModel = mongoose.model<WatchlistAsset>('WatchlistAsset', watchlistAssetSchema);
+export const PriceAlertModel = mongoose.model<PriceAlert>('PriceAlert', priceAlertSchema);
+export const WatchlistThemeModel = mongoose.model<WatchlistTheme>('WatchlistTheme', watchlistThemeSchema);
+export const AssetSentimentModel = mongoose.model<AssetSentiment>('AssetSentiment', assetSentimentSchema);
+export const TribeAssetTrackingModel = mongoose.model<TribeAssetTracking>('TribeAssetTracking', tribeAssetTrackingSchema);
+
+// Zod validation schemas for API requests
+export const insertUserSchema = z.object({
+  username: z.string().min(1),
+  password: z.string().min(6),
+  fullName: z.string().optional(),
+  profileBio: z.string().optional(),
+  profileImageUrl: z.string().optional(),
+  userType: z.enum(['investor', 'expert']),
+  experienceLevel: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
 });
 
-// Room Analytics
-export const roomAnalytics = pgTable("room_analytics", {
-  id: serial("id").primaryKey(),
-  roomId: integer("room_id").notNull().references(() => investmentRooms.id),
-  date: timestamp("date").notNull(),
-  activeMembers: integer("active_members").default(0),
-  newSubscriptions: integer("new_subscriptions").default(0),
-  revenue: decimal("revenue", { precision: 10, scale: 2 }).default("0"),
-  engagement: integer("engagement").default(0),
+export const insertInvestorProfileSchema = z.object({
+  interests: z.array(z.string()).optional(),
+  riskPersona: z.enum(['owl', 'fox', 'shark']).optional(),
+  riskLevel: z.enum(['low', 'moderate', 'high']).optional(),
+  returnTarget: z.enum(['5-8%', '10-15%', '20%+']).optional(),
 });
 
-// User Badges
-export const userBadges = pgTable("user_badges", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
-  badgeType: varchar("badge_type", { length: 100 }).notNull(),
-  badgeName: varchar("badge_name", { length: 255 }).notNull(),
-  earnedAt: timestamp("earned_at").defaultNow(),
-  roomId: integer("room_id").references(() => investmentRooms.id),
+export const insertExpertProfileSchema = z.object({
+  education: z.string().optional(),
+  achievements: z.array(z.string()).optional(),
+  specializations: z.array(z.string()).optional(),
+  expertPersona: z.enum(['owl', 'fox', 'shark']).optional(),
+  isVerified: z.boolean().default(false),
 });
 
-// Watchlist Assets
-export const watchlistAssets = pgTable("watchlist_assets", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
-  symbol: varchar("symbol", { length: 50 }).notNull(),
-  name: varchar("name", { length: 255 }).notNull(),
-  assetType: varchar("asset_type", { length: 50 }).notNull(), // stock, mutual_fund, etf, crypto
-  exchange: varchar("exchange", { length: 50 }).notNull(), // NSE, BSE, NYSE, NASDAQ, CRYPTO
-  currentPrice: decimal("current_price", { precision: 15, scale: 4 }),
-  priceChange: decimal("price_change", { precision: 15, scale: 4 }),
-  priceChangePercent: decimal("price_change_percent", { precision: 10, scale: 4 }),
-  theme: varchar("theme", { length: 100 }),
-  tags: text("tags").array(),
-  addedAt: timestamp("added_at").defaultNow(),
-  lastUpdated: timestamp("last_updated").defaultNow(),
+export const insertPostSchema = z.object({
+  userId: z.string(),
+  content: z.string().min(1),
+  postType: z.string().default('discussion'),
+  tags: z.array(z.string()).optional(),
 });
 
-// Price Alerts
-export const priceAlerts = pgTable("price_alerts", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
-  assetId: integer("asset_id").notNull().references(() => watchlistAssets.id),
-  alertType: varchar("alert_type", { length: 50 }).notNull(), // price_above, price_below, volume_spike, news_keyword
-  targetValue: decimal("target_value", { precision: 15, scale: 4 }),
-  keyword: varchar("keyword", { length: 255 }),
-  isActive: boolean("is_active").default(true),
-  notificationMethod: varchar("notification_method", { length: 50 }).default("in_app"), // in_app, push, email
-  createdAt: timestamp("created_at").defaultNow(),
-  triggeredAt: timestamp("triggered_at"),
+export const insertMarketDataSchema = z.object({
+  symbol: z.string().min(1),
+  name: z.string().min(1),
+  price: z.string().min(1),
+  change: z.string().min(1),
+  changePercent: z.string().min(1),
 });
 
-// Watchlist Themes
-export const watchlistThemes = pgTable("watchlist_themes", {
-  id: serial("id").primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
-  description: text("description"),
-  createdBy: integer("created_by").references(() => users.id),
-  isPublic: boolean("is_public").default(false),
-  followerCount: integer("follower_count").default(0),
-  assetCount: integer("asset_count").default(0),
-  createdAt: timestamp("created_at").defaultNow(),
+export const insertWatchlistAssetSchema = z.object({
+  userId: z.string(),
+  symbol: z.string().min(1),
+  name: z.string().min(1),
+  price: z.number(),
+  change: z.number(),
+  changePercent: z.number(),
 });
 
-// Theme Followers
-export const themeFollowers = pgTable("theme_followers", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
-  themeId: integer("theme_id").notNull().references(() => watchlistThemes.id),
-  followedAt: timestamp("followed_at").defaultNow(),
+export const insertPriceAlertSchema = z.object({
+  userId: z.string(),
+  symbol: z.string().min(1),
+  targetPrice: z.number(),
+  alertType: z.enum(['above', 'below']),
 });
 
-// Asset Sentiment
-export const assetSentiment = pgTable("asset_sentiment", {
-  id: serial("id").primaryKey(),
-  symbol: varchar("symbol", { length: 50 }).notNull(),
-  sentimentScore: decimal("sentiment_score", { precision: 5, scale: 2 }), // -1 to 1
-  sentimentLabel: varchar("sentiment_label", { length: 20 }), // positive, neutral, negative
-  summary: text("summary"),
-  source: varchar("source", { length: 100 }), // twitter, news, reddit
-  updatedAt: timestamp("updated_at").defaultNow(),
+export const insertWatchlistThemeSchema = z.object({
+  name: z.string().min(1),
+  description: z.string().min(1),
+  assets: z.array(z.string()),
+  isPublic: z.boolean().default(false),
+  createdBy: z.string(),
 });
 
-// Tribe Asset Tracking
-export const tribeAssetTracking = pgTable("tribe_asset_tracking", {
-  id: serial("id").primaryKey(),
-  roomId: integer("room_id").notNull().references(() => investmentRooms.id),
-  symbol: varchar("symbol", { length: 50 }).notNull(),
-  watcherCount: integer("watcher_count").default(0),
-  trendingScore: decimal("trending_score", { precision: 10, scale: 2 }).default("0"),
-  lastUpdated: timestamp("last_updated").defaultNow(),
+export const insertAssetSentimentSchema = z.object({
+  symbol: z.string().min(1),
+  sentiment: z.enum(['bullish', 'bearish', 'neutral']),
+  confidence: z.number().min(0).max(1),
 });
 
-// Schemas for data insertion/validation
-export const insertUserSchema = createInsertSchema(users).omit({
-  id: true,
-  createdAt: true,
+export const insertTribeAssetTrackingSchema = z.object({
+  tribeId: z.string(),
+  symbol: z.string().min(1),
 });
 
-export const insertInvestorProfileSchema = createInsertSchema(investorProfiles).omit({
-  id: true,
-});
-
-export const insertExpertProfileSchema = createInsertSchema(expertProfiles).omit({
-  id: true,
-});
-
-export const insertPostSchema = createInsertSchema(posts).omit({
-  id: true,
-  createdAt: true,
-  likes: true,
-  comments: true,
-});
-
-export const insertMarketDataSchema = createInsertSchema(marketData).omit({
-  id: true,
-  updatedAt: true,
-});
-
-// Investment Rooms schemas
-export const insertInvestmentRoomSchema = createInsertSchema(investmentRooms).omit({
-  id: true,
-  memberCount: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
-export const insertRoomSubscriptionSchema = createInsertSchema(roomSubscriptions).omit({
-  id: true,
-  createdAt: true,
-});
-
-export const insertRoomMembershipSchema = createInsertSchema(roomMemberships).omit({
-  id: true,
-  joinedAt: true,
-  xpEarned: true,
-});
-
-export const insertUserWalletSchema = createInsertSchema(userWallet).omit({
-  id: true,
-  updatedAt: true,
-});
-
-export const insertTransactionSchema = createInsertSchema(transactions).omit({
-  id: true,
-  createdAt: true,
-});
-
-export const insertUserBadgeSchema = createInsertSchema(userBadges).omit({
-  id: true,
-  earnedAt: true,
-});
-
-export const insertWatchlistAssetSchema = createInsertSchema(watchlistAssets).omit({
-  id: true,
-  addedAt: true,
-  lastUpdated: true,
-});
-
-export const insertPriceAlertSchema = createInsertSchema(priceAlerts).omit({
-  id: true,
-  createdAt: true,
-  triggeredAt: true,
-});
-
-export const insertWatchlistThemeSchema = createInsertSchema(watchlistThemes).omit({
-  id: true,
-  createdAt: true,
-});
-
-export const insertThemeFollowerSchema = createInsertSchema(themeFollowers).omit({
-  id: true,
-  followedAt: true,
-});
-
-export const insertAssetSentimentSchema = createInsertSchema(assetSentiment).omit({
-  id: true,
-  updatedAt: true,
-});
-
-export const insertTribeAssetTrackingSchema = createInsertSchema(tribeAssetTracking).omit({
-  id: true,
-  lastUpdated: true,
-});
-
-// Types for data insertion/selection
+// Type exports for use in other files
 export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = typeof users.$inferSelect;
-
 export type InsertInvestorProfile = z.infer<typeof insertInvestorProfileSchema>;
-export type InvestorProfile = typeof investorProfiles.$inferSelect;
-
 export type InsertExpertProfile = z.infer<typeof insertExpertProfileSchema>;
-export type ExpertProfile = typeof expertProfiles.$inferSelect;
-
 export type InsertPost = z.infer<typeof insertPostSchema>;
-export type Post = typeof posts.$inferSelect;
-
 export type InsertMarketData = z.infer<typeof insertMarketDataSchema>;
-export type MarketData = typeof marketData.$inferSelect;
-
-// Investment Rooms types
-export type InsertInvestmentRoom = z.infer<typeof insertInvestmentRoomSchema>;
-export type InvestmentRoom = typeof investmentRooms.$inferSelect;
-
-export type InsertRoomSubscription = z.infer<typeof insertRoomSubscriptionSchema>;
-export type RoomSubscription = typeof roomSubscriptions.$inferSelect;
-
-export type InsertRoomMembership = z.infer<typeof insertRoomMembershipSchema>;
-export type RoomMembership = typeof roomMemberships.$inferSelect;
-
-export type InsertUserWallet = z.infer<typeof insertUserWalletSchema>;
-export type UserWallet = typeof userWallet.$inferSelect;
-
-export type InsertTransaction = z.infer<typeof insertTransactionSchema>;
-export type Transaction = typeof transactions.$inferSelect;
-
-export type InsertUserBadge = z.infer<typeof insertUserBadgeSchema>;
-export type UserBadge = typeof userBadges.$inferSelect;
-
-// Watchlist types
 export type InsertWatchlistAsset = z.infer<typeof insertWatchlistAssetSchema>;
-export type WatchlistAsset = typeof watchlistAssets.$inferSelect;
-
 export type InsertPriceAlert = z.infer<typeof insertPriceAlertSchema>;
-export type PriceAlert = typeof priceAlerts.$inferSelect;
-
 export type InsertWatchlistTheme = z.infer<typeof insertWatchlistThemeSchema>;
-export type WatchlistTheme = typeof watchlistThemes.$inferSelect;
-
-export type InsertThemeFollower = z.infer<typeof insertThemeFollowerSchema>;
-export type ThemeFollower = typeof themeFollowers.$inferSelect;
-
 export type InsertAssetSentiment = z.infer<typeof insertAssetSentimentSchema>;
-export type AssetSentiment = typeof assetSentiment.$inferSelect;
-
 export type InsertTribeAssetTracking = z.infer<typeof insertTribeAssetTrackingSchema>;
-export type TribeAssetTracking = typeof tribeAssetTracking.$inferSelect;
+
+// Legacy type compatibility for existing code
+export type InvestorProfile = InvestorData & { _id?: Types.ObjectId; userId?: Types.ObjectId };
+export type ExpertProfile = ExpertData & { _id?: Types.ObjectId; userId?: Types.ObjectId };

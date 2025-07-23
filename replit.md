@@ -29,10 +29,13 @@ Preferred communication style: Simple, everyday language.
 
 ### Database
 
-- **ORM**: Drizzle ORM for database interactions
-- **Schema Management**: Using Drizzle Kit for database schema migrations
-- **Database**: Designed to work with PostgreSQL (Neon DB)
-- **Validation**: Zod integration with Drizzle for schema validation
+- **Database**: MongoDB with Mongoose ODM (migrated from PostgreSQL/Drizzle)
+- **Storage Architecture**: 
+  - Primary: MongoDB with Mongoose models and schemas
+  - Fallback: In-memory storage for development when MongoDB is unavailable
+- **Schema Management**: Mongoose schemas with embedded documents for user profiles
+- **Validation**: Zod schemas for API request validation
+- **Data Structure**: Document-based with embedded profile data instead of separate tables
 
 ## Key Components
 
@@ -114,26 +117,35 @@ Preferred communication style: Simple, everyday language.
 
 ## Database Schema
 
-The application uses a relational schema with the following key tables:
+The application uses a MongoDB document-based schema with the following key collections:
 
-1. **users** - Core user information
+1. **users** - Core user documents with embedded profiles
    - Authentication data
    - Profile information
    - User type (investor or expert)
+   - Embedded `investorProfile` subdocument for investor-specific data
+   - Embedded `expertProfile` subdocument for expert-specific data
 
-2. **investor_profiles** - Extended data for investors
-   - Investment preferences
-   - Risk persona
-   - Return targets
-
-3. **expert_profiles** - Extended data for financial experts
-   - Credentials and verification
-   - Specializations
-   - Achievement tracking
-
-4. **posts** - Content shared in the platform
+2. **posts** - Content shared in the platform
    - Different content types (analysis, news, debate, quiz)
    - Engagement metrics
+   - References to user documents
+
+3. **marketdata** - Financial market information
+   - Stock prices and market indices
+   - Real-time price changes and percentages
+
+4. **watchlistassets** - User watchlist tracking
+   - User-specific asset monitoring
+   - Price alerts and notifications
+
+5. **Additional Collections**: Asset sentiment, price alerts, watchlist themes, and tribe tracking
+
+### Migration Benefits
+- **Embedded Documents**: User profiles are now embedded within user documents, eliminating joins
+- **Flexible Schema**: Easy to add new fields for different user types without schema migrations
+- **Better Performance**: Reduced database queries through document embedding
+- **Scalability**: Horizontal scaling capabilities with MongoDB
 
 ## Deployment Strategy
 

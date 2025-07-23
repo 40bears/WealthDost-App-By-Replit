@@ -1,14 +1,13 @@
+import { Types } from "mongoose";
 import {
-  users,
-  investorProfiles,
-  expertProfiles,
-  posts,
-  marketData,
-  watchlistAssets,
-  priceAlerts,
-  watchlistThemes,
-  assetSentiment,
-  tribeAssetTracking,
+  UserModel,
+  PostModel,
+  MarketDataModel,
+  WatchlistAssetModel,
+  PriceAlertModel,
+  WatchlistThemeModel,
+  AssetSentimentModel,
+  TribeAssetTrackingModel,
   type User,
   type InsertUser,
   type InvestorProfile,
@@ -34,24 +33,24 @@ import {
 // Interface for storage operations
 export interface IStorage {
   // User operations
-  getUser(id: number): Promise<User | undefined>;
+  getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   
   // Investor profile operations
-  getInvestorProfile(userId: number): Promise<InvestorProfile | undefined>;
-  createInvestorProfile(profile: InsertInvestorProfile): Promise<InvestorProfile>;
-  updateInvestorProfile(userId: number, profile: Partial<InsertInvestorProfile>): Promise<InvestorProfile | undefined>;
+  getInvestorProfile(userId: string): Promise<InvestorProfile | undefined>;
+  createInvestorProfile(userId: string, profile: InsertInvestorProfile): Promise<InvestorProfile>;
+  updateInvestorProfile(userId: string, profile: Partial<InsertInvestorProfile>): Promise<InvestorProfile | undefined>;
   
   // Expert profile operations
-  getExpertProfile(userId: number): Promise<ExpertProfile | undefined>;
-  createExpertProfile(profile: InsertExpertProfile): Promise<ExpertProfile>;
-  updateExpertProfile(userId: number, profile: Partial<InsertExpertProfile>): Promise<ExpertProfile | undefined>;
+  getExpertProfile(userId: string): Promise<ExpertProfile | undefined>;
+  createExpertProfile(userId: string, profile: InsertExpertProfile): Promise<ExpertProfile>;
+  updateExpertProfile(userId: string, profile: Partial<InsertExpertProfile>): Promise<ExpertProfile | undefined>;
   
   // Posts operations
   getPosts(): Promise<Post[]>;
-  getPostById(id: number): Promise<Post | undefined>;
-  getPostsByUserId(userId: number): Promise<Post[]>;
+  getPostById(id: string): Promise<Post | undefined>;
+  getPostsByUserId(userId: string): Promise<Post[]>;
   createPost(post: InsertPost): Promise<Post>;
   
   // Market data operations
@@ -61,267 +60,400 @@ export interface IStorage {
   insertMarketData(data: InsertMarketData): Promise<MarketData>;
 
   // Watchlist operations
-  getUserWatchlist(userId: number): Promise<WatchlistAsset[]>;
+  getUserWatchlist(userId: string): Promise<WatchlistAsset[]>;
   addToWatchlist(asset: InsertWatchlistAsset): Promise<WatchlistAsset>;
-  removeFromWatchlist(userId: number, assetId: number): Promise<boolean>;
+  removeFromWatchlist(userId: string, assetId: string): Promise<boolean>;
   updateAssetPrice(symbol: string, price: number, change: number, changePercent: number): Promise<void>;
   
   // Price alerts operations
-  getUserAlerts(userId: number): Promise<PriceAlert[]>;
+  getUserAlerts(userId: string): Promise<PriceAlert[]>;
   createAlert(alert: InsertPriceAlert): Promise<PriceAlert>;
-  deleteAlert(alertId: number): Promise<boolean>;
+  deleteAlert(alertId: string): Promise<boolean>;
   
   // Watchlist themes operations
   getPublicThemes(): Promise<WatchlistTheme[]>;
-  getUserThemes(userId: number): Promise<WatchlistTheme[]>;
   createTheme(theme: InsertWatchlistTheme): Promise<WatchlistTheme>;
-  followTheme(userId: number, themeId: number): Promise<boolean>;
   
-  // Sentiment operations
+  // Asset sentiment operations
   getAssetSentiment(symbol: string): Promise<AssetSentiment | undefined>;
-  updateAssetSentiment(sentiment: InsertAssetSentiment): Promise<AssetSentiment>;
+  updateAssetSentiment(symbol: string, sentiment: InsertAssetSentiment): Promise<AssetSentiment>;
   
-  // Tribe tracking operations
-  getTribeAssets(roomId: number): Promise<TribeAssetTracking[]>;
-  updateTribeAssetTracking(roomId: number, symbol: string, watcherCount: number): Promise<void>;
+  // Tribe asset tracking operations
+  getTribeTracking(tribeId: string): Promise<TribeAssetTracking[]>;
+  addTribeTracking(tracking: InsertTribeAssetTracking): Promise<TribeAssetTracking>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private investorProfiles: Map<number, InvestorProfile>;
-  private expertProfiles: Map<number, ExpertProfile>;
-  private posts: Map<number, Post>;
-  private marketData: Map<string, MarketData>;
-  
-  private userId: number;
-  private investorProfileId: number;
-  private expertProfileId: number;
-  private postId: number;
-  private marketDataId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.investorProfiles = new Map();
-    this.expertProfiles = new Map();
-    this.posts = new Map();
-    this.marketData = new Map();
-    
-    this.userId = 1;
-    this.investorProfileId = 1;
-    this.expertProfileId = 1;
-    this.postId = 1;
-    this.marketDataId = 1;
-    
-    // Initialize with some default market data
-    this.initializeMarketData();
-    this.initializeUsers();
-  }
-  
-  private initializeMarketData() {
-    const defaultMarketData: InsertMarketData[] = [
-      {
-        symbol: "NIFTY50",
-        name: "NIFTY 50",
-        price: "22,474.05",
-        change: "+197.30",
-        changePercent: "+0.89%",
-      },
-      {
-        symbol: "SENSEX",
-        name: "SENSEX",
-        price: "73,876.44",
-        change: "+489.57",
-        changePercent: "+0.67%",
-      },
-      {
-        symbol: "BTC/INR",
-        name: "BTC/INR",
-        price: "52,84,490",
-        change: "-1,16,000",
-        changePercent: "-2.14%",
-      },
-    ];
-    
-    defaultMarketData.forEach(data => {
-      this.insertMarketData(data);
-    });
-  }
-
-  private initializeUsers() {
-    // Add some initial users for the community
-    const defaultUsers = [
-      {
-        username: "current_user",
-        password: "password123",
-        fullName: "Current User",
-        profileBio: "Investment enthusiast",
-        profileImageUrl: null,
-        userType: "investor",
-        experienceLevel: "intermediate"
-      },
-      {
-        username: "rajesh_analyst",
-        password: "password123",
-        fullName: "Rajesh Kumar",
-        profileBio: "Stock market analyst with 5 years of experience",
-        profileImageUrl: null,
-        userType: "expert",
-        experienceLevel: "advanced"
-      },
-      {
-        username: "priya_investor",
-        password: "password123",
-        fullName: "Priya Sharma",
-        profileBio: "Long-term value investor",
-        profileImageUrl: null,
-        userType: "investor",
-        experienceLevel: "beginner"
-      }
-    ];
-
-    defaultUsers.forEach(userData => {
-      this.createUser(userData);
-    });
-  }
-
+export class MongoStorage implements IStorage {
   // User operations
-  async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+  async getUser(id: string): Promise<User | undefined> {
+    try {
+      const user = await UserModel.findById(new Types.ObjectId(id));
+      return user || undefined;
+    } catch (error) {
+      console.error('Error getting user:', error);
+      return undefined;
+    }
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    try {
+      const user = await UserModel.findOne({ username });
+      return user || undefined;
+    } catch (error) {
+      console.error('Error getting user by username:', error);
+      return undefined;
+    }
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.userId++;
-    const user: User = { ...insertUser, id, createdAt: new Date() };
-    this.users.set(id, user);
-    return user;
+  async createUser(user: InsertUser): Promise<User> {
+    try {
+      const newUser = new UserModel(user);
+      return await newUser.save();
+    } catch (error) {
+      console.error('Error creating user:', error);
+      throw error;
+    }
   }
-  
+
   // Investor profile operations
-  async getInvestorProfile(userId: number): Promise<InvestorProfile | undefined> {
-    return Array.from(this.investorProfiles.values()).find(
-      (profile) => profile.userId === userId,
-    );
-  }
-  
-  async createInvestorProfile(profile: InsertInvestorProfile): Promise<InvestorProfile> {
-    const id = this.investorProfileId++;
-    const investorProfile: InvestorProfile = { ...profile, id };
-    this.investorProfiles.set(id, investorProfile);
-    return investorProfile;
-  }
-  
-  async updateInvestorProfile(userId: number, profile: Partial<InsertInvestorProfile>): Promise<InvestorProfile | undefined> {
-    const existingProfile = await this.getInvestorProfile(userId);
-    
-    if (!existingProfile) {
+  async getInvestorProfile(userId: string): Promise<InvestorProfile | undefined> {
+    try {
+      const user = await UserModel.findById(new Types.ObjectId(userId));
+      return user?.investorProfile ? { ...user.investorProfile, _id: user._id, userId: user._id } : undefined;
+    } catch (error) {
+      console.error('Error getting investor profile:', error);
       return undefined;
     }
-    
-    const updatedProfile: InvestorProfile = { ...existingProfile, ...profile };
-    this.investorProfiles.set(existingProfile.id, updatedProfile);
-    
-    return updatedProfile;
   }
-  
+
+  async createInvestorProfile(userId: string, profile: InsertInvestorProfile): Promise<InvestorProfile> {
+    try {
+      const user = await UserModel.findByIdAndUpdate(
+        new Types.ObjectId(userId),
+        { $set: { investorProfile: profile } },
+        { new: true, upsert: false }
+      );
+      if (!user || !user.investorProfile) {
+        throw new Error('Failed to create investor profile');
+      }
+      return { ...user.investorProfile, _id: user._id, userId: user._id };
+    } catch (error) {
+      console.error('Error creating investor profile:', error);
+      throw error;
+    }
+  }
+
+  async updateInvestorProfile(userId: string, profile: Partial<InsertInvestorProfile>): Promise<InvestorProfile | undefined> {
+    try {
+      const updateFields: any = {};
+      Object.keys(profile).forEach(key => {
+        updateFields[`investorProfile.${key}`] = profile[key as keyof InsertInvestorProfile];
+      });
+
+      const user = await UserModel.findByIdAndUpdate(
+        new Types.ObjectId(userId),
+        { $set: updateFields },
+        { new: true }
+      );
+      return user?.investorProfile ? { ...user.investorProfile, _id: user._id, userId: user._id } : undefined;
+    } catch (error) {
+      console.error('Error updating investor profile:', error);
+      return undefined;
+    }
+  }
+
   // Expert profile operations
-  async getExpertProfile(userId: number): Promise<ExpertProfile | undefined> {
-    return Array.from(this.expertProfiles.values()).find(
-      (profile) => profile.userId === userId,
-    );
-  }
-  
-  async createExpertProfile(profile: InsertExpertProfile): Promise<ExpertProfile> {
-    const id = this.expertProfileId++;
-    const expertProfile: ExpertProfile = { ...profile, id };
-    this.expertProfiles.set(id, expertProfile);
-    return expertProfile;
-  }
-  
-  async updateExpertProfile(userId: number, profile: Partial<InsertExpertProfile>): Promise<ExpertProfile | undefined> {
-    const existingProfile = await this.getExpertProfile(userId);
-    
-    if (!existingProfile) {
+  async getExpertProfile(userId: string): Promise<ExpertProfile | undefined> {
+    try {
+      const user = await UserModel.findById(new Types.ObjectId(userId));
+      return user?.expertProfile ? { ...user.expertProfile, _id: user._id, userId: user._id } : undefined;
+    } catch (error) {
+      console.error('Error getting expert profile:', error);
       return undefined;
     }
-    
-    const updatedProfile: ExpertProfile = { ...existingProfile, ...profile };
-    this.expertProfiles.set(existingProfile.id, updatedProfile);
-    
-    return updatedProfile;
   }
-  
+
+  async createExpertProfile(userId: string, profile: InsertExpertProfile): Promise<ExpertProfile> {
+    try {
+      const user = await UserModel.findByIdAndUpdate(
+        new Types.ObjectId(userId),
+        { $set: { expertProfile: profile } },
+        { new: true, upsert: false }
+      );
+      if (!user || !user.expertProfile) {
+        throw new Error('Failed to create expert profile');
+      }
+      return { ...user.expertProfile, _id: user._id, userId: user._id };
+    } catch (error) {
+      console.error('Error creating expert profile:', error);
+      throw error;
+    }
+  }
+
+  async updateExpertProfile(userId: string, profile: Partial<InsertExpertProfile>): Promise<ExpertProfile | undefined> {
+    try {
+      const updateFields: any = {};
+      Object.keys(profile).forEach(key => {
+        updateFields[`expertProfile.${key}`] = profile[key as keyof InsertExpertProfile];
+      });
+
+      const user = await UserModel.findByIdAndUpdate(
+        new Types.ObjectId(userId),
+        { $set: updateFields },
+        { new: true }
+      );
+      return user?.expertProfile ? { ...user.expertProfile, _id: user._id, userId: user._id } : undefined;
+    } catch (error) {
+      console.error('Error updating expert profile:', error);
+      return undefined;
+    }
+  }
+
   // Posts operations
   async getPosts(): Promise<Post[]> {
-    return Array.from(this.posts.values()).sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+    try {
+      return await PostModel.find().sort({ createdAt: -1 }).populate('userId', 'username fullName profileImageUrl');
+    } catch (error) {
+      console.error('Error getting posts:', error);
+      return [];
+    }
   }
-  
-  async getPostById(id: number): Promise<Post | undefined> {
-    return this.posts.get(id);
-  }
-  
-  async getPostsByUserId(userId: number): Promise<Post[]> {
-    return Array.from(this.posts.values())
-      .filter(post => post.userId === userId)
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  }
-  
-  async createPost(insertPost: InsertPost): Promise<Post> {
-    const id = this.postId++;
-    const post: Post = { 
-      ...insertPost, 
-      id, 
-      createdAt: new Date(),
-      likes: 0,
-      comments: 0,
-    };
-    this.posts.set(id, post);
-    return post;
-  }
-  
-  // Market data operations
-  async getMarketData(): Promise<MarketData[]> {
-    return Array.from(this.marketData.values());
-  }
-  
-  async getMarketDataBySymbol(symbol: string): Promise<MarketData | undefined> {
-    return this.marketData.get(symbol);
-  }
-  
-  async updateMarketData(symbol: string, data: Partial<InsertMarketData>): Promise<MarketData | undefined> {
-    const existingData = await this.getMarketDataBySymbol(symbol);
-    
-    if (!existingData) {
+
+  async getPostById(id: string): Promise<Post | undefined> {
+    try {
+      const post = await PostModel.findById(new Types.ObjectId(id)).populate('userId', 'username fullName profileImageUrl');
+      return post || undefined;
+    } catch (error) {
+      console.error('Error getting post by id:', error);
       return undefined;
     }
-    
-    const updatedData: MarketData = { 
-      ...existingData, 
-      ...data,
-      updatedAt: new Date()
-    };
-    this.marketData.set(symbol, updatedData);
-    
-    return updatedData;
   }
-  
+
+  async getPostsByUserId(userId: string): Promise<Post[]> {
+    try {
+      return await PostModel.find({ userId: new Types.ObjectId(userId) }).sort({ createdAt: -1 });
+    } catch (error) {
+      console.error('Error getting posts by user id:', error);
+      return [];
+    }
+  }
+
+  async createPost(post: InsertPost): Promise<Post> {
+    try {
+      const newPost = new PostModel({
+        ...post,
+        userId: new Types.ObjectId(post.userId)
+      });
+      return await newPost.save();
+    } catch (error) {
+      console.error('Error creating post:', error);
+      throw error;
+    }
+  }
+
+  // Market data operations
+  async getMarketData(): Promise<MarketData[]> {
+    try {
+      return await MarketDataModel.find().sort({ updatedAt: -1 });
+    } catch (error) {
+      console.error('Error getting market data:', error);
+      return [];
+    }
+  }
+
+  async getMarketDataBySymbol(symbol: string): Promise<MarketData | undefined> {
+    try {
+      const data = await MarketDataModel.findOne({ symbol });
+      return data || undefined;
+    } catch (error) {
+      console.error('Error getting market data by symbol:', error);
+      return undefined;
+    }
+  }
+
+  async updateMarketData(symbol: string, data: Partial<InsertMarketData>): Promise<MarketData | undefined> {
+    try {
+      const updated = await MarketDataModel.findOneAndUpdate(
+        { symbol },
+        { $set: { ...data, updatedAt: new Date() } },
+        { new: true }
+      );
+      return updated || undefined;
+    } catch (error) {
+      console.error('Error updating market data:', error);
+      return undefined;
+    }
+  }
+
   async insertMarketData(data: InsertMarketData): Promise<MarketData> {
-    const id = this.marketDataId++;
-    const marketData: MarketData = { 
-      ...data, 
-      id,
-      updatedAt: new Date()
-    };
-    this.marketData.set(data.symbol, marketData);
-    return marketData;
+    try {
+      const newData = new MarketDataModel(data);
+      return await newData.save();
+    } catch (error) {
+      console.error('Error inserting market data:', error);
+      throw error;
+    }
+  }
+
+  // Watchlist operations
+  async getUserWatchlist(userId: string): Promise<WatchlistAsset[]> {
+    try {
+      return await WatchlistAssetModel.find({ userId: new Types.ObjectId(userId) }).sort({ addedAt: -1 });
+    } catch (error) {
+      console.error('Error getting user watchlist:', error);
+      return [];
+    }
+  }
+
+  async addToWatchlist(asset: InsertWatchlistAsset): Promise<WatchlistAsset> {
+    try {
+      const newAsset = new WatchlistAssetModel({
+        ...asset,
+        userId: new Types.ObjectId(asset.userId)
+      });
+      return await newAsset.save();
+    } catch (error) {
+      console.error('Error adding to watchlist:', error);
+      throw error;
+    }
+  }
+
+  async removeFromWatchlist(userId: string, assetId: string): Promise<boolean> {
+    try {
+      const result = await WatchlistAssetModel.deleteOne({
+        _id: new Types.ObjectId(assetId),
+        userId: new Types.ObjectId(userId)
+      });
+      return result.deletedCount > 0;
+    } catch (error) {
+      console.error('Error removing from watchlist:', error);
+      return false;
+    }
+  }
+
+  async updateAssetPrice(symbol: string, price: number, change: number, changePercent: number): Promise<void> {
+    try {
+      await WatchlistAssetModel.updateMany(
+        { symbol },
+        { $set: { price, change, changePercent } }
+      );
+    } catch (error) {
+      console.error('Error updating asset price:', error);
+    }
+  }
+
+  // Price alerts operations
+  async getUserAlerts(userId: string): Promise<PriceAlert[]> {
+    try {
+      return await PriceAlertModel.find({ userId: new Types.ObjectId(userId), isActive: true }).sort({ createdAt: -1 });
+    } catch (error) {
+      console.error('Error getting user alerts:', error);
+      return [];
+    }
+  }
+
+  async createAlert(alert: InsertPriceAlert): Promise<PriceAlert> {
+    try {
+      const newAlert = new PriceAlertModel({
+        ...alert,
+        userId: new Types.ObjectId(alert.userId)
+      });
+      return await newAlert.save();
+    } catch (error) {
+      console.error('Error creating alert:', error);
+      throw error;
+    }
+  }
+
+  async deleteAlert(alertId: string): Promise<boolean> {
+    try {
+      const result = await PriceAlertModel.deleteOne({ _id: new Types.ObjectId(alertId) });
+      return result.deletedCount > 0;
+    } catch (error) {
+      console.error('Error deleting alert:', error);
+      return false;
+    }
+  }
+
+  // Watchlist themes operations
+  async getPublicThemes(): Promise<WatchlistTheme[]> {
+    try {
+      return await WatchlistThemeModel.find({ isPublic: true }).sort({ createdAt: -1 }).populate('createdBy', 'username fullName');
+    } catch (error) {
+      console.error('Error getting public themes:', error);
+      return [];
+    }
+  }
+
+  async createTheme(theme: InsertWatchlistTheme): Promise<WatchlistTheme> {
+    try {
+      const newTheme = new WatchlistThemeModel({
+        ...theme,
+        createdBy: new Types.ObjectId(theme.createdBy)
+      });
+      return await newTheme.save();
+    } catch (error) {
+      console.error('Error creating theme:', error);
+      throw error;
+    }
+  }
+
+  // Asset sentiment operations
+  async getAssetSentiment(symbol: string): Promise<AssetSentiment | undefined> {
+    try {
+      const sentiment = await AssetSentimentModel.findOne({ symbol });
+      return sentiment || undefined;
+    } catch (error) {
+      console.error('Error getting asset sentiment:', error);
+      return undefined;
+    }
+  }
+
+  async updateAssetSentiment(symbol: string, sentiment: InsertAssetSentiment): Promise<AssetSentiment> {
+    try {
+      const updated = await AssetSentimentModel.findOneAndUpdate(
+        { symbol },
+        { $set: { ...sentiment, updatedAt: new Date() } },
+        { new: true, upsert: true }
+      );
+      if (!updated) {
+        throw new Error('Failed to update asset sentiment');
+      }
+      return updated;
+    } catch (error) {
+      console.error('Error updating asset sentiment:', error);
+      throw error;
+    }
+  }
+
+  // Tribe asset tracking operations
+  async getTribeTracking(tribeId: string): Promise<TribeAssetTracking[]> {
+    try {
+      return await TribeAssetTrackingModel.find({ 
+        tribeId: new Types.ObjectId(tribeId), 
+        isActive: true 
+      }).sort({ trackingStarted: -1 });
+    } catch (error) {
+      console.error('Error getting tribe tracking:', error);
+      return [];
+    }
+  }
+
+  async addTribeTracking(tracking: InsertTribeAssetTracking): Promise<TribeAssetTracking> {
+    try {
+      const newTracking = new TribeAssetTrackingModel({
+        ...tracking,
+        tribeId: new Types.ObjectId(tracking.tribeId)
+      });
+      return await newTracking.save();
+    } catch (error) {
+      console.error('Error adding tribe tracking:', error);
+      throw error;
+    }
   }
 }
 
-export const storage = new MemStorage();
+import { MemoryStorage } from "./memoryStorage";
+
+// Create and export storage instance - fallback to memory storage for development
+export const storage = new MemoryStorage();
