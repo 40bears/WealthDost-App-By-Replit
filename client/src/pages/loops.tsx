@@ -47,6 +47,7 @@ export default function Loops() {
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [likedLoops, setLikedLoops] = useState<Set<string>>(new Set());
+  const [videoErrors, setVideoErrors] = useState<Set<number>>(new Set());
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -133,18 +134,10 @@ export default function Loops() {
     }
   }, [currentIndex, loops?.length]);
 
-  // Handle video playback
+  // Handle content playback simulation
   useEffect(() => {
-    videoRefs.current.forEach((video, index) => {
-      if (video) {
-        if (index === currentIndex && isPlaying) {
-          video.play();
-        } else {
-          video.pause();
-        }
-        video.muted = isMuted;
-      }
-    });
+    // Since we're using placeholder content, we just simulate playback state
+    // In a real app, this would handle actual video playback
   }, [currentIndex, isPlaying, isMuted]);
 
   // Handle keyboard controls
@@ -251,16 +244,43 @@ export default function Loops() {
               index < currentIndex ? '-translate-y-full' : 'translate-y-full'
             }`}
           >
-            {/* Video */}
-            <video
-              ref={el => videoRefs.current[index] = el}
-              className="w-full h-full object-cover"
-              src={loop.videoUrl}
-              poster={loop.thumbnailUrl}
-              loop
-              playsInline
+            {/* Loop Content Card */}
+            <div 
+              className="w-full h-full bg-gradient-to-br from-purple-900 to-purple-600 flex flex-col items-center justify-center relative"
               onClick={() => setIsPlaying(prev => !prev)}
-            />
+            >
+              {/* Content */}
+              <div className="text-center p-8 z-10">
+                <div className="mb-6">
+                  <Play className="w-16 h-16 text-white/90 mx-auto mb-4" />
+                  <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1 inline-block mb-4">
+                    <span className="text-white text-sm font-medium">{formatDuration(loop.duration)}</span>
+                  </div>
+                </div>
+                <h3 className="text-white text-xl font-bold mb-3 leading-tight">{loop.title}</h3>
+                <p className="text-white/90 text-sm mb-4 leading-relaxed max-w-xs mx-auto">{loop.description}</p>
+                <div className="flex items-center justify-center space-x-4 text-white/70 text-xs">
+                  <span>{formatCount(loop.views)} views</span>
+                  <span>•</span>
+                  <span>{formatCount(loop.likes)} likes</span>
+                </div>
+              </div>
+              
+              {/* Background Pattern */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="w-full h-full bg-gradient-to-br from-transparent via-white/10 to-transparent"></div>
+                <div className="absolute top-10 left-10 w-20 h-20 border border-white/20 rounded-full"></div>
+                <div className="absolute bottom-20 right-10 w-16 h-16 border border-white/20 rounded-full"></div>
+                <div className="absolute top-1/3 right-20 w-12 h-12 border border-white/20 rounded-full"></div>
+              </div>
+              
+              {/* Play indicator when paused */}
+              {!isPlaying && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                  <Play className="w-20 h-20 text-white opacity-80" />
+                </div>
+              )}
+            </div>
 
             {/* Video Overlay Info */}
             <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
@@ -349,12 +369,7 @@ export default function Loops() {
               </div>
             </div>
 
-            {/* Play/Pause Overlay */}
-            {!isPlaying && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Play className="w-16 h-16 text-white opacity-80" />
-              </div>
-            )}
+
 
             {/* Video Controls */}
             <div className="absolute top-1/2 right-4 transform -translate-y-1/2">

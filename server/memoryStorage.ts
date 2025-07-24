@@ -89,13 +89,13 @@ export class MemoryStorage implements IStorage {
       } as User);
     });
 
-    // Initialize sample loops
+    // Initialize sample loops as placeholder content
     const sampleLoops = [
       {
         userId: Array.from(this.users.keys())[0],
         title: "Tesla Stock Analysis - 60 Second Breakdown",
-        description: "Quick breakdown of Tesla's Q4 earnings and what it means for investors. #TSLA #Earnings",
-        videoUrl: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
+        description: "Quick breakdown of Tesla's Q4 earnings and what it means for investors. Stock up 12% after beating revenue expectations. Key growth drivers include Model Y sales and energy storage division expansion.",
+        videoUrl: "", // Empty for demo
         thumbnailUrl: "https://via.placeholder.com/400x600/6366f1/ffffff?text=Tesla+Analysis",
         duration: 58,
         tags: ["tesla", "earnings", "stocks", "analysis"],
@@ -105,9 +105,9 @@ export class MemoryStorage implements IStorage {
       },
       {
         userId: Array.from(this.users.keys())[1],
-        title: "Crypto Market Update",
-        description: "Bitcoin breaks $45k! Here's what this means for the crypto market 📈 #Bitcoin #Crypto",
-        videoUrl: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_2mb.mp4",
+        title: "Crypto Market Update - Bitcoin Rally",
+        description: "Bitcoin breaks $45k resistance! Here's what this means for the crypto market. Institutional adoption and ETF approvals driving momentum. Key support levels to watch.",
+        videoUrl: "", // Empty for demo
         thumbnailUrl: "https://via.placeholder.com/400x600/f59e0b/ffffff?text=Crypto+Update",
         duration: 45,
         tags: ["bitcoin", "crypto", "market", "bullish"],
@@ -117,15 +117,39 @@ export class MemoryStorage implements IStorage {
       },
       {
         userId: Array.from(this.users.keys())[2],
-        title: "SIP vs Lump Sum Investment",
-        description: "Which investment strategy is better? Let's break it down with real numbers! #SIP #Investment",
-        videoUrl: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
+        title: "SIP vs Lump Sum Investment Strategy",
+        description: "Which investment strategy is better? Let's break it down with real numbers! Historical data shows SIP reduces timing risk while lump sum can generate higher returns in bull markets.",
+        videoUrl: "", // Empty for demo
         thumbnailUrl: "https://via.placeholder.com/400x600/10b981/ffffff?text=SIP+vs+Lump",
         duration: 72,
         tags: ["sip", "investment", "strategy", "finance"],
         likes: 523,
         comments: 67,
         views: 2156,
+      },
+      {
+        userId: Array.from(this.users.keys())[0],
+        title: "Nifty 50 Technical Analysis",
+        description: "Market at crucial support levels. RSI showing oversold conditions while institutional buying continues. Sector rotation from IT to banking stocks visible.",
+        videoUrl: "", // Empty for demo
+        thumbnailUrl: "https://via.placeholder.com/400x600/8b5cf6/ffffff?text=Nifty+Analysis",
+        duration: 68,
+        tags: ["nifty", "technical", "analysis", "support"],
+        likes: 289,
+        comments: 34,
+        views: 1823,
+      },
+      {
+        userId: Array.from(this.users.keys())[1],
+        title: "Mutual Fund Portfolio Review",
+        description: "How to rebalance your mutual fund portfolio for 2024. Recommended allocation between large cap, mid cap, and international funds based on market conditions.",
+        videoUrl: "", // Empty for demo
+        thumbnailUrl: "https://via.placeholder.com/400x600/ec4899/ffffff?text=MF+Review",
+        duration: 91,
+        tags: ["mutualfunds", "portfolio", "rebalance", "2024"],
+        likes: 412,
+        comments: 56,
+        views: 2789,
       },
     ];
 
