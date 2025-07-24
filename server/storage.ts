@@ -8,6 +8,9 @@ import {
   WatchlistThemeModel,
   AssetSentimentModel,
   TribeAssetTrackingModel,
+  LoopModel,
+  LoopCommentModel,
+  LoopLikeModel,
   type User,
   type InsertUser,
   type InvestorProfile,
@@ -28,6 +31,12 @@ import {
   type InsertAssetSentiment,
   type TribeAssetTracking,
   type InsertTribeAssetTracking,
+  type Loop,
+  type InsertLoop,
+  type LoopComment,
+  type InsertLoopComment,
+  type LoopLike,
+  type InsertLoopLike,
 } from "@shared/schema";
 
 // Interface for storage operations
@@ -81,6 +90,21 @@ export interface IStorage {
   // Tribe asset tracking operations
   getTribeTracking(tribeId: string): Promise<TribeAssetTracking[]>;
   addTribeTracking(tracking: InsertTribeAssetTracking): Promise<TribeAssetTracking>;
+
+  // Loops operations
+  getLoops(): Promise<Loop[]>;
+  getLoopById(id: string): Promise<Loop | undefined>;
+  getLoopsByUserId(userId: string): Promise<Loop[]>;
+  createLoop(loopData: InsertLoop): Promise<Loop>;
+  updateLoopStats(loopId: string, likes?: number, comments?: number, views?: number): Promise<Loop | undefined>;
+  
+  // Loop comments operations
+  getLoopComments(loopId: string): Promise<LoopComment[]>;
+  addLoopComment(commentData: InsertLoopComment): Promise<LoopComment>;
+  
+  // Loop likes operations
+  toggleLoopLike(likeData: InsertLoopLike): Promise<{ liked: boolean; likesCount: number }>;
+  getUserLoopLikes(userId: string): Promise<string[]>; // Returns array of liked loop IDs
 }
 
 export class MongoStorage implements IStorage {
@@ -449,6 +473,158 @@ export class MongoStorage implements IStorage {
     } catch (error) {
       console.error('Error adding tribe tracking:', error);
       throw error;
+    }
+  }
+
+  // Loops operations
+  async getLoops(): Promise<Loop[]> {
+    try {
+      return await LoopModel.find({ isPublic: true })
+        .populate('userId', 'username fullName profileImageUrl')
+        .sort({ createdAt: -1 });
+    } catch (error) {
+      console.error('Error getting loops:', error);
+      return [];
+    }
+  }
+
+  async getLoopById(id: string): Promise<Loop | undefined> {
+    try {
+      const loop = await LoopModel.findById(new Types.ObjectId(id))
+        .populate('userId', 'username fullName profileImageUrl');
+      return loop || undefined;
+    } catch (error) {
+      console.error('Error getting loop by id:', error);
+      return undefined;
+    }
+  }
+
+  async getLoopsByUserId(userId: string): Promise<Loop[]> {
+    try {
+      return await LoopModel.find({ userId: new Types.ObjectId(userId) })
+        .populate('userId', 'username fullName profileImageUrl')
+        .sort({ createdAt: -1 });
+    } catch (error) {
+      console.error('Error getting loops by user id:', error);
+      return [];
+    }
+  }
+
+  async createLoop(loopData: InsertLoop): Promise<Loop> {
+    try {
+      const newLoop = new LoopModel({
+        ...loopData,
+        userId: new Types.ObjectId(loopData.userId)
+      });
+      return await newLoop.save();
+    } catch (error) {
+      console.error('Error creating loop:', error);
+      throw error;
+    }
+  }
+
+  async updateLoopStats(loopId: string, likes?: number, comments?: number, views?: number): Promise<Loop | undefined> {
+    try {
+      const updateData: any = {};
+      if (likes !== undefined) updateData.likes = likes;
+      if (comments !== undefined) updateData.comments = comments;
+      if (views !== undefined) updateData.views = views;
+
+      const updated = await LoopModel.findByIdAndUpdate(
+        new Types.ObjectId(loopId),
+        { $set: updateData },
+        { new: true }
+      ).populate('userId', 'username fullName profileImageUrl');
+      
+      return updated || undefined;
+    } catch (error) {
+      console.error('Error updating loop stats:', error);
+      return undefined;
+    }
+  }
+
+  // Loop comments operations
+  async getLoopComments(loopId: string): Promise<LoopComment[]> {
+    try {
+      return await LoopCommentModel.find({ loopId: new Types.ObjectId(loopId) })
+        .populate('userId', 'username fullName profileImageUrl')
+        .sort({ createdAt: -1 });
+    } catch (error) {
+      console.error('Error getting loop comments:', error);
+      return [];
+    }
+  }
+
+  async addLoopComment(commentData: InsertLoopComment): Promise<LoopComment> {
+    try {
+      const newComment = new LoopCommentModel({
+        ...commentData,
+        loopId: new Types.ObjectId(commentData.loopId),
+        userId: new Types.ObjectId(commentData.userId)
+      });
+      
+      const savedComment = await newComment.save();
+      
+      // Update comment count on the loop
+      await LoopModel.findByIdAndUpdate(
+        new Types.ObjectId(commentData.loopId),
+        { $inc: { comments: 1 } }
+      );
+      
+      return savedComment;
+    } catch (error) {
+      console.error('Error adding loop comment:', error);
+      throw error;
+    }
+  }
+
+  // Loop likes operations
+  async toggleLoopLike(likeData: InsertLoopLike): Promise<{ liked: boolean; likesCount: number }> {
+    try {
+      const existingLike = await LoopLikeModel.findOne({
+        loopId: new Types.ObjectId(likeData.loopId),
+        userId: new Types.ObjectId(likeData.userId)
+      });
+
+      if (existingLike) {
+        // Remove like
+        await LoopLikeModel.deleteOne({ _id: existingLike._id });
+        await LoopModel.findByIdAndUpdate(
+          new Types.ObjectId(likeData.loopId),
+          { $inc: { likes: -1 } }
+        );
+        
+        const loop = await LoopModel.findById(new Types.ObjectId(likeData.loopId));
+        return { liked: false, likesCount: loop?.likes || 0 };
+      } else {
+        // Add like
+        const newLike = new LoopLikeModel({
+          loopId: new Types.ObjectId(likeData.loopId),
+          userId: new Types.ObjectId(likeData.userId)
+        });
+        await newLike.save();
+        
+        await LoopModel.findByIdAndUpdate(
+          new Types.ObjectId(likeData.loopId),
+          { $inc: { likes: 1 } }
+        );
+        
+        const loop = await LoopModel.findById(new Types.ObjectId(likeData.loopId));
+        return { liked: true, likesCount: loop?.likes || 0 };
+      }
+    } catch (error) {
+      console.error('Error toggling loop like:', error);
+      throw error;
+    }
+  }
+
+  async getUserLoopLikes(userId: string): Promise<string[]> {
+    try {
+      const likes = await LoopLikeModel.find({ userId: new Types.ObjectId(userId) });
+      return likes.map(like => like.loopId.toString());
+    } catch (error) {
+      console.error('Error getting user loop likes:', error);
+      return [];
     }
   }
 }

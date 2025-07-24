@@ -5,7 +5,10 @@ import {
   insertUserSchema,
   insertInvestorProfileSchema,
   insertExpertProfileSchema,
-  insertPostSchema
+  insertPostSchema,
+  insertLoopSchema,
+  insertLoopCommentSchema,
+  insertLoopLikeSchema
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -228,6 +231,112 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(data);
     } catch (error) {
       res.status(500).json({ message: 'Failed to fetch market data', error });
+    }
+  });
+
+  // Loops routes
+  app.get('/api/loops', async (req, res) => {
+    try {
+      const loops = await storage.getLoops();
+      res.json(loops);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch loops', error });
+    }
+  });
+
+  app.get('/api/loops/:id', async (req, res) => {
+    try {
+      const loopId = req.params.id;
+      const loop = await storage.getLoopById(loopId);
+      
+      if (!loop) {
+        return res.status(404).json({ message: 'Loop not found' });
+      }
+      
+      // Increment view count
+      await storage.updateLoopStats(loopId, undefined, undefined, (loop.views || 0) + 1);
+      
+      res.json(loop);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch loop', error });
+    }
+  });
+
+  app.get('/api/loops/user/:userId', async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const loops = await storage.getLoopsByUserId(userId);
+      res.json(loops);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch user loops', error });
+    }
+  });
+
+  app.post('/api/loops', async (req, res) => {
+    try {
+      const loopData = insertLoopSchema.parse(req.body);
+      const user = await storage.getUser(loopData.userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      
+      const loop = await storage.createLoop(loopData);
+      res.status(201).json(loop);
+    } catch (error) {
+      res.status(400).json({ message: 'Invalid loop data', error });
+    }
+  });
+
+  // Loop comments routes
+  app.get('/api/loops/:loopId/comments', async (req, res) => {
+    try {
+      const loopId = req.params.loopId;
+      const comments = await storage.getLoopComments(loopId);
+      res.json(comments);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch loop comments', error });
+    }
+  });
+
+  app.post('/api/loops/:loopId/comments', async (req, res) => {
+    try {
+      const loopId = req.params.loopId;
+      const commentData = insertLoopCommentSchema.parse({
+        ...req.body,
+        loopId
+      });
+      
+      const comment = await storage.addLoopComment(commentData);
+      res.status(201).json(comment);
+    } catch (error) {
+      res.status(400).json({ message: 'Invalid comment data', error });
+    }
+  });
+
+  // Loop likes routes
+  app.post('/api/loops/:loopId/like', async (req, res) => {
+    try {
+      const loopId = req.params.loopId;
+      const likeData = insertLoopLikeSchema.parse({
+        ...req.body,
+        loopId
+      });
+      
+      const result = await storage.toggleLoopLike(likeData);
+      res.json(result);
+    } catch (error) {
+      res.status(400).json({ message: 'Failed to toggle like', error });
+    }
+  });
+
+  app.get('/api/users/:userId/liked-loops', async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const likedLoops = await storage.getUserLoopLikes(userId);
+      res.json(likedLoops);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch user likes', error });
     }
   });
 

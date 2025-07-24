@@ -29,7 +29,7 @@ import {
 type FeatureType = "home_feed" | "watchlist" | "portfolio" | "analytics" | "debate" | "quiz" | "news";
 
 // Define bottom tab types
-type Tab = "home" | "experts" | "explore" | "invroom" | "create";
+type Tab = "home" | "experts" | "explore" | "invroom" | "loops";
 
 // Define experts section tabs
 type ExpertsTabType = "topAnalysts" | "ask" | "myPicks";
@@ -263,13 +263,6 @@ const Dashboard = () => {
 
   // Function to handle tab changes
   const handleTabChange = (tab: Tab) => {
-    // Handle the create action without changing the active tab
-    if (tab === "create") {
-      console.log("Create post button clicked");
-      setIsCreatePostModalOpen(true);
-      return; // Don't change the active tab for create button
-    }
-    
     setActiveTab(tab);
     // When Home tab is clicked, reset to show posts feed
     if (tab === "home") {

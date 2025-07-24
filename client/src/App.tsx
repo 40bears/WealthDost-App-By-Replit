@@ -17,6 +17,7 @@ import MyPosts from "@/pages/my-posts";
 import Activity from "@/pages/activity";
 import Settings from "@/pages/settings";
 import HelpCenter from "@/pages/help-center";
+import Loops from "@/pages/loops";
 
 function Router() {
   return (
@@ -36,6 +37,7 @@ function Router() {
       <Route path="/activity" component={Activity} />
       <Route path="/settings" component={Settings} />
       <Route path="/help" component={HelpCenter} />
+      <Route path="/loops" component={Loops} />
       <Route component={NotFound} />
     </Switch>
   );

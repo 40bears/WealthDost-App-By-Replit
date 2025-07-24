@@ -20,6 +20,12 @@ import {
   type InsertAssetSentiment,
   type TribeAssetTracking,
   type InsertTribeAssetTracking,
+  type Loop,
+  type InsertLoop,
+  type LoopComment,
+  type InsertLoopComment,
+  type LoopLike,
+  type InsertLoopLike,
 } from "@shared/schema";
 import { IStorage } from "./storage";
 
@@ -32,6 +38,9 @@ export class MemoryStorage implements IStorage {
   private watchlistThemes: Map<string, WatchlistTheme> = new Map();
   private assetSentiments: Map<string, AssetSentiment> = new Map();
   private tribeTracking: Map<string, TribeAssetTracking> = new Map();
+  private loops: Map<string, Loop> = new Map();
+  private loopComments: Map<string, LoopComment> = new Map();
+  private loopLikes: Map<string, LoopLike> = new Map();
 
   constructor() {
     this.initializeData();
@@ -58,6 +67,85 @@ export class MemoryStorage implements IStorage {
         changePercent: data.changePercent,
         updatedAt: new Date(),
       } as MarketData);
+    });
+
+    // Initialize sample users for loops
+    const sampleUsers = [
+      { username: "financial_guru", fullName: "Rajesh Kumar" },
+      { username: "market_maven", fullName: "Priya Sharma" },
+      { username: "crypto_king", fullName: "Arjun Patel" },
+    ];
+
+    sampleUsers.forEach(userData => {
+      const userId = new Types.ObjectId().toString();
+      this.users.set(userId, {
+        _id: new Types.ObjectId(userId),
+        username: userData.username,
+        email: `${userData.username}@example.com`,
+        fullName: userData.fullName,
+        userType: "investor",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      } as User);
+    });
+
+    // Initialize sample loops
+    const sampleLoops = [
+      {
+        userId: Array.from(this.users.keys())[0],
+        title: "Tesla Stock Analysis - 60 Second Breakdown",
+        description: "Quick breakdown of Tesla's Q4 earnings and what it means for investors. #TSLA #Earnings",
+        videoUrl: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
+        thumbnailUrl: "https://via.placeholder.com/400x600/6366f1/ffffff?text=Tesla+Analysis",
+        duration: 58,
+        tags: ["tesla", "earnings", "stocks", "analysis"],
+        likes: 342,
+        comments: 28,
+        views: 1547,
+      },
+      {
+        userId: Array.from(this.users.keys())[1],
+        title: "Crypto Market Update",
+        description: "Bitcoin breaks $45k! Here's what this means for the crypto market 📈 #Bitcoin #Crypto",
+        videoUrl: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_2mb.mp4",
+        thumbnailUrl: "https://via.placeholder.com/400x600/f59e0b/ffffff?text=Crypto+Update",
+        duration: 45,
+        tags: ["bitcoin", "crypto", "market", "bullish"],
+        likes: 756,
+        comments: 89,
+        views: 3421,
+      },
+      {
+        userId: Array.from(this.users.keys())[2],
+        title: "SIP vs Lump Sum Investment",
+        description: "Which investment strategy is better? Let's break it down with real numbers! #SIP #Investment",
+        videoUrl: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
+        thumbnailUrl: "https://via.placeholder.com/400x600/10b981/ffffff?text=SIP+vs+Lump",
+        duration: 72,
+        tags: ["sip", "investment", "strategy", "finance"],
+        likes: 523,
+        comments: 67,
+        views: 2156,
+      },
+    ];
+
+    sampleLoops.forEach(loopData => {
+      const loopId = new Types.ObjectId().toString();
+      this.loops.set(loopId, {
+        _id: new Types.ObjectId(loopId),
+        userId: new Types.ObjectId(loopData.userId),
+        title: loopData.title,
+        description: loopData.description,
+        videoUrl: loopData.videoUrl,
+        thumbnailUrl: loopData.thumbnailUrl,
+        duration: loopData.duration,
+        tags: loopData.tags,
+        likes: loopData.likes,
+        comments: loopData.comments,
+        views: loopData.views,
+        isPublic: true,
+        createdAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000), // Random time in last week
+      } as Loop);
     });
   }
 
@@ -342,5 +430,174 @@ export class MemoryStorage implements IStorage {
     
     this.tribeTracking.set(id, tracking);
     return tracking;
+  }
+
+  // Loops operations
+  async getLoops(): Promise<Loop[]> {
+    const loops = Array.from(this.loops.values())
+      .filter(loop => loop.isPublic)
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    
+    // Populate user information
+    return loops.map(loop => {
+      const user = this.users.get(loop.userId.toString());
+      return {
+        ...loop,
+        userId: user ? {
+          _id: user._id.toString(),
+          username: user.username,
+          fullName: user.fullName,
+          profileImageUrl: user.profileImageUrl,
+        } : {
+          _id: loop.userId.toString(),
+          username: "Unknown User",
+          fullName: "Unknown User",
+          profileImageUrl: undefined,
+        }
+      };
+    });
+  }
+
+  async getLoopById(id: string): Promise<Loop | undefined> {
+    return this.loops.get(id);
+  }
+
+  async getLoopsByUserId(userId: string): Promise<Loop[]> {
+    const userObjectId = new Types.ObjectId(userId);
+    return Array.from(this.loops.values())
+      .filter(loop => loop.userId.equals(userObjectId))
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  }
+
+  async createLoop(loopData: InsertLoop): Promise<Loop> {
+    const id = new Types.ObjectId().toString();
+    const loop: Loop = {
+      _id: new Types.ObjectId(id),
+      userId: new Types.ObjectId(loopData.userId),
+      title: loopData.title,
+      description: loopData.description,
+      videoUrl: loopData.videoUrl,
+      thumbnailUrl: loopData.thumbnailUrl,
+      duration: loopData.duration,
+      tags: loopData.tags || [],
+      likes: 0,
+      comments: 0,
+      views: 0,
+      isPublic: true,
+      createdAt: new Date(),
+    } as Loop;
+    
+    this.loops.set(id, loop);
+    return loop;
+  }
+
+  async updateLoopStats(loopId: string, likes?: number, comments?: number, views?: number): Promise<Loop | undefined> {
+    const loop = this.loops.get(loopId);
+    if (!loop) {
+      return undefined;
+    }
+    
+    if (likes !== undefined) loop.likes = likes;
+    if (comments !== undefined) loop.comments = comments;
+    if (views !== undefined) loop.views = views;
+    
+    this.loops.set(loopId, loop);
+    return loop;
+  }
+
+  // Loop comments operations
+  async getLoopComments(loopId: string): Promise<LoopComment[]> {
+    const loopObjectId = new Types.ObjectId(loopId);
+    const comments = Array.from(this.loopComments.values())
+      .filter(comment => comment.loopId.equals(loopObjectId))
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    
+    // Populate user information
+    return comments.map(comment => {
+      const user = this.users.get(comment.userId.toString());
+      return {
+        ...comment,
+        userId: user ? {
+          username: user.username,
+          fullName: user.fullName,
+          profileImageUrl: user.profileImageUrl,
+        } : {
+          username: "Unknown User",
+          fullName: "Unknown User",
+          profileImageUrl: undefined,
+        }
+      };
+    });
+  }
+
+  async addLoopComment(commentData: InsertLoopComment): Promise<LoopComment> {
+    const id = new Types.ObjectId().toString();
+    const comment: LoopComment = {
+      _id: new Types.ObjectId(id),
+      loopId: new Types.ObjectId(commentData.loopId),
+      userId: new Types.ObjectId(commentData.userId),
+      content: commentData.content,
+      createdAt: new Date(),
+    } as LoopComment;
+    
+    this.loopComments.set(id, comment);
+    
+    // Update comment count on the loop
+    const loop = this.loops.get(commentData.loopId);
+    if (loop) {
+      loop.comments += 1;
+      this.loops.set(commentData.loopId, loop);
+    }
+    
+    return comment;
+  }
+
+  // Loop likes operations
+  async toggleLoopLike(likeData: InsertLoopLike): Promise<{ liked: boolean; likesCount: number }> {
+    const loopObjectId = new Types.ObjectId(likeData.loopId);
+    const userObjectId = new Types.ObjectId(likeData.userId);
+    
+    // Find existing like
+    let existingLikeId: string | undefined;
+    for (const [id, like] of this.loopLikes.entries()) {
+      if (like.loopId.equals(loopObjectId) && like.userId.equals(userObjectId)) {
+        existingLikeId = id;
+        break;
+      }
+    }
+    
+    const loop = this.loops.get(likeData.loopId);
+    if (!loop) {
+      throw new Error('Loop not found');
+    }
+    
+    if (existingLikeId) {
+      // Remove like
+      this.loopLikes.delete(existingLikeId);
+      loop.likes = Math.max(0, loop.likes - 1);
+      this.loops.set(likeData.loopId, loop);
+      return { liked: false, likesCount: loop.likes };
+    } else {
+      // Add like
+      const id = new Types.ObjectId().toString();
+      const like: LoopLike = {
+        _id: new Types.ObjectId(id),
+        loopId: loopObjectId,
+        userId: userObjectId,
+        createdAt: new Date(),
+      } as LoopLike;
+      
+      this.loopLikes.set(id, like);
+      loop.likes += 1;
+      this.loops.set(likeData.loopId, loop);
+      return { liked: true, likesCount: loop.likes };
+    }
+  }
+
+  async getUserLoopLikes(userId: string): Promise<string[]> {
+    const userObjectId = new Types.ObjectId(userId);
+    return Array.from(this.loopLikes.values())
+      .filter(like => like.userId.equals(userObjectId))
+      .map(like => like.loopId.toString());
   }
 }

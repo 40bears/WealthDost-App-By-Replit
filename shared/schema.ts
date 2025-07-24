@@ -126,6 +126,40 @@ export interface TribeAssetTracking extends Document {
   isActive: boolean;
 }
 
+// Loop interface for short-form video content
+export interface Loop extends Document {
+  _id: Types.ObjectId;
+  userId: Types.ObjectId;
+  title: string;
+  description?: string;
+  videoUrl: string;
+  thumbnailUrl?: string;
+  duration: number; // in seconds
+  tags?: string[];
+  likes: number;
+  comments: number;
+  views: number;
+  isPublic: boolean;
+  createdAt: Date;
+}
+
+// Loop comment interface
+export interface LoopComment extends Document {
+  _id: Types.ObjectId;
+  loopId: Types.ObjectId;
+  userId: Types.ObjectId;
+  content: string;
+  createdAt: Date;
+}
+
+// Loop like interface
+export interface LoopLike extends Document {
+  _id: Types.ObjectId;
+  loopId: Types.ObjectId;
+  userId: Types.ObjectId;
+  createdAt: Date;
+}
+
 // Mongoose Schemas
 const userSchema = new Schema<User>({
   username: { type: String, required: true, unique: true },
@@ -231,6 +265,35 @@ const tribeAssetTrackingSchema = new Schema<TribeAssetTracking>({
   isActive: { type: Boolean, default: true }
 });
 
+// Loop schemas for short-form video content
+const loopSchema = new Schema<Loop>({
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  title: { type: String, required: true },
+  description: { type: String },
+  videoUrl: { type: String, required: true },
+  thumbnailUrl: { type: String },
+  duration: { type: Number, required: true },
+  tags: [{ type: String }],
+  likes: { type: Number, default: 0 },
+  comments: { type: Number, default: 0 },
+  views: { type: Number, default: 0 },
+  isPublic: { type: Boolean, default: true },
+  createdAt: { type: Date, default: Date.now }
+});
+
+const loopCommentSchema = new Schema<LoopComment>({
+  loopId: { type: Schema.Types.ObjectId, ref: 'Loop', required: true },
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  content: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now }
+});
+
+const loopLikeSchema = new Schema<LoopLike>({
+  loopId: { type: Schema.Types.ObjectId, ref: 'Loop', required: true },
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  createdAt: { type: Date, default: Date.now }
+});
+
 // Export Mongoose models
 export const UserModel = mongoose.model<User>('User', userSchema);
 export const PostModel = mongoose.model<Post>('Post', postSchema);
@@ -241,6 +304,9 @@ export const PriceAlertModel = mongoose.model<PriceAlert>('PriceAlert', priceAle
 export const WatchlistThemeModel = mongoose.model<WatchlistTheme>('WatchlistTheme', watchlistThemeSchema);
 export const AssetSentimentModel = mongoose.model<AssetSentiment>('AssetSentiment', assetSentimentSchema);
 export const TribeAssetTrackingModel = mongoose.model<TribeAssetTracking>('TribeAssetTracking', tribeAssetTrackingSchema);
+export const LoopModel = mongoose.model<Loop>('Loop', loopSchema);
+export const LoopCommentModel = mongoose.model<LoopComment>('LoopComment', loopCommentSchema);
+export const LoopLikeModel = mongoose.model<LoopLike>('LoopLike', loopLikeSchema);
 
 // Zod validation schemas for API requests
 export const insertUserSchema = z.object({
@@ -318,6 +384,28 @@ export const insertTribeAssetTrackingSchema = z.object({
   symbol: z.string().min(1),
 });
 
+// Zod schemas for Loops
+export const insertLoopSchema = z.object({
+  userId: z.string(),
+  title: z.string().min(1),
+  description: z.string().optional(),
+  videoUrl: z.string().min(1),
+  thumbnailUrl: z.string().optional(),
+  duration: z.number().min(1),
+  tags: z.array(z.string()).optional(),
+});
+
+export const insertLoopCommentSchema = z.object({
+  loopId: z.string(),
+  userId: z.string(),
+  content: z.string().min(1),
+});
+
+export const insertLoopLikeSchema = z.object({
+  loopId: z.string(),
+  userId: z.string(),
+});
+
 // Type exports for use in other files
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type InsertInvestorProfile = z.infer<typeof insertInvestorProfileSchema>;
@@ -329,6 +417,9 @@ export type InsertPriceAlert = z.infer<typeof insertPriceAlertSchema>;
 export type InsertWatchlistTheme = z.infer<typeof insertWatchlistThemeSchema>;
 export type InsertAssetSentiment = z.infer<typeof insertAssetSentimentSchema>;
 export type InsertTribeAssetTracking = z.infer<typeof insertTribeAssetTrackingSchema>;
+export type InsertLoop = z.infer<typeof insertLoopSchema>;
+export type InsertLoopComment = z.infer<typeof insertLoopCommentSchema>;
+export type InsertLoopLike = z.infer<typeof insertLoopLikeSchema>;
 
 // Legacy type compatibility for existing code
 export type InvestorProfile = InvestorData & { _id?: Types.ObjectId; userId?: Types.ObjectId };
