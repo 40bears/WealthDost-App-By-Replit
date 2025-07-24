@@ -118,14 +118,18 @@ export default function Loops() {
     }
   });
 
-  // Handle scroll navigation
+  // Handle scroll navigation with infinite loop
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
-      if (e.deltaY > 0 && currentIndex < (loops?.length || 0) - 1) {
-        setCurrentIndex(prev => prev + 1);
-      } else if (e.deltaY < 0 && currentIndex > 0) {
-        setCurrentIndex(prev => prev - 1);
+      if (!loops || loops.length === 0) return;
+      
+      if (e.deltaY > 0) {
+        // Scroll down - go to next video (with infinite loop)
+        setCurrentIndex(prev => (prev + 1) % loops.length);
+      } else if (e.deltaY < 0) {
+        // Scroll up - go to previous video (with infinite loop)
+        setCurrentIndex(prev => prev === 0 ? loops.length - 1 : prev - 1);
       }
     };
 
@@ -134,7 +138,7 @@ export default function Loops() {
       container.addEventListener('wheel', handleWheel, { passive: false });
       return () => container.removeEventListener('wheel', handleWheel);
     }
-  }, [currentIndex, loops?.length]);
+  }, [loops?.length]);
 
   // Handle content playback simulation
   useEffect(() => {
@@ -142,9 +146,11 @@ export default function Loops() {
     // In a real app, this would handle actual video playback
   }, [currentIndex, isPlaying, isMuted]);
 
-  // Handle keyboard controls
+  // Handle keyboard controls with infinite loop
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (!loops || loops.length === 0) return;
+      
       switch (e.code) {
         case 'Space':
           e.preventDefault();
@@ -152,11 +158,11 @@ export default function Loops() {
           break;
         case 'ArrowUp':
           e.preventDefault();
-          if (currentIndex > 0) setCurrentIndex(prev => prev - 1);
+          setCurrentIndex(prev => prev === 0 ? loops.length - 1 : prev - 1);
           break;
         case 'ArrowDown':
           e.preventDefault();
-          if (currentIndex < (loops?.length || 0) - 1) setCurrentIndex(prev => prev + 1);
+          setCurrentIndex(prev => (prev + 1) % loops.length);
           break;
         case 'KeyM':
           e.preventDefault();
@@ -167,7 +173,7 @@ export default function Loops() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentIndex, loops?.length]);
+  }, [loops?.length]);
 
   const handleLike = (loopId: string) => {
     likeMutation.mutate(loopId);
@@ -392,16 +398,32 @@ export default function Loops() {
         ))}
       </div>
 
-      {/* Loop Navigation Indicator */}
+      {/* Loop Navigation Indicator - Show max 5 dots */}
       <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1">
-        {loops.map((_: any, index: number) => (
-          <div
-            key={index}
-            className={`w-1 h-8 rounded-full transition-colors ${
-              index === currentIndex ? 'bg-white' : 'bg-white/30'
-            }`}
-          />
-        ))}
+        {loops && loops.length > 0 && (
+          <>
+            {/* Show current position indicator */}
+            <div className="text-white/60 text-xs text-center mb-2">
+              {currentIndex + 1}/{loops.length}
+            </div>
+            {/* Show navigation dots (max 5) */}
+            {Array.from({ length: Math.min(5, loops.length) }).map((_, index) => {
+              const actualIndex = Math.floor((currentIndex * 5) / loops.length) + index;
+              const isActive = actualIndex === Math.floor((currentIndex * 5) / loops.length) + Math.floor((currentIndex % loops.length) * 5 / loops.length);
+              return (
+                <div
+                  key={index}
+                  className={`w-1 h-6 rounded-full transition-colors ${
+                    index === Math.floor((currentIndex % 5)) ? 'bg-white' : 'bg-white/30'
+                  }`}
+                />
+              );
+            })}
+            <div className="text-white/40 text-xs text-center mt-2">
+              ∞
+            </div>
+          </>
+        )}
       </div>
 
       {/* Comments Sidebar */}

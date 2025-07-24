@@ -151,6 +151,66 @@ export class MemoryStorage implements IStorage {
         comments: 56,
         views: 2789,
       },
+      {
+        userId: Array.from(this.users.keys())[2],
+        title: "Options Trading Basics",
+        description: "Learn the fundamentals of options trading in 60 seconds. Call vs Put options explained with real examples. Risk management strategies for beginners.",
+        videoUrl: "", // Empty for demo
+        thumbnailUrl: "https://via.placeholder.com/400x600/3b82f6/ffffff?text=Options+Trading",
+        duration: 63,
+        tags: ["options", "trading", "derivatives", "basics"],
+        likes: 678,
+        comments: 92,
+        views: 3456,
+      },
+      {
+        userId: Array.from(this.users.keys())[0],
+        title: "Dividend Stocks vs Growth Stocks",
+        description: "Which investment strategy suits your portfolio? Compare dividend yield vs capital appreciation. Top picks for both categories in current market.",
+        videoUrl: "", // Empty for demo
+        thumbnailUrl: "https://via.placeholder.com/400x600/f97316/ffffff?text=Dividend+Growth",
+        duration: 87,
+        tags: ["dividend", "growth", "stocks", "strategy"],
+        likes: 445,
+        comments: 67,
+        views: 2134,
+      },
+      {
+        userId: Array.from(this.users.keys())[1],
+        title: "Real Estate vs Stock Market",
+        description: "Where should you invest your money? Real estate vs stocks comparison. Returns, liquidity, and tax implications breakdown for Indian investors.",
+        videoUrl: "", // Empty for demo
+        thumbnailUrl: "https://via.placeholder.com/400x600/059669/ffffff?text=Real+Estate",
+        duration: 94,
+        tags: ["realestate", "stocks", "comparison", "investment"],
+        likes: 567,
+        comments: 78,
+        views: 2678,
+      },
+      {
+        userId: Array.from(this.users.keys())[2],
+        title: "Tax Saving Investments 2024",
+        description: "80C vs 80D vs ELSS - Complete tax saving guide. Best investment options to reduce your tax liability while building wealth.",
+        videoUrl: "", // Empty for demo
+        thumbnailUrl: "https://via.placeholder.com/400x600/dc2626/ffffff?text=Tax+Saving",
+        duration: 76,
+        tags: ["tax", "saving", "80c", "elss"],
+        likes: 789,
+        comments: 123,
+        views: 4567,
+      },
+      {
+        userId: Array.from(this.users.keys())[0],
+        title: "Emergency Fund Strategy",
+        description: "How much emergency fund do you really need? Liquid funds vs savings account vs FD. Build your financial safety net the right way.",
+        videoUrl: "", // Empty for demo
+        thumbnailUrl: "https://via.placeholder.com/400x600/7c3aed/ffffff?text=Emergency+Fund",
+        duration: 69,
+        tags: ["emergency", "fund", "safety", "liquidity"],
+        likes: 234,
+        comments: 45,
+        views: 1567,
+      },
     ];
 
     sampleLoops.forEach(loopData => {
@@ -170,6 +230,46 @@ export class MemoryStorage implements IStorage {
         isPublic: true,
         createdAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000), // Random time in last week
       } as Loop);
+    });
+
+    // Add sample comments for the first few loops
+    const sampleComments = [
+      {
+        loopId: Array.from(this.loops.keys())[0],
+        userId: Array.from(this.users.keys())[1],
+        content: "Great analysis! Tesla's energy division is definitely undervalued by the market.",
+      },
+      {
+        loopId: Array.from(this.loops.keys())[0],
+        userId: Array.from(this.users.keys())[2],
+        content: "Thanks for the breakdown. What's your take on their manufacturing capacity expansion?",
+      },
+      {
+        loopId: Array.from(this.loops.keys())[1],
+        userId: Array.from(this.users.keys())[0],
+        content: "Bitcoin at 45k! Finally breaking that resistance. Next target 50k? 🚀",
+      },
+      {
+        loopId: Array.from(this.loops.keys())[1],
+        userId: Array.from(this.users.keys())[2],
+        content: "Institutional buying is the real driver here. ETF approvals changed everything.",
+      },
+      {
+        loopId: Array.from(this.loops.keys())[2],
+        userId: Array.from(this.users.keys())[1],
+        content: "SIP all the way! Timing the market is impossible for retail investors.",
+      },
+    ];
+
+    sampleComments.forEach(commentData => {
+      const commentId = new Types.ObjectId().toString();
+      this.loopComments.set(commentId, {
+        _id: new Types.ObjectId(commentId),
+        loopId: new Types.ObjectId(commentData.loopId),
+        userId: new Types.ObjectId(commentData.userId),
+        content: commentData.content,
+        createdAt: new Date(Date.now() - Math.random() * 2 * 24 * 60 * 60 * 1000), // Random time in last 2 days
+      } as LoopComment);
     });
   }
 
