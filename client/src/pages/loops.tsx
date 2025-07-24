@@ -398,33 +398,7 @@ export default function Loops() {
         ))}
       </div>
 
-      {/* Loop Navigation Indicator - Show max 5 dots */}
-      <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1">
-        {loops && loops.length > 0 && (
-          <>
-            {/* Show current position indicator */}
-            <div className="text-white/60 text-xs text-center mb-2">
-              {currentIndex + 1}/{loops.length}
-            </div>
-            {/* Show navigation dots (max 5) */}
-            {Array.from({ length: Math.min(5, loops.length) }).map((_, index) => {
-              const actualIndex = Math.floor((currentIndex * 5) / loops.length) + index;
-              const isActive = actualIndex === Math.floor((currentIndex * 5) / loops.length) + Math.floor((currentIndex % loops.length) * 5 / loops.length);
-              return (
-                <div
-                  key={index}
-                  className={`w-1 h-6 rounded-full transition-colors ${
-                    index === Math.floor((currentIndex % 5)) ? 'bg-white' : 'bg-white/30'
-                  }`}
-                />
-              );
-            })}
-            <div className="text-white/40 text-xs text-center mt-2">
-              ∞
-            </div>
-          </>
-        )}
-      </div>
+
 
       {/* Comments Sidebar */}
       {showComments && (
