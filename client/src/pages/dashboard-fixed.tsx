@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link as RouterLink } from "wouter";
 import MarketOverview from "@/components/dashboard/MarketOverview";
 import FeatureNavigation from "@/components/dashboard/FeatureNavigation";
-import BottomNavigation from "@/components/dashboard/BottomNavigation";
+
 import WelcomeCard from "@/components/dashboard/WelcomeCard";
 import ContentFeed from "@/components/dashboard/ContentFeed";
 import CreatePostModal from "@/components/dashboard/CreatePostModal";
@@ -27,9 +27,6 @@ import {
 
 // Define feature types for our top navigation with empty string for default home feed
 type FeatureType = "home_feed" | "watchlist" | "portfolio" | "analytics" | "debate" | "quiz" | "news";
-
-// Define bottom tab types
-type Tab = "home" | "experts" | "explore" | "invroom" | "loops";
 
 // Define experts section tabs
 type ExpertsTabType = "topAnalysts" | "ask" | "myPicks";
@@ -167,7 +164,6 @@ const StockPickFormComponent = () => {
 };
 
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState<Tab>("home");
   const [activeFeature, setActiveFeature] = useState<FeatureType>("home_feed");
   const [expertsTab, setExpertsTab] = useState<ExpertsTabType>("topAnalysts");
   const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
@@ -262,13 +258,7 @@ const Dashboard = () => {
   };
 
   // Function to handle tab changes
-  const handleTabChange = (tab: Tab) => {
-    setActiveTab(tab);
-    // When Home tab is clicked, reset to show posts feed
-    if (tab === "home") {
-      setActiveFeature("home_feed");
-    }
-  };
+
 
   // Function to render posts feed
   const renderPostsFeed = () => {
@@ -1062,20 +1052,9 @@ const Dashboard = () => {
     );
   };
 
-  // Render content based on selected bottom tab
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case "home":
-        return renderFeatureContent();
-      case "experts":
-        return renderExpertsContent();
-      case "explore":
-        return renderExploreContent();
-      case "invroom":
-        return renderInvRoomContent();
-      default:
-        return renderPostsFeed();
-    }
+  // Just render the main feature content since navigation is now global
+  const renderMainContent = () => {
+    return renderFeatureContent();
   };
 
   return (
@@ -1200,17 +1179,15 @@ const Dashboard = () => {
 
       {/* No banner here - removed as requested */}
 
-      {/* Quick Nav Tabs (only visible on home tab) - Fixed */}
-      {activeTab === "home" && (
-        <div className="sticky top-[60px] z-10 bg-white">
-          <FeatureNavigation activeFeature={activeFeature as any} onFeatureSelect={handleFeatureSelect} />
-        </div>
-      )}
+      {/* Quick Nav Tabs - Fixed */}
+      <div className="sticky top-[60px] z-10 bg-white">
+        <FeatureNavigation activeFeature={activeFeature as any} onFeatureSelect={handleFeatureSelect} />
+      </div>
 
       {/* Main Content Area - Scrollable */}
       <div className="flex-1 overflow-auto pb-20 min-h-0">
-        {/* Dynamic Content Area based on selected tab */}
-        {renderTabContent()}
+        {/* Dynamic Content Area */}
+        {renderMainContent()}
       </div>
 
       {/* Create Post Modal */}
@@ -1448,10 +1425,7 @@ const Dashboard = () => {
         </div>
       )}
       
-      {/* Bottom Navigation - Fixed */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white z-20 max-w-md mx-auto">
-        <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
-      </div>
+
     </div>
   );
 };

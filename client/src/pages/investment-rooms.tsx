@@ -6,13 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link } from "wouter";
-import BottomNavigation from "@/components/dashboard/BottomNavigation";
 
 const InvestmentRooms = () => {
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterType, setFilterType] = useState("all"); // all, free, premium, sponsored
   const [showCreateTribe, setShowCreateTribe] = useState(false);
-  const [activeTab, setActiveTab] = useState<"home" | "experts" | "explore" | "invroom" | "loops">("invroom");
+
 
   // Mock data - would be fetched from API
   const rooms = [
@@ -80,9 +79,7 @@ const InvestmentRooms = () => {
     return categoryMatch && typeMatch;
   });
 
-  const handleTabChange = (tab: "home" | "experts" | "explore" | "invroom" | "loops") => {
-    setActiveTab(tab);
-  };
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -229,13 +226,6 @@ const InvestmentRooms = () => {
 
       {/* Bottom padding for safe area */}
       <div className="h-20"></div>
-      
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 z-50">
-        <div className="max-w-md mx-auto">
-          <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
-        </div>
-      </div>
 
       {/* Create Tribe Modal */}
       {showCreateTribe && (
