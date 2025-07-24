@@ -48,6 +48,8 @@ export default function Loops() {
   const [newComment, setNewComment] = useState("");
   const [likedLoops, setLikedLoops] = useState<Set<string>>(new Set());
   const [videoErrors, setVideoErrors] = useState<Set<number>>(new Set());
+  const [touchStart, setTouchStart] = useState({ y: 0, time: 0 });
+  const [isScrolling, setIsScrolling] = useState(false);
 
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -117,16 +119,21 @@ export default function Loops() {
     }
   });
 
-  // Handle scroll navigation with infinite loop
+  // Handle scroll navigation with single video transitions
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
-      if (!loops || loops.length === 0) return;
+      if (!loops || loops.length === 0 || isScrolling) return;
       
-      if (e.deltaY > 0) {
+      setIsScrolling(true);
+      
+      // Debounce scrolling to prevent rapid transitions
+      setTimeout(() => setIsScrolling(false), 300);
+      
+      if (e.deltaY > 50) {
         // Scroll down - go to next video (with infinite loop)
         setCurrentIndex(prev => (prev + 1) % loops.length);
-      } else if (e.deltaY < 0) {
+      } else if (e.deltaY < -50) {
         // Scroll up - go to previous video (with infinite loop)
         setCurrentIndex(prev => prev === 0 ? loops.length - 1 : prev - 1);
       }
@@ -137,7 +144,50 @@ export default function Loops() {
       container.addEventListener('wheel', handleWheel, { passive: false });
       return () => container.removeEventListener('wheel', handleWheel);
     }
-  }, [loops?.length]);
+  }, [loops?.length, isScrolling]);
+
+  // Handle touch events for mobile swiping
+  useEffect(() => {
+    const handleTouchStart = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      setTouchStart({
+        y: touch.clientY,
+        time: Date.now()
+      });
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (!loops || loops.length === 0 || isScrolling) return;
+      
+      const touch = e.changedTouches[0];
+      const deltaY = touchStart.y - touch.clientY;
+      const deltaTime = Date.now() - touchStart.time;
+      
+      // Only trigger if swipe is fast enough and far enough
+      if (Math.abs(deltaY) > 50 && deltaTime < 300) {
+        setIsScrolling(true);
+        setTimeout(() => setIsScrolling(false), 300);
+        
+        if (deltaY > 0) {
+          // Swipe up - go to next video
+          setCurrentIndex(prev => (prev + 1) % loops.length);
+        } else {
+          // Swipe down - go to previous video
+          setCurrentIndex(prev => prev === 0 ? loops.length - 1 : prev - 1);
+        }
+      }
+    };
+
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('touchstart', handleTouchStart, { passive: true });
+      container.addEventListener('touchend', handleTouchEnd, { passive: true });
+      return () => {
+        container.removeEventListener('touchstart', handleTouchStart);
+        container.removeEventListener('touchend', handleTouchEnd);
+      };
+    }
+  }, [loops?.length, touchStart, isScrolling]);
 
   // Handle content playback simulation
   useEffect(() => {
@@ -145,7 +195,7 @@ export default function Loops() {
     // In a real app, this would handle actual video playback
   }, [currentIndex, isPlaying, isMuted]);
 
-  // Handle keyboard controls with infinite loop
+  // Handle keyboard controls with debouncing
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!loops || loops.length === 0) return;
@@ -157,11 +207,19 @@ export default function Loops() {
           break;
         case 'ArrowUp':
           e.preventDefault();
-          setCurrentIndex(prev => prev === 0 ? loops.length - 1 : prev - 1);
+          if (!isScrolling) {
+            setIsScrolling(true);
+            setTimeout(() => setIsScrolling(false), 300);
+            setCurrentIndex(prev => prev === 0 ? loops.length - 1 : prev - 1);
+          }
           break;
         case 'ArrowDown':
           e.preventDefault();
-          setCurrentIndex(prev => (prev + 1) % loops.length);
+          if (!isScrolling) {
+            setIsScrolling(true);
+            setTimeout(() => setIsScrolling(false), 300);
+            setCurrentIndex(prev => (prev + 1) % loops.length);
+          }
           break;
         case 'KeyM':
           e.preventDefault();
@@ -172,7 +230,7 @@ export default function Loops() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [loops?.length]);
+  }, [loops?.length, isScrolling]);
 
   const handleLike = (loopId: string) => {
     likeMutation.mutate(loopId);
@@ -229,6 +287,10 @@ export default function Loops() {
     <div 
       ref={containerRef}
       className="relative h-screen bg-black overflow-hidden"
+      style={{ 
+        touchAction: 'pan-x pinch-zoom',
+        userSelect: 'none'
+      }}
     >
       {/* Header */}
       <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between p-4 bg-gradient-to-b from-black/50 to-transparent">
@@ -248,10 +310,13 @@ export default function Loops() {
         {loops.map((loop: Loop, index: number) => (
           <div
             key={loop._id}
-            className={`absolute inset-0 transition-transform duration-300 ${
-              index === currentIndex ? 'translate-y-0' : 
-              index < currentIndex ? '-translate-y-full' : 'translate-y-full'
+            className={`absolute inset-0 transition-all duration-300 ease-out ${
+              index === currentIndex ? 'translate-y-0 opacity-100 scale-100' : 
+              index < currentIndex ? '-translate-y-full opacity-0 scale-95' : 'translate-y-full opacity-0 scale-95'
             }`}
+            style={{
+              transform: isScrolling && index === currentIndex ? 'scale(0.98)' : undefined
+            }}
           >
             {/* Loop Content Card */}
             <div 
@@ -460,8 +525,8 @@ export default function Loops() {
       )}
 
       {/* Instructions */}
-      <div className="absolute bottom-20 left-4 text-gray-400 text-xs">
-        <p>Use ↑↓ arrows or scroll to navigate • Space to play/pause • M to mute</p>
+      <div className="absolute bottom-20 left-4 text-gray-400 text-xs bg-black/30 backdrop-blur-sm px-3 py-2 rounded-lg">
+        <p>Swipe up/down or use ↑↓ arrows • Space to play/pause • M to mute</p>
       </div>
     </div>
   );
