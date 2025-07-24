@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Heart, MessageCircle, Share2, Play, Pause, Volume2, VolumeX, MoreVertical, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
+import BottomNavigation from "@/components/dashboard/BottomNavigation";
 
 interface Loop {
   _id: string;
@@ -48,6 +49,7 @@ export default function Loops() {
   const [newComment, setNewComment] = useState("");
   const [likedLoops, setLikedLoops] = useState<Set<string>>(new Set());
   const [videoErrors, setVideoErrors] = useState<Set<number>>(new Set());
+  const [activeTab, setActiveTab] = useState<"home" | "experts" | "explore" | "invroom" | "loops">("loops");
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -178,6 +180,10 @@ export default function Loops() {
         content: newComment.trim()
       });
     }
+  };
+
+  const handleTabChange = (tab: "home" | "experts" | "explore" | "invroom" | "loops") => {
+    setActiveTab(tab);
   };
 
   const formatDuration = (seconds: number) => {
@@ -461,8 +467,15 @@ export default function Loops() {
       )}
 
       {/* Instructions */}
-      <div className="absolute bottom-4 left-4 text-gray-400 text-xs">
+      <div className="absolute bottom-20 left-4 text-gray-400 text-xs">
         <p>Use ↑↓ arrows or scroll to navigate • Space to play/pause • M to mute</p>
+      </div>
+
+      {/* Bottom Navigation */}
+      <div className="absolute bottom-0 left-0 right-0 z-50">
+        <div className="max-w-md mx-auto">
+          <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
+        </div>
       </div>
     </div>
   );
