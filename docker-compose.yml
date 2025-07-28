@@ -1,0 +1,29 @@
+services:
+  wealth-dost:
+    image: 'app-wealthdost:latest'
+    container_name: wealthdost
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    networks:
+      - mongodb
+    depends_on:
+      - mongodb
+    
+  mongodb:
+    image: mongo:7
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - mongodb
+
+volumes:
+  mongodb_data:
+
+networks:
+  mongodb:
+    driver: bridge
