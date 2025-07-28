@@ -1,5 +1,8 @@
 import mongoose from 'mongoose';
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://test:test@cluster0.mongodb.net/wealthdost?retryWrites=true&w=majority';
 
 let isConnected = false;
