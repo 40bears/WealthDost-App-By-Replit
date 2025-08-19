@@ -6,6 +6,7 @@ import {
   insertInvestorProfileSchema,
   insertExpertProfileSchema,
   insertPostSchema,
+  insertStockTipSchema,
   insertLoopSchema,
   insertLoopCommentSchema,
   insertLoopLikeSchema
@@ -209,6 +210,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Stock tips routes
+  app.get('/api/stock-tips', async (req, res) => {
+    try {
+      const posts = await storage.getPosts();
+      const stockTips = posts.filter(post => post.postType === 'stock_tip');
+      res.json(stockTips);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch stock tips', error });
+    }
+  });
+
+  app.post('/api/stock-tips', async (req, res) => {
+    try {
+      const stockTipData = insertStockTipSchema.parse(req.body);
+      
+      // Create a post with stock tip data
+      const postData = {
+        userId: req.body.userId || 'demo-user',
+        content: `${stockTipData.tipType.toUpperCase()} ${stockTipData.stockName} (${stockTipData.symbol}) at $${stockTipData.entryPrice}, target $${stockTipData.exitPrice}`,
+        postType: 'stock_tip' as const,
+        stockName: stockTipData.stockName,
+        symbol: stockTipData.symbol,
+        entryPrice: stockTipData.entryPrice,
+        exitPrice: stockTipData.exitPrice,
+        targetDate: stockTipData.targetDate,
+        tipType: stockTipData.tipType,
+        reasoning: stockTipData.reasoning,
+        status: 'active' as const,
+      };
+      
+      const post = await storage.createPost(postData);
+      res.status(201).json(post);
+    } catch (error) {
+      res.status(400).json({ message: 'Invalid stock tip data', error });
+    }
+  });
+
   // Market data routes
   app.get('/api/market-data', async (req, res) => {
     try {

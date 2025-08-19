@@ -2,11 +2,11 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link as RouterLink } from "wouter";
 import MarketOverview from "@/components/dashboard/MarketOverview";
-import FeatureNavigation from "@/components/dashboard/FeatureNavigation";
+// import FeatureNavigation from "@/components/dashboard/FeatureNavigation"; // Hidden for release
 
 import WelcomeCard from "@/components/dashboard/WelcomeCard";
 import ContentFeed from "@/components/dashboard/ContentFeed";
-import CreatePostModal from "@/components/dashboard/CreatePostModal";
+import EnhancedCreatePostModal from "@/components/dashboard/EnhancedCreatePostModal";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -1103,7 +1103,7 @@ const Dashboard = () => {
                   <User className="mr-2 h-4 w-4" />
                   <span>My Profile</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer" onClick={() => {setActiveTab("home"); setActiveFeature("analytics");}}>
+                <DropdownMenuItem className="cursor-pointer" onClick={() => setActiveFeature("analytics")}>
                   <BarChart3 className="mr-2 h-4 w-4" />
                   <span>Analytics</span>
                 </DropdownMenuItem>
@@ -1179,10 +1179,10 @@ const Dashboard = () => {
 
       {/* No banner here - removed as requested */}
 
-      {/* Quick Nav Tabs - Fixed */}
-      <div className="sticky top-[60px] z-10 bg-white">
+      {/* Quick Nav Tabs - Hidden for release */}
+      {/* <div className="sticky top-[60px] z-10 bg-white">
         <FeatureNavigation activeFeature={activeFeature as any} onFeatureSelect={handleFeatureSelect} />
-      </div>
+      </div> */}
 
       {/* Main Content Area - Scrollable */}
       <div className="flex-1 overflow-auto pb-20 min-h-0">
@@ -1191,9 +1191,13 @@ const Dashboard = () => {
       </div>
 
       {/* Create Post Modal */}
-      <CreatePostModal 
+      <EnhancedCreatePostModal 
         isOpen={isCreatePostModalOpen}
         onClose={() => setIsCreatePostModalOpen(false)}
+        onPostCreated={() => {
+          // Refresh posts when a new one is created
+          window.location.reload();
+        }}
       />
 
       {/* Portfolio Upload Modal */}

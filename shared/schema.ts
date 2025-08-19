@@ -45,6 +45,16 @@ export interface Post extends Document {
   createdAt: Date;
   likes: number;
   comments: number;
+  imageUrl?: string;
+  // Stock tip specific fields
+  stockName?: string;
+  symbol?: string;
+  entryPrice?: number;
+  exitPrice?: number;
+  targetDate?: Date;
+  tipType?: 'buy' | 'sell';
+  reasoning?: string;
+  status?: 'active' | 'completed' | 'expired';
 }
 
 // Market data interface
@@ -193,10 +203,20 @@ const userSchema = new Schema<User>({
 const postSchema = new Schema<Post>({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   content: { type: String, required: true },
-  postType: { type: String, default: 'discussion' },
+  postType: { type: String, default: 'discussion', enum: ['discussion', 'tweet', 'stock_tip', 'analysis', 'news', 'debate', 'quiz'] },
   tags: [{ type: String }],
   likes: { type: Number, default: 0 },
   comments: { type: Number, default: 0 },
+  imageUrl: { type: String },
+  // Stock tip specific fields
+  stockName: { type: String },
+  symbol: { type: String },
+  entryPrice: { type: Number },
+  exitPrice: { type: Number },
+  targetDate: { type: Date },
+  tipType: { type: String, enum: ['buy', 'sell'] },
+  reasoning: { type: String },
+  status: { type: String, enum: ['active', 'completed', 'expired'], default: 'active' },
   createdAt: { type: Date, default: Date.now }
 });
 
@@ -336,9 +356,30 @@ export const insertExpertProfileSchema = z.object({
 
 export const insertPostSchema = z.object({
   userId: z.string(),
-  content: z.string().min(1),
-  postType: z.string().default('discussion'),
+  content: z.string().min(1).max(600, "Content must be under 600 characters"),
+  postType: z.enum(['discussion', 'tweet', 'stock_tip', 'analysis', 'news', 'debate', 'quiz']).default('discussion'),
   tags: z.array(z.string()).optional(),
+  imageUrl: z.string().optional(),
+  // Stock tip specific fields
+  stockName: z.string().optional(),
+  symbol: z.string().optional(),
+  entryPrice: z.number().optional(),
+  exitPrice: z.number().optional(),
+  targetDate: z.string().optional(),
+  tipType: z.enum(['buy', 'sell']).optional(),
+  reasoning: z.string().max(500, "Reasoning must be under 500 characters").optional(),
+  status: z.enum(['active', 'completed', 'expired']).default('active').optional(),
+});
+
+// Separate schema for stock tips
+export const insertStockTipSchema = z.object({
+  stockName: z.string().min(1, "Stock name is required"),
+  symbol: z.string().min(1, "Stock symbol is required").max(10, "Symbol too long"),
+  entryPrice: z.number().min(0.01, "Entry price must be positive"),
+  exitPrice: z.number().min(0.01, "Exit price must be positive"),
+  targetDate: z.string().min(1, "Target date is required"),
+  tipType: z.enum(['buy', 'sell']),
+  reasoning: z.string().max(500, "Reasoning must be under 500 characters").optional(),
 });
 
 export const insertMarketDataSchema = z.object({
@@ -420,6 +461,7 @@ export type InsertTribeAssetTracking = z.infer<typeof insertTribeAssetTrackingSc
 export type InsertLoop = z.infer<typeof insertLoopSchema>;
 export type InsertLoopComment = z.infer<typeof insertLoopCommentSchema>;
 export type InsertLoopLike = z.infer<typeof insertLoopLikeSchema>;
+export type InsertStockTip = z.infer<typeof insertStockTipSchema>;
 
 // Legacy type compatibility for existing code
 export type InvestorProfile = InvestorData & { _id?: Types.ObjectId; userId?: Types.ObjectId };

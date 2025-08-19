@@ -169,20 +169,46 @@ The application is configured for deployment on Replit with the following setup:
 
 The application is configured with appropriate ports and process management for seamless deployment on Replit.
 
+## Recent Changes (January 2025)
+
+### Simplified Release Version
+1. **UI Framework Migration**
+   - Fully migrated to Shadcn UI components throughout the application
+   - Enhanced component consistency and accessibility
+
+2. **Navigation Updates** 
+   - Hidden Loops from footer navigation, replaced with Stock Tips
+   - Removed header navigation links (Watchlist, Portfolio, Debate, Quiz, News) from Home page for simplified release
+
+3. **Enhanced Post Creation**
+   - Implemented dual post creation functionality:
+     - Tweet-like posts: Text/image content with 600 character limit
+     - Stock Tips: Structured stock recommendations with entry/exit prices, target dates, and reasoning
+   - Created EnhancedCreatePostModal with tabbed interface
+
+4. **Stock Tips Feature**
+   - New `/stock-tips` page with card-based display
+   - Backend API support for stock tip creation and retrieval
+   - Integration with existing post system using `postType: 'stock_tip'`
+
+5. **Schema Updates**
+   - Extended Post schema to support both tweet-like posts and stock tips
+   - Added stock-specific fields: stockName, symbol, entryPrice, exitPrice, targetDate, tipType, reasoning, status
+
 ## Upcoming Features
 
-1. **Investment Portfolio Tracking**
+1. **User Authentication System**
+   - Complete login/logout functionality
+   - Session management
+
+2. **Investment Portfolio Tracking**
    - Personal investment dashboard
    - Performance analytics
 
-2. **Expert Verification System**
+3. **Expert Verification System**
    - Credential verification workflow
    - Expert ranking algorithm
 
-3. **Community Interaction Features**
+4. **Community Interaction Features**
    - Real-time chat and discussions
    - Group investment rooms
-
-4. **Advanced Analytics**
-   - Custom financial charts and insights
-   - Personalized investment recommendations
