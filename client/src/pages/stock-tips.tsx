@@ -1,398 +1,251 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowLeft, TrendingUp, TrendingDown, Clock, Target, Calendar, User, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, TrendingUp, TrendingDown, DollarSign, Calendar, Target } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useToast } from "@/hooks/use-toast";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import BottomNavigation from "@/components/dashboard/BottomNavigation";
 
-interface StockTip {
-  _id: string;
-  stockName: string;
-  symbol: string;
-  entryPrice: number;
-  exitPrice: number;
-  targetDate: string;
-  type: 'buy' | 'sell';
-  reasoning: string;
-  author: string;
-  createdAt: string;
-  status: 'active' | 'completed' | 'expired';
-  performance?: number;
-}
-
-const stockTipSchema = z.object({
-  stockName: z.string().min(1, "Stock name is required"),
-  symbol: z.string().min(1, "Stock symbol is required").max(10, "Symbol too long"),
-  entryPrice: z.number().min(0.01, "Entry price must be positive"),
-  exitPrice: z.number().min(0.01, "Exit price must be positive"),
-  targetDate: z.string().min(1, "Target date is required"),
-  type: z.enum(['buy', 'sell']),
-  reasoning: z.string().max(500, "Reasoning must be under 500 characters")
-});
-
-type StockTipFormData = z.infer<typeof stockTipSchema>;
-
-const StockTips = () => {
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const { toast } = useToast();
-
-  const { data: stockTips, isLoading } = useQuery<StockTip[]>({
-    queryKey: ['/api/stock-tips'],
-  });
-
-  const form = useForm<StockTipFormData>({
-    resolver: zodResolver(stockTipSchema),
-    defaultValues: {
-      stockName: "",
-      symbol: "",
-      entryPrice: 0,
-      exitPrice: 0,
-      targetDate: "",
-      type: "buy",
-      reasoning: ""
+// Demo stock tips data
+const demoStockTips = [
+  {
+    id: '1',
+    stockName: 'Apple Inc.',
+    symbol: 'AAPL',
+    tipType: 'buy' as const,
+    entryPrice: 150.00,
+    exitPrice: 165.00,
+    targetDate: '2025-03-01',
+    reasoning: 'Strong Q1 earnings expected, iPhone 16 sales momentum, and AI integration driving growth.',
+    status: 'active' as const,
+    createdAt: new Date('2025-01-15'),
+    author: {
+      name: 'Sarah Chen',
+      avatar: '',
+      isExpert: true,
+      expertise: 'Tech Analyst'
     }
+  },
+  {
+    id: '2',
+    stockName: 'Tesla Inc.',
+    symbol: 'TSLA',
+    tipType: 'buy' as const,
+    entryPrice: 185.00,
+    exitPrice: 220.00,
+    targetDate: '2025-04-15',
+    reasoning: 'Model Y refresh and FSD improvements should boost sales. Energy storage segment growing rapidly.',
+    status: 'active' as const,
+    createdAt: new Date('2025-01-14'),
+    author: {
+      name: 'Alex Kumar',
+      avatar: '',
+      isExpert: true,
+      expertise: 'EV Specialist'
+    }
+  },
+  {
+    id: '3',
+    stockName: 'Microsoft Corp.',
+    symbol: 'MSFT',
+    tipType: 'sell' as const,
+    entryPrice: 420.00,
+    exitPrice: 395.00,
+    targetDate: '2025-02-28',
+    reasoning: 'Overvalued at current levels. Cloud growth slowing and AI spending not yet showing ROI.',
+    status: 'completed' as const,
+    createdAt: new Date('2025-01-10'),
+    author: {
+      name: 'David Park',
+      avatar: '',
+      isExpert: false,
+      expertise: 'Individual Investor'
+    }
+  }
+];
+
+export default function StockTips() {
+  const [filter, setFilter] = useState<'all' | 'buy' | 'sell' | 'active' | 'completed'>('all');
+
+  const filteredTips = demoStockTips.filter(tip => {
+    if (filter === 'all') return true;
+    if (filter === 'buy' || filter === 'sell') return tip.tipType === filter;
+    if (filter === 'active' || filter === 'completed') return tip.status === filter;
+    return true;
   });
 
-  const onSubmit = async (data: StockTipFormData) => {
-    try {
-      const response = await fetch('/api/stock-tips', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-
-      if (response.ok) {
-        toast({
-          title: "Stock Tip Created",
-          description: "Your stock tip has been shared with the community!"
-        });
-        setIsCreateModalOpen(false);
-        form.reset();
-        // Invalidate query to refresh the list
-        window.location.reload();
-      } else {
-        throw new Error('Failed to create stock tip');
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create stock tip. Please try again.",
-        variant: "destructive"
-      });
+  const calculatePotentialReturn = (entryPrice: number, exitPrice: number, tipType: 'buy' | 'sell') => {
+    if (tipType === 'buy') {
+      return ((exitPrice - entryPrice) / entryPrice * 100).toFixed(1);
+    } else {
+      return ((entryPrice - exitPrice) / entryPrice * 100).toFixed(1);
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric'
-    });
+    }).format(date);
   };
-
-  const calculatePerformance = (tip: StockTip) => {
-    const performance = ((tip.exitPrice - tip.entryPrice) / tip.entryPrice) * 100;
-    return tip.type === 'buy' ? performance : -performance;
-  };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 p-4">
-        <div className="max-w-md mx-auto">
-          <div className="animate-pulse space-y-4">
-            {[1, 2, 3].map((i) => (
-              <Card key={i}>
-                <CardContent className="p-4">
-                  <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                  <div className="h-3 bg-gray-200 rounded mb-2"></div>
-                  <div className="h-3 bg-gray-200 rounded"></div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-10">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-gray-900">Stock Tips</h1>
-          
-          <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                <Plus className="w-4 h-4 mr-1" />
-                Share Tip
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-md mx-auto">
-              <DialogHeader>
-                <DialogTitle>Share a Stock Tip</DialogTitle>
-              </DialogHeader>
-              
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="stockName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Stock Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Apple Inc." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="symbol"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Symbol</FormLabel>
-                          <FormControl>
-                            <Input placeholder="AAPL" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+      <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
+        <div className="flex items-center justify-between p-4">
+          <div className="flex items-center gap-3">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => window.history.back()}
+              className="p-2"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div>
+              <h1 className="text-xl font-bold">Stock Tips</h1>
+              <p className="text-sm text-gray-600">Expert recommendations & community insights</p>
+            </div>
+          </div>
+          <TrendingUp className="h-6 w-6 text-blue-600" />
+        </div>
 
-                  <FormField
-                    control={form.control}
-                    name="type"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Action</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select action" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="buy">Buy</SelectItem>
-                            <SelectItem value="sell">Sell</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="entryPrice"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Entry Price ($)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
-                              step="0.01" 
-                              placeholder="150.00"
-                              {...field}
-                              onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="exitPrice"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Target Price ($)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
-                              step="0.01" 
-                              placeholder="165.00"
-                              {...field}
-                              onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <FormField
-                    control={form.control}
-                    name="targetDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Target Date</FormLabel>
-                        <FormControl>
-                          <Input type="date" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="reasoning"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Why this tip? (Optional)</FormLabel>
-                        <FormControl>
-                          <Textarea 
-                            placeholder="Share your analysis or reasoning..."
-                            className="resize-none"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="flex gap-2 pt-4">
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      onClick={() => setIsCreateModalOpen(false)}
-                      className="flex-1"
-                    >
-                      Cancel
-                    </Button>
-                    <Button type="submit" className="flex-1">
-                      Share Tip
-                    </Button>
-                  </div>
-                </form>
-              </Form>
-            </DialogContent>
-          </Dialog>
+        {/* Filter Tabs */}
+        <div className="flex gap-2 px-4 pb-3 overflow-x-auto">
+          {[
+            { key: 'all', label: 'All Tips' },
+            { key: 'buy', label: 'Buy' },
+            { key: 'sell', label: 'Sell' },
+            { key: 'active', label: 'Active' },
+            { key: 'completed', label: 'Completed' }
+          ].map(({ key, label }) => (
+            <Button
+              key={key}
+              variant={filter === key ? "default" : "outline"}
+              size="sm"
+              onClick={() => setFilter(key as any)}
+              className="whitespace-nowrap"
+            >
+              {label}
+            </Button>
+          ))}
         </div>
       </div>
 
-      {/* Content */}
-      <div className="p-4 space-y-4 pb-20">
-        {!stockTips || stockTips.length === 0 ? (
-          <div className="text-center py-12">
-            <TrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No Stock Tips Yet</h3>
-            <p className="text-gray-500 mb-6">Be the first to share a stock tip with the community!</p>
-            <Button onClick={() => setIsCreateModalOpen(true)}>
-              <Plus className="w-4 h-4 mr-2" />
-              Share Your First Tip
-            </Button>
-          </div>
+      {/* Stock Tips List */}
+      <div className="p-4 pb-24 space-y-4">
+        {filteredTips.length === 0 ? (
+          <Card className="text-center py-8">
+            <CardContent>
+              <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-600 mb-2">No Stock Tips Found</h3>
+              <p className="text-gray-500">Try adjusting your filter or check back later for new tips.</p>
+            </CardContent>
+          </Card>
         ) : (
-          stockTips.map((tip) => {
-            const performance = calculatePerformance(tip);
-            const isPositive = performance > 0;
-            
-            return (
-              <Card key={tip._id} className="hover:shadow-md transition-shadow">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        {tip.stockName}
-                        <Badge variant="secondary" className="text-xs">
-                          {tip.symbol}
-                        </Badge>
-                      </CardTitle>
-                      <p className="text-sm text-gray-500 mt-1">by {tip.author}</p>
-                    </div>
-                    <Badge 
-                      variant={tip.type === 'buy' ? 'default' : 'destructive'}
-                      className="ml-2"
-                    >
-                      {tip.type === 'buy' ? (
-                        <TrendingUp className="w-3 h-3 mr-1" />
-                      ) : (
-                        <TrendingDown className="w-3 h-3 mr-1" />
-                      )}
-                      {tip.type.toUpperCase()}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                
-                <CardContent className="pt-0">
-                  <div className="grid grid-cols-2 gap-4 mb-4">
+          filteredTips.map((tip) => (
+            <Card key={tip.id} className="hover:shadow-md transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
-                      <DollarSign className="w-4 h-4 text-gray-400" />
-                      <div>
-                        <p className="text-xs text-gray-500">Entry</p>
-                        <p className="font-medium">${tip.entryPrice.toFixed(2)}</p>
+                      <div className={`p-2 rounded-lg ${
+                        tip.tipType === 'buy' 
+                          ? 'bg-green-100 text-green-700' 
+                          : 'bg-red-100 text-red-700'
+                      }`}>
+                        {tip.tipType === 'buy' ? (
+                          <TrendingUp className="h-4 w-4" />
+                        ) : (
+                          <TrendingDown className="h-4 w-4" />
+                        )}
                       </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <Target className="w-4 h-4 text-gray-400" />
                       <div>
-                        <p className="text-xs text-gray-500">Target</p>
-                        <p className="font-medium">${tip.exitPrice.toFixed(2)}</p>
+                        <h3 className="font-bold text-lg">{tip.stockName}</h3>
+                        <p className="text-sm text-gray-600">{tip.symbol}</p>
                       </div>
                     </div>
                   </div>
-
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm text-gray-600">
-                        Target: {formatDate(tip.targetDate)}
-                      </span>
-                    </div>
-                    
-                    <div className={`text-sm font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                      {isPositive ? '+' : ''}{performance.toFixed(1)}%
-                    </div>
-                  </div>
-
-                  {tip.reasoning && (
-                    <div className="bg-gray-50 rounded-lg p-3 mt-3">
-                      <p className="text-sm text-gray-700">{tip.reasoning}</p>
-                    </div>
-                  )}
-
-                  <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
-                    <span className="text-xs text-gray-500">
-                      {formatDate(tip.createdAt)}
-                    </span>
-                    <Badge 
-                      variant={tip.status === 'active' ? 'default' : tip.status === 'completed' ? 'secondary' : 'outline'}
-                      className="text-xs"
-                    >
+                  <div className="flex items-center gap-2">
+                    <Badge variant={tip.status === 'active' ? 'default' : 'secondary'}>
                       {tip.status}
                     </Badge>
+                    <Badge variant={tip.tipType === 'buy' ? 'default' : 'destructive'}>
+                      {tip.tipType.toUpperCase()}
+                    </Badge>
                   </div>
-                </CardContent>
-              </Card>
-            );
-          })
+                </div>
+              </CardHeader>
+
+              <CardContent className="space-y-4">
+                {/* Price Information */}
+                <div className="grid grid-cols-3 gap-4 p-3 bg-gray-50 rounded-lg">
+                  <div className="text-center">
+                    <p className="text-xs text-gray-500 mb-1">Entry Price</p>
+                    <p className="font-bold text-lg">${tip.entryPrice}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-gray-500 mb-1">Target Price</p>
+                    <p className="font-bold text-lg">${tip.exitPrice}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-gray-500 mb-1">Potential Return</p>
+                    <p className={`font-bold text-lg ${
+                      parseFloat(calculatePotentialReturn(tip.entryPrice, tip.exitPrice, tip.tipType)) > 0
+                        ? 'text-green-600'
+                        : 'text-red-600'
+                    }`}>
+                      {calculatePotentialReturn(tip.entryPrice, tip.exitPrice, tip.tipType)}%
+                    </p>
+                  </div>
+                </div>
+
+                {/* Target Date */}
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Calendar className="h-4 w-4" />
+                  <span>Target Date: {formatDate(new Date(tip.targetDate))}</span>
+                </div>
+
+                {/* Reasoning */}
+                {tip.reasoning && (
+                  <div className="p-3 bg-blue-50 rounded-lg">
+                    <p className="text-sm text-gray-700">{tip.reasoning}</p>
+                  </div>
+                )}
+
+                {/* Author Info */}
+                <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={tip.author.avatar} />
+                      <AvatarFallback>
+                        {tip.author.name.split(' ').map(n => n[0]).join('')}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-medium">{tip.author.name}</p>
+                        {tip.author.isExpert && (
+                          <Star className="h-3 w-3 text-yellow-500 fill-current" />
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-500">{tip.author.expertise}</p>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {formatDate(tip.createdAt)}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
         )}
       </div>
+
+      {/* Bottom Navigation */}
+      <BottomNavigation activeTab="tips" onTabChange={() => {}} />
     </div>
   );
-};
-
-export default StockTips;
+}

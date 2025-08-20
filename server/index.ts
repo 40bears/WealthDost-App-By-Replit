@@ -1,79 +1,68 @@
 import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
+import { createServer } from "http";
 import { setupVite, serveStatic, log } from "./vite";
-import { connectToDatabase } from "./db";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use((req, res, next) => {
-  const start = Date.now();
-  const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
+// Simple demo API endpoints for frontend demo
+app.get('/api/posts', (req, res) => {
+  res.json([]);
+});
 
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
-  };
+app.get('/api/stock-tips', (req, res) => {
+  res.json([]);
+});
 
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
+app.get('/api/market-data', (req, res) => {
+  res.json([
+    { symbol: 'AAPL', name: 'Apple Inc.', price: '150.00', change: '+2.50', changePercent: '+1.69%' },
+    { symbol: 'MSFT', name: 'Microsoft Corp.', price: '420.00', change: '+5.20', changePercent: '+1.25%' },
+    { symbol: 'GOOGL', name: 'Alphabet Inc.', price: '140.00', change: '-1.80', changePercent: '-1.27%' },
+    { symbol: 'TSLA', name: 'Tesla Inc.', price: '185.00', change: '+8.50', changePercent: '+4.81%' }
+  ]);
+});
 
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
-      }
+app.post('/api/posts', (req, res) => {
+  res.status(201).json({ id: Date.now().toString(), ...req.body, createdAt: new Date() });
+});
 
-      log(logLine);
-    }
-  });
+app.post('/api/stock-tips', (req, res) => {
+  res.status(201).json({ id: Date.now().toString(), ...req.body, createdAt: new Date() });
+});
 
-  next();
+// All other API routes return empty responses
+app.get('/api/*', (req, res) => {
+  res.json([]);
+});
+
+app.post('/api/*', (req, res) => {
+  res.status(201).json({ id: Date.now().toString(), message: 'Demo endpoint' });
 });
 
 (async () => {
-  // Try to connect to MongoDB, but continue with memory storage if it fails
-  try {
-    await connectToDatabase();
-    console.log('📊 Using MongoDB storage');
-  } catch (error) {
-    console.log('📁 Using in-memory storage (MongoDB unavailable)');
-  }
-  
-  const server = await registerRoutes(app);
+  const server = createServer(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
-
     res.status(status).json({ message });
-    throw err;
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
+  // Setup vite in development and serve static files in production
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
   const port = 5000;
   server.listen({
     port,
     host: "0.0.0.0",
     reusePort: true,
   }, () => {
-    log(`serving on port ${port}`);
+    log(`Frontend demo server running on port ${port}`);
   });
 })();

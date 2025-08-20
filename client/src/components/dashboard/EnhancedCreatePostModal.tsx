@@ -1,12 +1,9 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -15,25 +12,21 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { MessageSquare, TrendingUp, Image, X } from "lucide-react";
 
-// Tweet-like post schema
-const tweetPostSchema = z.object({
-  content: z.string().min(1, "Content is required").max(600, "Content must be under 600 characters"),
-  imageUrl: z.string().optional(),
-});
+// Simple form data types for demo
+interface TweetPostFormData {
+  content: string;
+  imageUrl?: string;
+}
 
-// Stock tip schema
-const stockTipSchema = z.object({
-  stockName: z.string().min(1, "Stock name is required"),
-  symbol: z.string().min(1, "Stock symbol is required").max(10, "Symbol too long"),
-  entryPrice: z.number().min(0.01, "Entry price must be positive"),
-  exitPrice: z.number().min(0.01, "Exit price must be positive"),
-  targetDate: z.string().min(1, "Target date is required"),
-  tipType: z.enum(['buy', 'sell']),
-  reasoning: z.string().max(500, "Reasoning must be under 500 characters").optional(),
-});
-
-type TweetPostFormData = z.infer<typeof tweetPostSchema>;
-type StockTipFormData = z.infer<typeof stockTipSchema>;
+interface StockTipFormData {
+  stockName: string;
+  symbol: string;
+  entryPrice: number;
+  exitPrice: number;
+  targetDate: string;
+  tipType: 'buy' | 'sell';
+  reasoning?: string;
+}
 
 interface EnhancedCreatePostModalProps {
   isOpen: boolean;
@@ -47,7 +40,6 @@ const EnhancedCreatePostModal = ({ isOpen, onClose, onPostCreated }: EnhancedCre
   const { toast } = useToast();
 
   const tweetForm = useForm<TweetPostFormData>({
-    resolver: zodResolver(tweetPostSchema),
     defaultValues: {
       content: "",
       imageUrl: ""
@@ -55,7 +47,6 @@ const EnhancedCreatePostModal = ({ isOpen, onClose, onPostCreated }: EnhancedCre
   });
 
   const stockTipForm = useForm<StockTipFormData>({
-    resolver: zodResolver(stockTipSchema),
     defaultValues: {
       stockName: "",
       symbol: "",
@@ -69,71 +60,56 @@ const EnhancedCreatePostModal = ({ isOpen, onClose, onPostCreated }: EnhancedCre
 
   const onTweetSubmit = async (data: TweetPostFormData) => {
     setIsSubmitting(true);
-    try {
-      const response = await fetch('/api/posts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...data,
-          postType: 'tweet',
-          userId: 'demo-user' // In a real app, this would come from authentication
-        })
-      });
-
-      if (response.ok) {
-        toast({
-          title: "Post Created",
-          description: "Your post has been shared successfully!"
-        });
-        tweetForm.reset();
-        onPostCreated?.();
-        onClose();
-      } else {
-        throw new Error('Failed to create post');
-      }
-    } catch (error) {
+    
+    // Simple validation for demo
+    if (!data.content || data.content.length > 600) {
       toast({
-        title: "Error",
-        description: "Failed to create post. Please try again.",
+        title: "Validation Error",
+        description: "Content is required and must be under 600 characters.",
         variant: "destructive"
       });
-    } finally {
       setIsSubmitting(false);
+      return;
     }
+
+    // Simulate API call
+    setTimeout(() => {
+      toast({
+        title: "Post Created",
+        description: "Your post has been shared successfully!"
+      });
+      tweetForm.reset();
+      onPostCreated?.();
+      onClose();
+      setIsSubmitting(false);
+    }, 1000);
   };
 
   const onStockTipSubmit = async (data: StockTipFormData) => {
     setIsSubmitting(true);
-    try {
-      const response = await fetch('/api/stock-tips', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...data,
-          userId: 'demo-user' // In a real app, this would come from authentication
-        })
-      });
-
-      if (response.ok) {
-        toast({
-          title: "Stock Tip Created",
-          description: "Your stock tip has been shared with the community!"
-        });
-        stockTipForm.reset();
-        onPostCreated?.();
-        onClose();
-      } else {
-        throw new Error('Failed to create stock tip');
-      }
-    } catch (error) {
+    
+    // Simple validation for demo
+    if (!data.stockName || !data.symbol || !data.entryPrice || !data.exitPrice || !data.targetDate) {
       toast({
-        title: "Error",
-        description: "Failed to create stock tip. Please try again.",
+        title: "Validation Error",
+        description: "Please fill in all required fields.",
         variant: "destructive"
       });
-    } finally {
       setIsSubmitting(false);
+      return;
     }
+
+    // Simulate API call
+    setTimeout(() => {
+      toast({
+        title: "Stock Tip Created",
+        description: "Your stock tip has been shared with the community!"
+      });
+      stockTipForm.reset();
+      onPostCreated?.();
+      onClose();
+      setIsSubmitting(false);
+    }, 1000);
   };
 
   const handleClose = () => {
