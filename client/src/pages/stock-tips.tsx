@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { ArrowLeft, TrendingUp, TrendingDown, Clock, Target, Calendar, User, Star } from "lucide-react";
+import { ArrowLeft, TrendingUp, TrendingDown, Clock, Target, Calendar, User, Star, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import BottomNavigation from "@/components/dashboard/BottomNavigation";
+import EnhancedCreatePostModal from "@/components/dashboard/EnhancedCreatePostModal";
 
 // Demo stock tips data
 const demoStockTips = [
@@ -66,6 +67,7 @@ const demoStockTips = [
 
 export default function StockTips() {
   const [filter, setFilter] = useState<'all' | 'buy' | 'sell' | 'active' | 'completed'>('all');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const filteredTips = demoStockTips.filter(tip => {
     if (filter === 'all') return true;
@@ -109,7 +111,14 @@ export default function StockTips() {
               <p className="text-sm text-gray-600">Expert recommendations & community insights</p>
             </div>
           </div>
-          <TrendingUp className="h-6 w-6 text-blue-600" />
+          <Button 
+            onClick={() => setIsCreateModalOpen(true)}
+            size="sm"
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Plus className="h-4 w-4 mr-1" />
+            Create
+          </Button>
         </div>
 
         {/* Filter Tabs */}
@@ -246,6 +255,16 @@ export default function StockTips() {
 
       {/* Bottom Navigation */}
       <BottomNavigation activeTab="tips" onTabChange={() => {}} />
+
+      {/* Create Post Modal */}
+      <EnhancedCreatePostModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onPostCreated={() => {
+          // In a real app, this would refresh the tips list
+          console.log('Post created successfully');
+        }}
+      />
     </div>
   );
 }

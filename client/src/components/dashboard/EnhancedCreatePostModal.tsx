@@ -37,6 +37,8 @@ interface EnhancedCreatePostModalProps {
 const EnhancedCreatePostModal = ({ isOpen, onClose, onPostCreated }: EnhancedCreatePostModalProps) => {
   const [activeTab, setActiveTab] = useState<"tweet" | "stock_tip">("tweet");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const { toast } = useToast();
 
   const tweetForm = useForm<TweetPostFormData>({
@@ -58,6 +60,32 @@ const EnhancedCreatePostModal = ({ isOpen, onClose, onPostCreated }: EnhancedCre
     }
   });
 
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast({
+          title: "File Too Large",
+          description: "Please select an image smaller than 5MB.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setSelectedImage(null);
+    setImagePreview(null);
+  };
+
   const onTweetSubmit = async (data: TweetPostFormData) => {
     setIsSubmitting(true);
     
@@ -72,13 +100,16 @@ const EnhancedCreatePostModal = ({ isOpen, onClose, onPostCreated }: EnhancedCre
       return;
     }
 
-    // Simulate API call
+    // Simulate API call with image upload
     setTimeout(() => {
       toast({
         title: "Post Created",
-        description: "Your post has been shared successfully!"
+        description: selectedImage 
+          ? "Your post with image has been shared successfully!" 
+          : "Your post has been shared successfully!"
       });
       tweetForm.reset();
+      removeImage();
       onPostCreated?.();
       onClose();
       setIsSubmitting(false);
@@ -115,6 +146,7 @@ const EnhancedCreatePostModal = ({ isOpen, onClose, onPostCreated }: EnhancedCre
   const handleClose = () => {
     tweetForm.reset();
     stockTipForm.reset();
+    removeImage();
     setActiveTab("tweet");
     onClose();
   };
@@ -183,25 +215,55 @@ const EnhancedCreatePostModal = ({ isOpen, onClose, onPostCreated }: EnhancedCre
                       )}
                     />
 
-                    <FormField
-                      control={tweetForm.control}
-                      name="imageUrl"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Image URL (Optional)</FormLabel>
-                          <FormControl>
-                            <div className="flex items-center gap-2">
-                              <Image className="h-4 w-4 text-gray-400" />
-                              <Input
-                                placeholder="https://example.com/image.jpg"
-                                {...field}
-                              />
+                    {/* Image Upload Section */}
+                    <div className="space-y-3">
+                      <FormLabel>Add Image (Optional)</FormLabel>
+                      
+                      {!imagePreview ? (
+                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className="hidden"
+                            id="image-upload"
+                          />
+                          <label
+                            htmlFor="image-upload"
+                            className="cursor-pointer flex flex-col items-center gap-2"
+                          >
+                            <Image className="h-8 w-8 text-gray-400" />
+                            <div className="text-sm text-gray-600">
+                              <span className="font-medium text-blue-600 hover:text-blue-500">
+                                Click to upload
+                              </span>{" "}
+                              or drag and drop
                             </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
+                            <div className="text-xs text-gray-500">
+                              PNG, JPG, GIF up to 5MB
+                            </div>
+                          </label>
+                        </div>
+                      ) : (
+                        <div className="relative">
+                          <img
+                            src={imagePreview}
+                            alt="Preview"
+                            className="w-full h-40 object-cover rounded-lg border"
+                          />
+                          <button
+                            type="button"
+                            onClick={removeImage}
+                            className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 shadow-lg transition-colors"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                          <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                            {selectedImage?.name}
+                          </div>
+                        </div>
                       )}
-                    />
+                    </div>
 
                     <div className="flex gap-2 pt-4">
                       <Button
