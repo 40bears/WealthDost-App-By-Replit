@@ -21,21 +21,17 @@ Preferred communication style: Simple, everyday language.
 
 ### Backend
 
-- **Technology**: Node.js with Express
-- **API Architecture**: RESTful API design with standard CRUD operations
-- **Runtime**: ESM-based Node.js application
-- **Development Tools**: Using Vite for frontend development and tsx for TypeScript execution in development
-- **Build Process**: Vite for frontend bundling, esbuild for server-side code
+- **Technology**: Minimal Express server for frontend demo
+- **API Architecture**: Simple mock endpoints returning static data
+- **Purpose**: Frontend demonstration only - real backend logic to be implemented separately
+- **Endpoints**: Basic API endpoints (/api/posts, /api/stock-tips, /api/market-data) with hardcoded responses
+- **Development Tools**: Using Vite for frontend development and tsx for TypeScript execution
 
 ### Database
 
-- **Database**: MongoDB with Mongoose ODM (migrated from PostgreSQL/Drizzle)
-- **Storage Architecture**: 
-  - Primary: MongoDB with Mongoose models and schemas
-  - Fallback: In-memory storage for development when MongoDB is unavailable
-- **Schema Management**: Mongoose schemas with embedded documents for user profiles
-- **Validation**: Zod schemas for API request validation
-- **Data Structure**: Document-based with embedded profile data instead of separate tables
+- **Current State**: No database - using static demo data for frontend showcase
+- **Future Implementation**: Backend and database logic will be added separately
+- **Demo Data**: Hardcoded market data and sample posts for UI demonstration
 
 ## Key Components
 
@@ -169,20 +165,52 @@ The application is configured for deployment on Replit with the following setup:
 
 The application is configured with appropriate ports and process management for seamless deployment on Replit.
 
+## Recent Changes (January 2025)
+
+### Simplified Release Version
+1. **UI Framework Migration**
+   - Fully migrated to Shadcn UI components throughout the application
+   - Enhanced component consistency and accessibility
+
+2. **Navigation Updates** 
+   - Hidden Loops from footer navigation, replaced with Stock Tips
+   - Removed header navigation links (Watchlist, Portfolio, Debate, Quiz, News) from Home page for simplified release
+
+3. **Enhanced Post Creation**
+   - Implemented dual post creation functionality:
+     - Tweet-like posts: Text/image content with 600 character limit
+     - Stock Tips: Structured stock recommendations with entry/exit prices, target dates, and reasoning
+   - Created EnhancedCreatePostModal with tabbed interface
+
+4. **Stock Tips Feature**
+   - New `/stock-tips` page with card-based display
+   - Backend API support for stock tip creation and retrieval
+   - Integration with existing post system using `postType: 'stock_tip'`
+
+5. **Schema Updates**
+   - Extended Post schema to support both tweet-like posts and stock tips
+   - Added stock-specific fields: stockName, symbol, entryPrice, exitPrice, targetDate, tipType, reasoning, status
+
+6. **Backend Simplification (Latest)**
+   - Removed all complex backend logic, database connections, and MongoDB/Mongoose dependencies
+   - Simplified to minimal Express server with static demo endpoints
+   - Converted to frontend-only demo with hardcoded data for UI showcase
+   - Removed validation schemas and complex API routing - ready for separate backend implementation
+
 ## Upcoming Features
 
-1. **Investment Portfolio Tracking**
+1. **User Authentication System**
+   - Complete login/logout functionality
+   - Session management
+
+2. **Investment Portfolio Tracking**
    - Personal investment dashboard
    - Performance analytics
 
-2. **Expert Verification System**
+3. **Expert Verification System**
    - Credential verification workflow
    - Expert ranking algorithm
 
-3. **Community Interaction Features**
+4. **Community Interaction Features**
    - Real-time chat and discussions
    - Group investment rooms
-
-4. **Advanced Analytics**
-   - Custom financial charts and insights
-   - Personalized investment recommendations
