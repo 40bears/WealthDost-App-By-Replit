@@ -19,21 +19,22 @@ import Activity from "@/pages/activity";
 import Settings from "@/pages/settings";
 import HelpCenter from "@/pages/help-center";
 import Loops from "@/pages/loops";
+import StockTips from "@/pages/stock-tips";
 import BottomNavigation from "@/components/dashboard/BottomNavigation";
 
 function Router() {
   const [location] = useLocation();
-  const [activeTab, setActiveTab] = useState<"home" | "experts" | "explore" | "invroom" | "loops">(() => {
+  const [activeTab, setActiveTab] = useState<"home" | "experts" | "explore" | "invroom" | "tips">(() => {
     // Determine initial active tab based on current route
     if (location.includes('/dashboard')) return 'home';
     if (location.includes('/experts')) return 'experts';
     if (location.includes('/watchlist') || location.includes('/portfolio')) return 'explore';
     if (location.includes('/investment-rooms')) return 'invroom';
-    if (location.includes('/loops')) return 'loops';
+    if (location.includes('/stock-tips')) return 'tips';
     return 'home';
   });
 
-  const handleTabChange = (tab: "home" | "experts" | "explore" | "invroom" | "loops") => {
+  const handleTabChange = (tab: "home" | "experts" | "explore" | "invroom" | "tips") => {
     setActiveTab(tab);
   };
 
@@ -61,6 +62,7 @@ function Router() {
           <Route path="/settings" component={Settings} />
           <Route path="/help" component={HelpCenter} />
           <Route path="/loops" component={Loops} />
+          <Route path="/stock-tips" component={StockTips} />
           <Route component={NotFound} />
         </Switch>
       </div>
