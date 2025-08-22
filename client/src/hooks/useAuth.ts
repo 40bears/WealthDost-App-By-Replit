@@ -1,21 +1,50 @@
-import { useQuery } from "@tanstack/react-query";
-import { User } from "@shared/schema";
+import { useState, useEffect } from "react";
 
-interface UseAuthReturn {
-  user: User | null;
-  isLoading: boolean;
-  isAuthenticated: boolean;
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  isLoggedIn: boolean;
 }
 
-export function useAuth(): UseAuthReturn {
-  const { data: user, isLoading } = useQuery({
-    queryKey: ["/api/users/1"], // In a real app, this would be based on a session or token
-    retry: false,
-  });
+export const useAuth = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Check if user is logged in from localStorage
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        const userData = JSON.parse(storedUser);
+        if (userData.isLoggedIn) {
+          setUser(userData);
+        }
+      } catch (error) {
+        console.error('Error parsing stored user data:', error);
+        localStorage.removeItem('user');
+      }
+    }
+    setIsLoading(false);
+  }, []);
+
+  const login = (userData: User) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+  };
+
+  const isAuthenticated = !!user?.isLoggedIn;
 
   return {
-    user: user || null,
+    user,
     isLoading,
-    isAuthenticated: !!user,
+    isAuthenticated,
+    login,
+    logout
   };
-}
+};

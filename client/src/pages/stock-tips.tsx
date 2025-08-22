@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import BottomNavigation from "@/components/dashboard/BottomNavigation";
 import EnhancedCreatePostModal from "@/components/dashboard/EnhancedCreatePostModal";
+import FloatingCreateButton from "@/components/FloatingCreateButton";
 
 // Demo stock tips data
 const demoStockTips = [
@@ -265,6 +266,9 @@ export default function StockTips() {
           console.log('Post created successfully');
         }}
       />
+
+      {/* Floating Create Button */}
+      <FloatingCreateButton />
     </div>
   );
 }

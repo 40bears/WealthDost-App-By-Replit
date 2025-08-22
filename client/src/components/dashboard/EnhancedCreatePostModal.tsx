@@ -155,17 +155,7 @@ const EnhancedCreatePostModal = ({ isOpen, onClose, onPostCreated }: EnhancedCre
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-md mx-auto max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            Create New Post
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleClose}
-              className="ml-auto h-6 w-6 p-0"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </DialogTitle>
+          <DialogTitle>Create New Post</DialogTitle>
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "tweet" | "stock_tip")}>

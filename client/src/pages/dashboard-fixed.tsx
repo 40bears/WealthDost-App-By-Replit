@@ -7,6 +7,9 @@ import MarketOverview from "@/components/dashboard/MarketOverview";
 import WelcomeCard from "@/components/dashboard/WelcomeCard";
 import ContentFeed from "@/components/dashboard/ContentFeed";
 import EnhancedCreatePostModal from "@/components/dashboard/EnhancedCreatePostModal";
+import FloatingCreateButton from "@/components/FloatingCreateButton";
+import AuthPrompt from "@/components/auth/AuthPrompt";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -169,6 +172,8 @@ const Dashboard = () => {
   const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
   const [isPortfolioModalOpen, setIsPortfolioModalOpen] = useState(false);
   const [portfolioStocks, setPortfolioStocks] = useState<any[]>([]);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const { isAuthenticated, user, logout } = useAuth();
   const [stockFormData, setStockFormData] = useState({
     stockName: "",
     entryDate: "",
@@ -1087,9 +1092,11 @@ const Dashboard = () => {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="text-sm font-medium leading-none">Rahul Kumar</p>
+                      <p className="text-sm font-medium leading-none">
+                        {isAuthenticated && user?.name ? user.name : "Guest User"}
+                      </p>
                       <p className="text-xs leading-none text-muted-foreground mt-1">
-                        Smart Investor
+                        {isAuthenticated ? "Smart Investor" : "Please sign in"}
                       </p>
                     </div>
                   </div>
@@ -1429,6 +1436,16 @@ const Dashboard = () => {
         </div>
       )}
       
+      {/* Auth Prompt */}
+      <AuthPrompt
+        isOpen={showAuthPrompt}
+        onClose={() => setShowAuthPrompt(false)}
+        onSuccess={() => setShowAuthPrompt(false)}
+        message="Sign in to access all features of WealthDost."
+      />
+
+      {/* Floating Create Button */}
+      <FloatingCreateButton />
 
     </div>
   );

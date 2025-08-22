@@ -20,6 +20,7 @@ import Settings from "@/pages/settings";
 import HelpCenter from "@/pages/help-center";
 import Loops from "@/pages/loops";
 import StockTips from "@/pages/stock-tips";
+import GlobalSearch from "@/pages/global-search";
 import BottomNavigation from "@/components/dashboard/BottomNavigation";
 
 function Router() {
@@ -63,6 +64,7 @@ function Router() {
           <Route path="/help" component={HelpCenter} />
           <Route path="/loops" component={Loops} />
           <Route path="/stock-tips" component={StockTips} />
+        <Route path="/search" component={GlobalSearch} />
           <Route component={NotFound} />
         </Switch>
       </div>

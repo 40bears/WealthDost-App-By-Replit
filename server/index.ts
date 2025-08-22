@@ -57,10 +57,10 @@ app.post('/api/*', (req, res) => {
     serveStatic(app);
   }
 
-  const port = 5000;
+  const port = 5001;
   server.listen({
     port,
-    host: "0.0.0.0",
+    host: "127.0.0.1",
     // reusePort: true,
   }, () => {
     log(`Frontend demo server running on port ${port}`);

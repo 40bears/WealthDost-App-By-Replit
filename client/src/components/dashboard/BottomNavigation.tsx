@@ -11,13 +11,15 @@ const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => 
   const tabs = [
     { id: "home", icon: "home", label: "Home", href: "/dashboard" },
     { id: "tips", icon: "trending_up", label: "Tips", href: "/stock-tips" },
-    { id: "explore", icon: "search", label: "Explore", href: null },
+    { id: "explore", icon: "search", label: "Explore", href: "/search" },
     { id: "experts", icon: "psychology", label: "Experts", href: "/experts" },
     { id: "invroom", icon: "meeting_room", label: "Tribe", href: "/investment-rooms" },
   ];
 
   const handleTabClick = (tab: any) => {
-    if (tab.href) {
+    if (tab.id === "explore") {
+      window.location.href = "/search";
+    } else if (tab.href) {
       window.location.href = tab.href;
     } else {
       onTabChange(tab.id as Tab);
