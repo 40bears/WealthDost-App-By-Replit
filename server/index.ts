@@ -57,7 +57,7 @@ app.post('/api/*', (req, res) => {
     serveStatic(app);
   }
 
-  const port = 5001;
+  const port = 5000;
   server.listen({
     port,
     host: "127.0.0.1",
