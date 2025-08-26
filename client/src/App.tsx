@@ -21,6 +21,8 @@ import HelpCenter from "@/pages/help-center";
 import Loops from "@/pages/loops";
 import StockTips from "@/pages/stock-tips";
 import GlobalSearch from "@/pages/global-search";
+import Terms from "@/pages/terms";
+import Privacy from "@/pages/privacy";
 import BottomNavigation from "@/components/dashboard/BottomNavigation";
 
 function Router() {
@@ -64,7 +66,9 @@ function Router() {
           <Route path="/help" component={HelpCenter} />
           <Route path="/loops" component={Loops} />
           <Route path="/stock-tips" component={StockTips} />
-        <Route path="/search" component={GlobalSearch} />
+          <Route path="/search" component={GlobalSearch} />
+          <Route path="/terms" component={Terms} />
+          <Route path="/privacy" component={Privacy} />
           <Route component={NotFound} />
         </Switch>
       </div>

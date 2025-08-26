@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft, Search, User, Hash, MessageSquare, Star, TrendingUp } from "lucide-react";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -97,6 +98,16 @@ const demoPosts = [
 export default function GlobalSearch() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<'all' | 'users' | 'hashtags' | 'posts'>('all');
+  const [location] = useLocation();
+
+  // Check for URL parameters and populate search on component mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const query = urlParams.get('q');
+    if (query) {
+      setSearchQuery(query);
+    }
+  }, [location]);
 
   const filteredUsers = demoUsers.filter(user => 
     user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

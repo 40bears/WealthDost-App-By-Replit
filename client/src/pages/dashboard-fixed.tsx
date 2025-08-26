@@ -16,7 +16,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ChevronRight, Upload, Link as LinkIcon, User, Settings, HelpCircle, LogOut, FileText, Heart, Activity, Bell, Shield, Globe, BarChart3 } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import PortfolioHealthScore from "@/components/portfolio/PortfolioHealthScore";
 import {
   DropdownMenu,
@@ -173,7 +173,20 @@ const Dashboard = () => {
   const [isPortfolioModalOpen, setIsPortfolioModalOpen] = useState(false);
   const [portfolioStocks, setPortfolioStocks] = useState<any[]>([]);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [feedFilter, setFeedFilter] = useState<"all" | "trending" | "following">("all");
   const { isAuthenticated, user, logout } = useAuth();
+  const [, setLocation] = useLocation();
+
+  // Function to handle hashtag clicks
+  const handleHashtagClick = (hashtag: string) => {
+    setLocation(`/search?q=${encodeURIComponent(hashtag)}`);
+  };
+
+  // Function to handle View All click
+  const handleViewAllMarkets = () => {
+    // Navigate to a comprehensive market overview page or show expanded view
+    alert("This would navigate to a detailed market analysis page");
+  };
   const [stockFormData, setStockFormData] = useState({
     stockName: "",
     entryDate: "",
@@ -314,7 +327,12 @@ const Dashboard = () => {
         <div className="mt-4 mb-6">
           <div className="flex justify-between items-center mb-3">
             <h3 className="font-semibold">Market Highlights</h3>
-            <Button variant="ghost" size="sm" className="text-xs">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-xs" 
+              onClick={handleViewAllMarkets}
+            >
               View All
             </Button>
           </div>
@@ -358,10 +376,34 @@ const Dashboard = () => {
         <div className="relative">
           <div className="flex justify-between items-center mb-3">
             <h3 className="font-semibold">Community Feed</h3>
-            <Button variant="ghost" size="sm" className="text-xs flex items-center">
-              <span className="material-icons text-sm mr-1">filter_list</span>
-              Filter
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="text-xs flex items-center">
+                  <span className="material-icons text-sm mr-1">filter_list</span>
+                  Filter ({feedFilter})
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem 
+                  onClick={() => setFeedFilter("all")}
+                  className={feedFilter === "all" ? "bg-blue-50" : ""}
+                >
+                  All Posts
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => setFeedFilter("trending")}
+                  className={feedFilter === "trending" ? "bg-blue-50" : ""}
+                >
+                  Trending
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => setFeedFilter("following")}
+                  className={feedFilter === "following" ? "bg-blue-50" : ""}
+                >
+                  Following
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           
           {/* Show API posts if available, otherwise show mock posts */}
@@ -385,7 +427,11 @@ const Dashboard = () => {
                   <p className="text-sm text-gray-700 mb-3">{post.content}</p>
                   <div className="flex flex-wrap gap-1 mb-3">
                     {post.tags.map((tag, index) => (
-                      <span key={index} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                      <span 
+                        key={index} 
+                        onClick={() => handleHashtagClick(tag)}
+                        className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded cursor-pointer hover:bg-blue-100 hover:text-blue-700 transition-colors"
+                      >
                         #{tag}
                       </span>
                     ))}
@@ -454,7 +500,9 @@ const Dashboard = () => {
           <div className="px-4 py-6">
             <h2 className="text-xl font-semibold mb-4">Analytics</h2>
             <p className="text-gray-600 mb-4">User-level financial behavior insights.</p>
-            <MarketOverview data={typedMarketData} isLoading={isLoadingMarketData} />
+            <div className="px-0">
+              <MarketOverview data={typedMarketData} isLoading={isLoadingMarketData} />
+            </div>
             
             <div className="mt-6 space-y-4">
               <div className="bg-white border border-gray-200 rounded-lg p-4">
