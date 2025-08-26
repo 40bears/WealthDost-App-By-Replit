@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, MoreHorizontal, Edit, Trash2, Eye } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +15,7 @@ import {
 
 const MyPosts = () => {
   const [filter, setFilter] = useState("all");
+  const [, setLocation] = useLocation();
 
   // Fetch user's posts
   const { data: posts, isLoading } = useQuery({
@@ -29,6 +30,12 @@ const MyPosts = () => {
     { value: "question", label: "Questions" },
     { value: "discussion", label: "Discussions" },
   ];
+
+  // Filter posts based on selected filter
+  const filteredPosts = typedPosts?.filter((post) => {
+    if (filter === "all") return true;
+    return post.type === filter;
+  }) || [];
 
   const handleDeletePost = (postId: number) => {
     if (confirm("Are you sure you want to delete this post?")) {
@@ -105,8 +112,8 @@ const MyPosts = () => {
               <div className="animate-spin w-8 h-8 border-4 border-purple-200 border-t-purple-600 rounded-full mx-auto"></div>
               <p className="text-gray-500 mt-2">Loading your posts...</p>
             </div>
-          ) : typedPosts && typedPosts.length > 0 ? (
-            typedPosts.map((post) => (
+          ) : filteredPosts && filteredPosts.length > 0 ? (
+            filteredPosts.map((post) => (
               <Card key={post.id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-3">
@@ -184,11 +191,21 @@ const MyPosts = () => {
               </div>
               <h3 className="font-medium text-gray-900 mb-2">No posts yet</h3>
               <p className="text-gray-500 text-sm mb-4">Start sharing your investment insights with the community!</p>
-              <Link href="/dashboard">
-                <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-                  Create Your First Post
-                </Button>
-              </Link>
+              <Button 
+                className="bg-purple-600 hover:bg-purple-700 text-white"
+                onClick={() => {
+                  setLocation("/dashboard");
+                  // Trigger post creation modal after redirect
+                  setTimeout(() => {
+                    const createButton = document.querySelector('[data-create-post]');
+                    if (createButton) {
+                      (createButton as HTMLElement).click();
+                    }
+                  }, 100);
+                }}
+              >
+                Create Your First Post
+              </Button>
             </div>
           )}
         </div>

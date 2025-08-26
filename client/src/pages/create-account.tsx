@@ -65,6 +65,14 @@ export default function CreateAccount() {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Create Account</h1>
           <p className="text-white/80">Enter your mobile number to get started</p>
+          <div className="mt-4">
+            <p className="text-white/70 text-sm">
+              Already have an account?{" "}
+              <Link href="/login" className="text-white font-semibold underline hover:text-blue-200 transition-colors">
+                Sign In
+              </Link>
+            </p>
+          </div>
         </div>
 
         {/* Registration Form */}
@@ -152,9 +160,13 @@ export default function CreateAccount() {
             <div className="mt-6 text-center">
               <p className="text-xs text-gray-600">
                 By continuing, you agree to our{" "}
-                <span className="text-purple-600 hover:underline">Terms of Service</span>{" "}
+                <Link href="/terms" className="text-purple-600 hover:underline cursor-pointer">
+                  Terms of Service
+                </Link>{" "}
                 and{" "}
-                <span className="text-purple-600 hover:underline">Privacy Policy</span>
+                <Link href="/privacy" className="text-purple-600 hover:underline cursor-pointer">
+                  Privacy Policy
+                </Link>
               </p>
             </div>
           </CardContent>

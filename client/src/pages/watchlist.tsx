@@ -491,7 +491,15 @@ const Watchlist = () => {
               <p className="text-sm text-gray-500 mb-4">
                 Discover what assets are trending in your investment communities
               </p>
-              <Button className="bg-purple-600 text-white">
+              <Button 
+                className="bg-purple-600 text-white"
+                onClick={() => {
+                  // Navigate to a dedicated Tribe joining/selection screen
+                  alert("Navigating to Tribe selection screen...");
+                  // In a real app, this would redirect to a tribes page
+                  // window.location.href = "/tribes";
+                }}
+              >
                 Join a Tribe to See Picks
               </Button>
             </div>
