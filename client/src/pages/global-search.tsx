@@ -141,7 +141,7 @@ export default function GlobalSearch() {
   const renderSearchResults = () => {
     if (!searchQuery.trim()) {
       return (
-        <div className="text-center py-12">
+        <div className="bg-white/70 backdrop-blur-md border-2 border-gray-200 hover:border-gray-300 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] rounded-2xl text-center py-12">
           <Search className="h-16 w-16 text-gray-300 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-600 mb-2">Search WealthDost</h3>
           <p className="text-gray-500">Find users, hashtags, and posts</p>
@@ -153,7 +153,7 @@ export default function GlobalSearch() {
 
     if (!hasResults) {
       return (
-        <div className="text-center py-12">
+        <div className="bg-white/70 backdrop-blur-md border-2 border-gray-200 hover:border-gray-300 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] rounded-2xl text-center py-12">
           <Search className="h-16 w-16 text-gray-300 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-600 mb-2">No results found</h3>
           <p className="text-gray-500">Try a different search term</p>
@@ -173,8 +173,8 @@ export default function GlobalSearch() {
             </div>
             <div className="space-y-3">
               {filteredUsers.map((user) => (
-                <Card key={user.id} className="hover:shadow-md transition-shadow cursor-pointer">
-                  <CardContent className="p-4">
+                <div key={user.id} className="bg-white/70 backdrop-blur-md border-2 border-gray-200 hover:border-blue-300 shadow-lg hover:shadow-xl hover:shadow-blue-500/20 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] rounded-2xl cursor-pointer">
+                  <div className="p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <Avatar className="h-12 w-12">
@@ -195,7 +195,7 @@ export default function GlobalSearch() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" className="border-2 hover:border-blue-300 hover:shadow-md hover:shadow-blue-500/20 transition-all duration-300 hover:scale-105 active:scale-95">
                           Follow
                         </Button>
                         <p className="text-xs text-gray-500 mt-1">
@@ -203,8 +203,8 @@ export default function GlobalSearch() {
                         </p>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -220,11 +220,11 @@ export default function GlobalSearch() {
             </div>
             <div className="space-y-3">
               {filteredHashtags.map((hashtag) => (
-                <Card key={hashtag.id} className="hover:shadow-md transition-shadow cursor-pointer">
-                  <CardContent className="p-4">
+                <div key={hashtag.id} className="bg-white/70 backdrop-blur-md border-2 border-gray-200 hover:border-green-300 shadow-lg hover:shadow-xl hover:shadow-green-500/20 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] rounded-2xl cursor-pointer">
+                  <div className="p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="bg-green-100 p-2 rounded-lg">
+                        <div className="bg-green-100/70 backdrop-blur-sm p-2 rounded-lg border-2 border-green-200 hover:border-green-300 transition-all duration-300">
                           <Hash className="h-5 w-5 text-green-600" />
                         </div>
                         <div>
@@ -236,18 +236,18 @@ export default function GlobalSearch() {
                       </div>
                       <div className="flex items-center gap-2">
                         {hashtag.trending && (
-                          <Badge variant="default" className="bg-orange-100 text-orange-700">
+                          <Badge variant="default" className="bg-orange-100/70 backdrop-blur-sm text-orange-700 border-2 border-orange-200 hover:border-orange-300 hover:shadow-md hover:shadow-orange-500/20 transition-all duration-300">
                             <TrendingUp className="h-3 w-3 mr-1" />
                             Trending
                           </Badge>
                         )}
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" className="border-2 hover:border-green-300 hover:shadow-md hover:shadow-green-500/20 transition-all duration-300 hover:scale-105 active:scale-95">
                           Follow
                         </Button>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -263,8 +263,8 @@ export default function GlobalSearch() {
             </div>
             <div className="space-y-3">
               {filteredPosts.map((post) => (
-                <Card key={post.id} className="hover:shadow-md transition-shadow cursor-pointer">
-                  <CardContent className="p-4">
+                <div key={post.id} className="bg-white/70 backdrop-blur-md border-2 border-gray-200 hover:border-purple-300 shadow-lg hover:shadow-xl hover:shadow-purple-500/20 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] rounded-2xl cursor-pointer">
+                  <div className="p-4">
                     <div className="flex items-start gap-3">
                       <Avatar className="h-10 w-10">
                         <AvatarImage src={post.author.avatar} />
@@ -291,7 +291,7 @@ export default function GlobalSearch() {
                           </div>
                           <div className="flex gap-1">
                             {post.hashtags.map((tag) => (
-                              <Badge key={tag} variant="outline" className="text-xs">
+                              <Badge key={tag} variant="outline" className="text-xs border-2 hover:border-purple-300 hover:shadow-sm hover:shadow-purple-500/20 transition-all duration-300">
                                 #{tag}
                               </Badge>
                             ))}
@@ -299,8 +299,8 @@ export default function GlobalSearch() {
                         </div>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -310,15 +310,15 @@ export default function GlobalSearch() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-100">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
+      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b-2 border-gray-200/50 shadow-lg">
         <div className="flex items-center gap-3 p-4">
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={() => window.history.back()}
-            className="p-2"
+            className="p-2 border-2 border-transparent hover:border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 transition-all duration-300 hover:scale-105 active:scale-95 rounded-xl"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -329,7 +329,7 @@ export default function GlobalSearch() {
                 placeholder="Search users, hashtags, and posts..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-white/70 backdrop-blur-sm border-2 border-gray-200 hover:border-blue-300 focus:border-blue-400 focus:shadow-lg focus:shadow-blue-500/20 transition-all duration-300 rounded-xl"
                 autoFocus
               />
             </div>
@@ -349,7 +349,11 @@ export default function GlobalSearch() {
               variant={activeTab === key ? "default" : "outline"}
               size="sm"
               onClick={() => setActiveTab(key as any)}
-              className="whitespace-nowrap"
+              className={`whitespace-nowrap border-2 transition-all duration-300 hover:scale-105 active:scale-95 ${
+                activeTab === key 
+                  ? 'shadow-lg hover:shadow-xl' 
+                  : 'border-2 hover:border-primary/50 hover:shadow-md hover:shadow-primary/20'
+              }`}
             >
               {label}
             </Button>
@@ -363,10 +367,7 @@ export default function GlobalSearch() {
       </div>
 
       {/* Bottom Navigation */}
-      <BottomNavigation activeTab="explore" onTabChange={() => {}} />
-
-      {/* Floating Create Button */}
-      <FloatingCreateButton />
+      <BottomNavigation />
     </div>
   );
 }

@@ -82,13 +82,13 @@ const InvestmentRooms = () => {
 
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-green-50/30 to-gray-100">
       {/* Header */}
-      <div className="sticky top-0 bg-white border-b border-gray-200 z-20 shadow-sm">
+      <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b-2 border-gray-200/50 shadow-lg z-20">
         <div className="max-w-md mx-auto p-4">
           <div className="flex items-center justify-between mb-3">
             <Link href="/dashboard">
-              <Button variant="ghost" size="sm" className="p-1 text-gray-600">
+              <Button variant="ghost" size="sm" className="p-1 text-gray-600 border-2 border-transparent hover:border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 transition-all duration-300 hover:scale-105 active:scale-95 rounded-xl">
                 <span className="material-icons text-lg">arrow_back</span>
               </Button>
             </Link>
@@ -96,7 +96,7 @@ const InvestmentRooms = () => {
             <Button 
               variant="ghost" 
               size="sm" 
-              className="p-1 text-purple-600"
+              className="p-1 text-purple-600 border-2 border-transparent hover:border-purple-300 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 hover:scale-105 active:scale-95 rounded-xl"
               onClick={() => setShowCreateTribe(true)}
             >
               <span className="material-icons text-lg">add</span>
@@ -107,7 +107,7 @@ const InvestmentRooms = () => {
           <div className="flex gap-3 mb-3">
             <div className="flex-1">
               <Select value={filterType} onValueChange={setFilterType}>
-                <SelectTrigger className="h-9 text-sm">
+                <SelectTrigger className="h-9 text-sm bg-white/70 backdrop-blur-sm border-2 border-gray-200 hover:border-gray-300 focus:border-gray-400 hover:shadow-lg hover:shadow-gray-500/20 transition-all duration-300 rounded-xl">
                   <SelectValue placeholder="Filter by Type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -121,7 +121,7 @@ const InvestmentRooms = () => {
             
             <div className="flex-1">
               <Select value={filterCategory} onValueChange={setFilterCategory}>
-                <SelectTrigger className="h-9 text-sm">
+                <SelectTrigger className="h-9 text-sm bg-white/70 backdrop-blur-sm border-2 border-gray-200 hover:border-gray-300 focus:border-gray-400 hover:shadow-lg hover:shadow-gray-500/20 transition-all duration-300 rounded-xl">
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -141,25 +141,29 @@ const InvestmentRooms = () => {
       {/* Rooms List */}
       <div className="max-w-md mx-auto p-4 space-y-4">
         {filteredRooms.map((room) => (
-          <Card key={room.id} className="border border-gray-200 hover:shadow-md transition-shadow">
-            <CardContent className="p-4">
+          <div key={room.id} className="bg-white/70 backdrop-blur-md border-2 border-gray-200 hover:border-gray-300 shadow-lg hover:shadow-xl hover:shadow-gray-500/20 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] rounded-2xl relative">
+            <div className="p-4">
+              {/* Sponsored Badge - Top Right */}
+              {room.isSponsored && (
+                <div className="absolute top-3 right-3">
+                  <Badge className="text-xs bg-blue-100/70 backdrop-blur-sm text-blue-700 border-2 border-blue-200 hover:border-blue-300 hover:shadow-sm hover:shadow-blue-500/20 transition-all duration-300">
+                    Sponsored
+                  </Badge>
+                </div>
+              )}
+
               {/* Room Header */}
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">
                   <div className="flex items-center space-x-2 mb-1">
                     <h3 className="font-semibold text-sm">{room.name}</h3>
-                    {room.isSponsored && (
-                      <Badge className="text-xs bg-blue-100 text-blue-700">
-                        Sponsored by {room.sponsorName}
-                      </Badge>
-                    )}
                   </div>
                   <p className="text-xs text-gray-600 mb-2">{room.description}</p>
                   
                   {/* Creator Info */}
                   <div className="flex items-center space-x-2 mb-2">
-                    <Avatar className="h-6 w-6">
-                      <AvatarFallback className="bg-purple-100 text-purple-600 text-xs">
+                    <Avatar className="h-6 w-6 border-2 border-purple-200 hover:border-purple-300 transition-all duration-300">
+                      <AvatarFallback className="bg-purple-100/70 backdrop-blur-sm text-purple-600 text-xs">
                         {room.creatorAvatar}
                       </AvatarFallback>
                     </Avatar>
@@ -191,7 +195,7 @@ const InvestmentRooms = () => {
               {/* Badges */}
               <div className="flex flex-wrap gap-1 mb-3">
                 {room.badges.map((badge, index) => (
-                  <Badge key={index} variant="secondary" className="text-xs">
+                  <Badge key={index} variant="secondary" className="text-xs border-2 hover:border-gray-300 hover:shadow-sm hover:shadow-gray-500/20 transition-all duration-300 bg-gray-100/70 backdrop-blur-sm">
                     {badge}
                   </Badge>
                 ))}
@@ -200,21 +204,21 @@ const InvestmentRooms = () => {
               {/* Action Button */}
               <Link href={`/room/${room.id}`}>
                 <Button 
-                  className={`w-full text-sm ${room.isPremium ? 'bg-purple-600 text-white' : 'bg-purple-100 text-purple-700 hover:bg-purple-200'}`}
+                  className={`w-full text-sm border-2 transition-all duration-300 hover:scale-105 active:scale-95 ${room.isPremium ? 'bg-purple-600/90 backdrop-blur-sm text-white border-purple-400 hover:border-purple-300 hover:shadow-lg hover:shadow-purple-500/30' : 'bg-purple-100/70 backdrop-blur-sm text-purple-700 border-purple-200 hover:border-purple-300 hover:bg-purple-200/70 hover:shadow-md hover:shadow-purple-500/20'}`}
                   size="sm"
                 >
                   {room.isPremium ? `Subscribe for ₹${room.premiumPrice}/mo` : "Join Tribe"}
                 </Button>
               </Link>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ))}
         
         {filteredRooms.length === 0 && (
-          <div className="text-center py-8">
+          <div className="bg-white/70 backdrop-blur-md border-2 border-gray-200 hover:border-gray-300 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] rounded-2xl text-center py-8">
             <span className="material-icons text-4xl text-gray-300 mb-2">meeting_room</span>
             <p className="text-gray-600">No rooms found for selected filters</p>
-            <Button variant="outline" size="sm" className="mt-3" onClick={() => {
+            <Button variant="outline" size="sm" className="mt-3 border-2 hover:border-gray-300 hover:shadow-md hover:shadow-gray-500/20 transition-all duration-300 hover:scale-105 active:scale-95" onClick={() => {
               setFilterCategory("all");
               setFilterType("all");
             }}>
@@ -229,14 +233,15 @@ const InvestmentRooms = () => {
 
       {/* Create Tribe Modal */}
       {showCreateTribe && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-md rounded-lg max-h-[90vh] overflow-hidden">
-            <div className="p-4 border-b border-gray-200">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white/90 backdrop-blur-md border-2 border-gray-200 w-full max-w-md rounded-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+            <div className="p-4 border-b-2 border-gray-200/50 flex-shrink-0 bg-white/50 backdrop-blur-sm">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold">Create New Tribe</h3>
                 <Button 
                   variant="ghost" 
                   size="sm" 
+                  className="border-2 border-transparent hover:border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 transition-all duration-300 hover:scale-105 active:scale-95 rounded-xl"
                   onClick={() => setShowCreateTribe(false)}
                 >
                   <span className="material-icons">close</span>
@@ -244,14 +249,14 @@ const InvestmentRooms = () => {
               </div>
             </div>
             
-            <div className="p-4 overflow-y-auto">
+            <div className="p-4 overflow-y-auto flex-1">
               <div className="space-y-4">
                 {/* Tribe Name */}
                 <div>
                   <label className="text-sm font-medium text-gray-700 mb-1 block">Tribe Name</label>
                   <input 
                     type="text" 
-                    className="w-full p-3 border border-gray-300 rounded-lg text-sm" 
+                    className="w-full p-3 bg-white/70 backdrop-blur-sm border-2 border-gray-300 hover:border-green-300 focus:border-green-400 focus:shadow-lg focus:shadow-green-500/20 transition-all duration-300 rounded-xl text-sm" 
                     placeholder="e.g., Tech Growth Investors"
                   />
                 </div>
@@ -260,7 +265,7 @@ const InvestmentRooms = () => {
                 <div>
                   <label className="text-sm font-medium text-gray-700 mb-1 block">Description</label>
                   <textarea 
-                    className="w-full p-3 border border-gray-300 rounded-lg text-sm" 
+                    className="w-full p-3 bg-white/70 backdrop-blur-sm border-2 border-gray-300 hover:border-green-300 focus:border-green-400 focus:shadow-lg focus:shadow-green-500/20 transition-all duration-300 rounded-xl text-sm" 
                     rows={3}
                     placeholder="Describe what your tribe is about..."
                   />
@@ -305,7 +310,7 @@ const InvestmentRooms = () => {
                     <span className="text-sm">₹</span>
                     <input 
                       type="number" 
-                      className="flex-1 p-3 border border-gray-300 rounded-lg text-sm" 
+                      className="flex-1 p-3 bg-white/70 backdrop-blur-sm border-2 border-gray-300 hover:border-green-300 focus:border-green-400 focus:shadow-lg focus:shadow-green-500/20 transition-all duration-300 rounded-xl text-sm" 
                       placeholder="199"
                       min="99"
                       max="499"
@@ -338,7 +343,7 @@ const InvestmentRooms = () => {
                 </div>
 
                 {/* Revenue Split Info */}
-                <div className="bg-purple-50 p-3 rounded-lg">
+                <div className="bg-purple-50/70 backdrop-blur-sm border-2 border-purple-200 hover:border-purple-300 transition-all duration-300 p-3 rounded-xl">
                   <div className="text-sm text-purple-800">
                     <strong>Revenue Split:</strong> You keep 70%, platform takes 30%
                   </div>
@@ -347,17 +352,20 @@ const InvestmentRooms = () => {
                   </div>
                 </div>
               </div>
-              
-              <div className="flex space-x-3 mt-6">
+            </div>
+            
+            {/* Footer - Fixed */}
+            <div className="p-4 border-t-2 border-gray-200/50 flex-shrink-0 bg-white/50 backdrop-blur-sm">
+              <div className="flex space-x-3">
                 <Button 
                   variant="outline" 
-                  className="flex-1"
+                  className="flex-1 border-2 hover:border-gray-300 hover:shadow-md hover:shadow-gray-500/20 transition-all duration-300 hover:scale-105 active:scale-95 backdrop-blur-sm"
                   onClick={() => setShowCreateTribe(false)}
                 >
                   Cancel
                 </Button>
                 <Button 
-                  className="flex-1 bg-purple-600 text-white"
+                  className="flex-1 bg-purple-600/90 backdrop-blur-sm hover:bg-purple-700/90 text-white border-2 border-purple-400 hover:border-purple-300 hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105 active:scale-95"
                   onClick={() => setShowCreateTribe(false)}
                 >
                   Create Tribe

@@ -185,13 +185,13 @@ const Watchlist = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-100">
       {/* Header */}
-      <div className="sticky top-0 bg-white border-b border-gray-200 z-20 shadow-sm">
+      <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b-2 border-gray-200/50 shadow-lg z-20">
         <div className="max-w-md mx-auto p-4">
           <div className="flex items-center justify-between mb-3">
             <Link href="/dashboard">
-              <Button variant="ghost" size="sm" className="p-1 text-gray-600">
+              <Button variant="ghost" size="sm" className="p-1 text-gray-600 border-2 border-transparent rounded-xl transition-all duration-300 active:scale-95">
                 <span className="material-icons text-lg">arrow_back</span>
               </Button>
             </Link>
@@ -199,7 +199,7 @@ const Watchlist = () => {
             <Button 
               variant="ghost" 
               size="sm" 
-              className="p-1 text-purple-600"
+              className="p-1 text-purple-600 border-2 border-transparent rounded-xl transition-all duration-300 active:scale-95"
               onClick={() => setShowAddAsset(true)}
             >
               <Plus size={20} />
@@ -212,39 +212,39 @@ const Watchlist = () => {
             <input
               type="text"
               placeholder="Search assets or add new ones..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full pl-10 pr-4 py-2 bg-white/70 backdrop-blur-sm border-2 border-gray-200 focus:border-blue-400 focus:shadow-lg focus:shadow-blue-500/20 rounded-xl text-sm focus:outline-none transition-all duration-300"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
           {/* Tabs */}
-          <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
+          <div className="flex space-x-1 bg-gray-100/70 backdrop-blur-sm rounded-xl p-1 border-2 border-gray-200">
             <button
-              className={`flex-1 py-2 px-3 rounded-md text-xs font-medium transition-colors ${
+              className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all duration-300 active:scale-95 ${
                 activeTab === "my-watchlist" 
-                  ? "bg-white text-purple-600 shadow-sm" 
-                  : "text-gray-600"
+                  ? "bg-white/80 backdrop-blur-sm text-purple-600 shadow-lg border-2 border-purple-200" 
+                  : "text-gray-600 border-2 border-transparent"
               }`}
               onClick={() => setActiveTab("my-watchlist")}
             >
               My Watchlist
             </button>
             <button
-              className={`flex-1 py-2 px-3 rounded-md text-xs font-medium transition-colors ${
+              className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all duration-300 active:scale-95 ${
                 activeTab === "themed-lists" 
-                  ? "bg-white text-purple-600 shadow-sm" 
-                  : "text-gray-600"
+                  ? "bg-white/80 backdrop-blur-sm text-purple-600 shadow-lg border-2 border-purple-200" 
+                  : "text-gray-600 border-2 border-transparent"
               }`}
               onClick={() => setActiveTab("themed-lists")}
             >
               Themed Lists
             </button>
             <button
-              className={`flex-1 py-2 px-3 rounded-md text-xs font-medium transition-colors ${
+              className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all duration-300 active:scale-95 ${
                 activeTab === "tribe-picks" 
-                  ? "bg-white text-purple-600 shadow-sm" 
-                  : "text-gray-600"
+                  ? "bg-white/80 backdrop-blur-sm text-purple-600 shadow-lg border-2 border-purple-200" 
+                  : "text-gray-600 border-2 border-transparent"
               }`}
               onClick={() => setActiveTab("tribe-picks")}
             >
@@ -261,13 +261,13 @@ const Watchlist = () => {
             {watchlistAssets.map((asset) => {
               const isExpanded = expandedAssets.has(asset.id);
               return (
-                <Card key={asset.id} className="border border-gray-200">
-                  <CardContent className="p-4">
+                <div key={asset.id} className="bg-white/70 backdrop-blur-md border-2 border-gray-200 shadow-lg rounded-2xl transition-all duration-300 active:scale-[0.98]">
+                  <div className="p-4">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-1">
                           <h3 className="font-semibold text-sm">{asset.symbol}</h3>
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="outline" className="text-xs bg-gray-100/70 backdrop-blur-sm border-2 border-gray-200">
                             {asset.exchange}
                           </Badge>
                           {asset.hasAlert && (
@@ -304,7 +304,7 @@ const Watchlist = () => {
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-xs px-2 py-1"
+                              className="text-xs px-2 py-1 bg-white/70 backdrop-blur-sm border-2 border-gray-200 transition-all duration-300 active:scale-95"
                               onClick={() => {
                                 setSelectedAsset(asset);
                                 setShowCreateAlert(true);
@@ -315,7 +315,7 @@ const Watchlist = () => {
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-xs px-2 py-1"
+                              className="text-xs px-2 py-1 bg-white/70 backdrop-blur-sm border-2 border-gray-200 transition-all duration-300 active:scale-95"
                             >
                               <BarChart3 size={10} />
                             </Button>
@@ -324,7 +324,7 @@ const Watchlist = () => {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="p-1"
+                              className="p-1 border-2 border-transparent transition-all duration-300 active:scale-95 rounded-xl"
                               onClick={() => toggleAssetExpansion(asset.id)}
                             >
                               {isExpanded ? (
@@ -342,7 +342,7 @@ const Watchlist = () => {
                             {/* Tags */}
                             <div className="flex flex-wrap gap-1">
                               {asset.tags.map((tag, index) => (
-                                <Badge key={index} variant="secondary" className="text-xs">
+                                <Badge key={index} variant="secondary" className="text-xs bg-gray-100/70 backdrop-blur-sm border-2 border-gray-200">
                                   {tag}
                                 </Badge>
                               ))}
@@ -374,7 +374,7 @@ const Watchlist = () => {
 
                             {/* News Highlight */}
                             {asset.news && (
-                              <div className="bg-blue-50 p-2 rounded text-xs">
+                              <div className="bg-blue-50/70 backdrop-blur-sm border-2 border-blue-200 p-2 rounded-xl text-xs">
                                 <div className="flex items-center space-x-1">
                                   <Newspaper size={12} className="text-blue-600" />
                                   <span className="text-blue-800">{asset.news.headline}</span>
@@ -387,7 +387,7 @@ const Watchlist = () => {
                               <div className="flex items-center space-x-3 text-xs text-gray-500">
                                 <span>RSI: {asset.technicals.rsi}</span>
                                 {asset.technicals.isNear52High && (
-                                  <Badge variant="outline" className="text-xs text-orange-600">
+                                  <Badge variant="outline" className="text-xs text-orange-600 bg-orange-50/70 backdrop-blur-sm border-2 border-orange-200">
                                     Near 52W High
                                   </Badge>
                                 )}
@@ -396,14 +396,14 @@ const Watchlist = () => {
 
                             {/* CTAs */}
                             <div className="grid grid-cols-3 gap-1">
-                              <Button variant="outline" size="sm" className="text-xs px-2 py-1">
+                              <Button variant="outline" size="sm" className="text-xs px-2 py-1 bg-white/70 backdrop-blur-sm border-2 border-gray-200 transition-all duration-300 active:scale-95">
                                 <MessageCircle size={10} className="mr-1" />
                                 Discuss
                               </Button>
                               <Button 
                                 variant="outline" 
                                 size="sm" 
-                                className="text-xs px-2 py-1 hover:bg-purple-50 hover:text-purple-600"
+                                className="text-xs px-2 py-1 bg-white/70 backdrop-blur-sm border-2 border-gray-200 transition-all duration-300 active:scale-95"
                                 onClick={() => window.location.href = "/expert/1"}
                               >
                                 <Plus size={10} className="mr-1" />
@@ -412,7 +412,7 @@ const Watchlist = () => {
                               <Button 
                                 variant="outline" 
                                 size="sm" 
-                                className="text-xs px-2 py-1 hover:bg-blue-50 hover:text-blue-600"
+                                className="text-xs px-2 py-1 bg-white/70 backdrop-blur-sm border-2 border-gray-200 transition-all duration-300 active:scale-95"
                                 onClick={() => window.location.href = "/experts"}
                               >
                                 <Star size={10} className="mr-1" />
@@ -423,8 +423,8 @@ const Watchlist = () => {
                         )}
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               );
             })}
           </div>
@@ -433,14 +433,14 @@ const Watchlist = () => {
         {activeTab === "themed-lists" && (
           <div className="space-y-3">
             {themes.map((theme) => (
-              <Card key={theme.id} className="border border-gray-200">
-                <CardContent className="p-4">
+              <div key={theme.id} className="bg-white/70 backdrop-blur-md border-2 border-gray-200 shadow-lg rounded-2xl transition-all duration-300 active:scale-[0.98]">
+                <div className="p-4">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-1">
                         <h3 className="font-semibold text-sm">{theme.name}</h3>
                         {theme.isFollowing && (
-                          <Badge className="text-xs bg-purple-100 text-purple-700">
+                          <Badge className="text-xs bg-purple-100/70 backdrop-blur-sm text-purple-700 border-2 border-purple-200">
                             Following
                           </Badge>
                         )}
@@ -462,7 +462,7 @@ const Watchlist = () => {
                     <Button
                       variant={theme.isFollowing ? "outline" : "default"}
                       size="sm"
-                      className="text-xs ml-3"
+                      className={`text-xs ml-3 border-2 transition-all duration-300 active:scale-95 ${theme.isFollowing ? 'bg-white/70 backdrop-blur-sm border-gray-200' : 'bg-purple-600/90 backdrop-blur-sm border-purple-400'}`}
                     >
                       {theme.isFollowing ? (
                         <>
@@ -477,22 +477,22 @@ const Watchlist = () => {
                       )}
                     </Button>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             ))}
           </div>
         )}
 
         {activeTab === "tribe-picks" && (
           <div className="space-y-3">
-            <div className="text-center py-8">
+            <div className="bg-white/70 backdrop-blur-md border-2 border-gray-200 shadow-lg rounded-2xl text-center py-8 transition-all duration-300 active:scale-[0.98]">
               <Users size={48} className="mx-auto text-gray-400 mb-3" />
               <h3 className="text-lg font-semibold text-gray-600 mb-2">Most Watched by Your Tribes</h3>
               <p className="text-sm text-gray-500 mb-4">
                 Discover what assets are trending in your investment communities
               </p>
               <Button 
-                className="bg-purple-600 text-white"
+                className="bg-purple-600/90 backdrop-blur-sm text-white border-2 border-purple-400 transition-all duration-300 active:scale-95"
                 onClick={() => {
                   // Navigate to a dedicated Tribe joining/selection screen
                   alert("Navigating to Tribe selection screen...");
@@ -509,14 +509,15 @@ const Watchlist = () => {
 
       {/* Add Asset Modal */}
       {showAddAsset && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-md rounded-lg max-h-[90vh] overflow-hidden">
-            <div className="p-4 border-b border-gray-200">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white/90 backdrop-blur-md border-2 border-gray-200 w-full max-w-md rounded-2xl max-h-[90vh] overflow-hidden shadow-2xl">
+            <div className="p-4 border-b-2 border-gray-200/50 bg-white/50 backdrop-blur-sm">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold">Add to Watchlist</h3>
                 <Button 
                   variant="ghost" 
                   size="sm" 
+                  className="border-2 border-transparent rounded-xl transition-all duration-300 active:scale-95"
                   onClick={() => setShowAddAsset(false)}
                 >
                   <X size={20} />
