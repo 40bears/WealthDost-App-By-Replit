@@ -9,6 +9,9 @@ import { Post } from "@shared/schema";
 import { timeAgo } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { useInteraction } from "@/lib/interactionContext";
+import { Heart, MessageCircle, Share, UserPlus, UserCheck } from "lucide-react";
+import { CommentModal } from "@/components/ui/comment-modal";
 
 interface ContentFeedProps {
   posts?: Post[];
@@ -16,6 +19,17 @@ interface ContentFeedProps {
 }
 
 const ContentFeed = ({ posts, isLoading = false }: ContentFeedProps) => {
+  const { 
+    toggleLike, 
+    toggleFollow, 
+    sharePost, 
+    addComment, 
+    isLiked, 
+    isFollowing, 
+    getShareCount, 
+    getCommentCount 
+  } = useInteraction();
+
   if (isLoading) {
     return (
       <div className="mx-4 my-4 space-y-4">
@@ -35,50 +49,108 @@ const ContentFeed = ({ posts, isLoading = false }: ContentFeedProps) => {
 
   return (
     <div className="mx-4 my-4 space-y-4 pb-16">
-      {posts.map((post: any) => (
-        <Card key={post.id}>
-          <CardContent className="p-4">
-            <div className="flex items-start mb-3">
-              <div className="h-10 w-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
-                <span className="text-purple-600 font-semibold text-sm">
-                  {post.userId === 1 ? "U" : "A"}
-                </span>
-              </div>
-              <div>
-                <h4 className="font-medium text-sm">
-                  {post.userId === 1 ? "You" : `User ${post.userId}`}
-                </h4>
-                <p className="text-xs text-gray-500">
-                  {new Date(post.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} • {new Date(post.createdAt).toLocaleDateString()}
-                </p>
-              </div>
-            </div>
-            <p className="text-sm text-gray-700 mb-3">{post.content}</p>
-            {post.tags && post.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1 mb-3">
-                {post.tags.map((tag: string, index: number) => (
-                  <span key={index} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
-                    #{tag}
+      {posts.map((post: any) => {
+        const liked = isLiked(post.id);
+        const following = isFollowing(post.userId);
+        const shareCount = getShareCount(post.id);
+        const commentCount = getCommentCount(post.id);
+        
+        return (
+          <div key={post.id} className="bg-white/70 backdrop-blur-md border-2 border-gray-200 shadow-lg rounded-2xl transition-all duration-300 active:scale-[0.98]">
+            <div className="p-4">
+              <div className="flex items-start mb-3">
+                <div className="h-10 w-10 bg-purple-100/70 backdrop-blur-sm rounded-full flex items-center justify-center mr-3">
+                  <span className="text-purple-600 font-semibold text-sm">
+                    {post.userId === 1 ? "U" : "A"}
                   </span>
-                ))}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-medium text-sm">
+                        {post.userId === 1 ? "You" : `User ${post.userId}`}
+                      </h4>
+                      <p className="text-xs text-gray-500">
+                        {new Date(post.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} • {new Date(post.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                    {post.userId !== 1 && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={`text-xs px-3 py-1 border-2 transition-all duration-300 active:scale-95 ${
+                          following 
+                            ? 'bg-purple-100/70 backdrop-blur-sm text-purple-600 border-purple-200' 
+                            : 'bg-white/70 backdrop-blur-sm border-gray-200'
+                        }`}
+                        onClick={() => toggleFollow(post.userId)}
+                      >
+                        {following ? (
+                          <>
+                            <UserCheck size={12} className="mr-1" />
+                            Following
+                          </>
+                        ) : (
+                          <>
+                            <UserPlus size={12} className="mr-1" />
+                            Follow
+                          </>
+                        )}
+                      </Button>
+                    )}
+                  </div>
+                </div>
               </div>
-            )}
-            <div className="flex items-center justify-between text-xs text-gray-500">
-              <button className="flex items-center hover:text-purple-600">
-                <span className="material-icons text-sm mr-1">thumb_up</span>
-                {post.likes || 0}
-              </button>
-              <button className="flex items-center hover:text-purple-600">
-                <span className="material-icons text-sm mr-1">comment</span>
-                {post.comments || 0}
-              </button>
-              <button className="flex items-center hover:text-purple-600">
-                <span className="material-icons text-sm">share</span>
-              </button>
+              
+              <p className="text-sm text-gray-700 mb-3">{post.content}</p>
+              
+              {post.tags && post.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1 mb-3">
+                  {post.tags.map((tag: string, index: number) => (
+                    <span key={index} className="text-xs bg-gray-100/70 backdrop-blur-sm text-gray-600 px-2 py-1 rounded-lg border-2 border-gray-200">
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+              
+              <div className="flex items-center justify-between pt-2 border-t-2 border-gray-100">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={`flex items-center space-x-1 text-xs border-2 border-transparent rounded-xl transition-all duration-300 active:scale-95 hover:bg-red-50/70 hover:backdrop-blur-sm ${
+                    liked ? 'text-red-600 bg-red-50/70 backdrop-blur-sm border-red-200' : 'text-gray-500'
+                  }`}
+                  onClick={() => toggleLike(post.id)}
+                >
+                  <Heart size={14} className={`transition-all duration-300 ${liked ? 'fill-current' : ''}`} />
+                  <span className="font-medium">{(post.likes || 0) + (liked ? 1 : 0)}</span>
+                </Button>
+                
+                <CommentModal postId={post.id} onAddComment={addComment}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex items-center space-x-1 text-xs text-gray-500 border-2 border-transparent rounded-xl transition-all duration-300 active:scale-95 hover:bg-blue-50/70 hover:backdrop-blur-sm hover:text-blue-600"
+                  >
+                    <MessageCircle size={14} className="transition-all duration-300" />
+                    <span className="font-medium">{(post.comments || 0) + commentCount}</span>
+                  </Button>
+                </CommentModal>
+                
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center space-x-1 text-xs text-gray-500 border-2 border-transparent rounded-xl transition-all duration-300 active:scale-95 hover:bg-gray-50/70 hover:backdrop-blur-sm hover:text-gray-600"
+                  onClick={() => sharePost(post.id)}
+                >
+                  <Share size={14} className="transition-all duration-300" />
+                </Button>
+              </div>
             </div>
-          </CardContent>
-        </Card>
-      ))}
+          </div>
+        );
+      })}
     </div>
   );
 };

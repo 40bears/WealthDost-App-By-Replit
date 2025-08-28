@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 type Tab = "home" | "experts" | "explore" | "invroom" | "tips";
 
@@ -8,6 +8,8 @@ interface BottomNavigationProps {
 }
 
 const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => {
+  const [, setLocation] = useLocation();
+  
   const tabs = [
     { id: "home", icon: "home", label: "Home", href: "/dashboard" },
     { id: "tips", icon: "trending_up", label: "Tips", href: "/stock-tips" },
@@ -17,23 +19,20 @@ const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => 
   ];
 
   const handleTabClick = (tab: any) => {
-    if (tab.id === "explore") {
-      window.location.href = "/search";
-    } else if (tab.href) {
-      window.location.href = tab.href;
-    } else {
-      onTabChange(tab.id as Tab);
-    }
+    // Update active tab state
+    onTabChange(tab.id as Tab);
+    // Navigate using SPA routing
+    setLocation(tab.href);
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10 safe-bottom">
+    <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t-2 border-gray-200/50 shadow-lg z-10 safe-bottom">
       <div className="max-w-md mx-auto flex justify-around px-4 py-2">
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            className={`flex flex-col items-center px-2 py-1 tab-slide btn-pulse ${
-              activeTab === tab.id ? "text-primary active" : "text-gray-500"
+            className={`flex flex-col items-center px-2 py-1 rounded-xl transition-all duration-300 active:scale-95 ${
+              activeTab === tab.id ? "text-primary bg-purple-50/70 backdrop-blur-sm" : "text-gray-500"
             }`}
             onClick={() => handleTabClick(tab)}
           >

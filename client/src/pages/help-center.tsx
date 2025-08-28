@@ -117,20 +117,24 @@ const HelpCenter = () => {
             <h3 className="font-semibold">Quick Help</h3>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button variant="outline" className="w-full justify-between">
-              <div className="flex items-center">
-                <MessageCircle className="mr-2 h-4 w-4 text-blue-600" />
-                <span>Contact Support</span>
-              </div>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" className="w-full justify-between">
-              <div className="flex items-center">
-                <Book className="mr-2 h-4 w-4 text-green-600" />
-                <span>User Guide</span>
-              </div>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
+            <Link href="/help/contact">
+              <Button variant="outline" className="w-full justify-between">
+                <div className="flex items-center">
+                  <MessageCircle className="mr-2 h-4 w-4 text-blue-600" />
+                  <span>Contact Support</span>
+                </div>
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </Link>
+            <Link href="/help/guide">
+              <Button variant="outline" className="w-full justify-between">
+                <div className="flex items-center">
+                  <Book className="mr-2 h-4 w-4 text-green-600" />
+                  <span>User Guide</span>
+                </div>
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </CardContent>
         </Card>
 
@@ -142,22 +146,22 @@ const HelpCenter = () => {
           <CardContent className="space-y-3">
             {categories.map((category, index) => {
               const IconComponent = category.icon;
+              const categorySlug = category.title.toLowerCase().replace(/\s+/g, '-');
               return (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-gray-50 cursor-pointer transition-colors"
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className={`p-2 rounded-lg ${category.bgColor}`}>
-                      <IconComponent className={`h-5 w-5 ${category.color}`} />
+                <Link key={index} href={`/help/category/${categorySlug}`}>
+                  <div className="flex items-center justify-between p-3 rounded-lg border hover:bg-gray-50 cursor-pointer transition-colors">
+                    <div className="flex items-center space-x-3">
+                      <div className={`p-2 rounded-lg ${category.bgColor}`}>
+                        <IconComponent className={`h-5 w-5 ${category.color}`} />
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm">{category.title}</p>
+                        <p className="text-xs text-gray-500">{category.description}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium text-sm">{category.title}</p>
-                      <p className="text-xs text-gray-500">{category.description}</p>
-                    </div>
+                    <ChevronRight className="h-4 w-4 text-gray-400" />
                   </div>
-                  <ChevronRight className="h-4 w-4 text-gray-400" />
-                </div>
+                </Link>
               );
             })}
           </CardContent>

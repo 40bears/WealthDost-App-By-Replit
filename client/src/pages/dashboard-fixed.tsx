@@ -184,8 +184,7 @@ const Dashboard = () => {
 
   // Function to handle View All click
   const handleViewAllMarkets = () => {
-    // Navigate to a comprehensive market overview page or show expanded view
-    alert("This would navigate to a detailed market analysis page");
+    setLocation("/analytics");
   };
   const [stockFormData, setStockFormData] = useState({
     stockName: "",
@@ -214,8 +213,8 @@ const Dashboard = () => {
   // Function to handle feature selection
   const handleFeatureSelect = (feature: FeatureType) => {
     if (feature === "watchlist") {
-      // Navigate to watchlist page
-      window.location.href = "/watchlist";
+      // Navigate to watchlist page using SPA routing
+      setLocation("/watchlist");
       return;
     }
     if (feature === "portfolio") {
@@ -501,7 +500,7 @@ const Dashboard = () => {
             <h2 className="text-xl font-semibold mb-4">Analytics</h2>
             <p className="text-gray-600 mb-4">User-level financial behavior insights.</p>
             <div className="px-0">
-              <MarketOverview data={typedMarketData} isLoading={isLoadingMarketData} />
+              <MarketOverview data={typedMarketData} isLoading={isLoadingMarketData} onViewAll={handleViewAllMarkets} />
             </div>
             
             <div className="mt-6 space-y-4">
@@ -1154,23 +1153,23 @@ const Dashboard = () => {
               
               {/* Navigation Options */}
               <DropdownMenuGroup>
-                <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/profile"}>
+                <DropdownMenuItem className="cursor-pointer" onClick={() => setLocation("/profile")}>
                   <User className="mr-2 h-4 w-4" />
                   <span>My Profile</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer" onClick={() => setActiveFeature("analytics")}>
+                <DropdownMenuItem className="cursor-pointer" onClick={() => setLocation("/analytics")}>
                   <BarChart3 className="mr-2 h-4 w-4" />
                   <span>Analytics</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/my-posts"}>
+                <DropdownMenuItem className="cursor-pointer" onClick={() => setLocation("/my-posts")}>
                   <FileText className="mr-2 h-4 w-4" />
                   <span>My Posts</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/watchlist"}>
+                <DropdownMenuItem className="cursor-pointer" onClick={() => setLocation("/watchlist")}>
                   <Heart className="mr-2 h-4 w-4" />
                   <span>Watchlist</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/activity"}>
+                <DropdownMenuItem className="cursor-pointer" onClick={() => setLocation("/activity")}>
                   <Activity className="mr-2 h-4 w-4" />
                   <span>Activity</span>
                 </DropdownMenuItem>
@@ -1196,15 +1195,15 @@ const Dashboard = () => {
               
               {/* Support */}
               <DropdownMenuGroup>
-                <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/help"}>
+                <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/help-center"}>
                   <HelpCircle className="mr-2 h-4 w-4" />
                   <span>Help Center</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/help"}>
+                <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/help/contact"}>
                   <Settings className="mr-2 h-4 w-4" />
                   <span>Report Bug / Feedback</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/help"}>
+                <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/help/contact"}>
                   <span className="material-icons mr-2 text-base">support_agent</span>
                   <span>Contact Support</span>
                 </DropdownMenuItem>
