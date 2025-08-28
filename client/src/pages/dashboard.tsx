@@ -670,7 +670,6 @@ const Dashboard = () => {
             </div>
           </div>
         );
-      }
       default:
         return (
           <>
@@ -681,10 +680,6 @@ const Dashboard = () => {
         );
     }
   };
-
-  // Type assertions for data to fix typescript issues
-  const typedMarketData = marketData as any[];
-  const typedPosts = posts as any[];
 
   return (
     <div className="flex flex-col h-full relative">

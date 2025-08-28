@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Search, User, Hash, MessageSquare, Star, TrendingUp } from "lucide-react";
+import { ArrowLeft, Search, User, Hash, MessageSquare, Star, TrendingUp, UserPlus, UserCheck } from "lucide-react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import BottomNavigation from "@/components/dashboard/BottomNavigation";
 import FloatingCreateButton from "@/components/FloatingCreateButton";
+import { useInteraction } from "@/lib/interactionContext";
 
 // Demo data for search results
 const demoUsers = [
@@ -99,6 +100,8 @@ export default function GlobalSearch() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<'all' | 'users' | 'hashtags' | 'posts'>('all');
   const [location] = useLocation();
+  
+  const { toggleFollow, isFollowing } = useInteraction();
 
   // Check for URL parameters and populate search on component mount
   useEffect(() => {
@@ -195,8 +198,27 @@ export default function GlobalSearch() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <Button variant="outline" size="sm" className="border-2 hover:border-blue-300 hover:shadow-md hover:shadow-blue-500/20 transition-all duration-300 hover:scale-105 active:scale-95">
-                          Follow
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className={`border-2 transition-all duration-300 hover:scale-105 active:scale-95 ${
+                            isFollowing(user.username) 
+                              ? 'bg-purple-50/70 text-purple-600 border-purple-200 hover:bg-purple-100/70 hover:border-purple-300' 
+                              : 'border-gray-200 hover:border-blue-300 hover:shadow-md hover:shadow-blue-500/20'
+                          }`}
+                          onClick={() => toggleFollow(user.username)}
+                        >
+                          {isFollowing(user.username) ? (
+                            <>
+                              <UserCheck size={12} className="mr-1" />
+                              Following
+                            </>
+                          ) : (
+                            <>
+                              <UserPlus size={12} className="mr-1" />
+                              Follow
+                            </>
+                          )}
                         </Button>
                         <p className="text-xs text-gray-500 mt-1">
                           {formatFollowers(user.followers)} followers

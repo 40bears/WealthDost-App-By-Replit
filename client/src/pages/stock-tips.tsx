@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { ArrowLeft, TrendingUp, TrendingDown, Clock, Target, Calendar, User, Star, Plus } from "lucide-react";
+import { ArrowLeft, TrendingUp, TrendingDown, Clock, Target, Calendar, User, Star, Plus, Heart, MessageCircle, Share, UserCheck, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import BottomNavigation from "@/components/dashboard/BottomNavigation";
 import EnhancedCreatePostModal from "@/components/dashboard/EnhancedCreatePostModal";
+import { useInteraction } from "@/lib/interactionContext";
+import { CommentModal } from "@/components/ui/comment-modal";
 
 
 // Demo stock tips data
@@ -69,6 +71,17 @@ const demoStockTips = [
 export default function StockTips() {
   const [filter, setFilter] = useState<'all' | 'buy' | 'sell' | 'active' | 'completed'>('all');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  
+  const { 
+    toggleLike, 
+    toggleFollow, 
+    sharePost, 
+    addComment, 
+    isLiked, 
+    isFollowing, 
+    getShareCount, 
+    getCommentCount 
+  } = useInteraction();
 
   const filteredTips = demoStockTips.filter(tip => {
     if (filter === 'all') return true;
@@ -237,7 +250,7 @@ export default function StockTips() {
                   </div>
                 )}
 
-                {/* Author Info */}
+                {/* Author Info & Follow Button */}
                 <div className="flex items-center justify-between pt-3 border-t-2 border-gray-200">
                   <div className="flex items-center gap-3">
                     <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-bold border-2 border-white shadow-lg">
@@ -255,9 +268,66 @@ export default function StockTips() {
                       <p className="text-xs text-gray-500">{tip.author.expertise}</p>
                     </div>
                   </div>
-                  <div className="text-xs text-gray-500">
-                    {formatDate(tip.createdAt)}
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-500">{formatDate(tip.createdAt)}</span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={`h-7 px-3 text-xs border-2 rounded-xl transition-all duration-300 active:scale-95 ${
+                        isFollowing(tip.author.name) 
+                          ? 'bg-purple-50/70 text-purple-600 border-purple-200 hover:bg-purple-100/70 hover:border-purple-300' 
+                          : 'bg-white/70 text-gray-600 border-gray-200 hover:bg-gray-50/70 hover:border-gray-300'
+                      }`}
+                      onClick={() => toggleFollow(tip.author.name)}
+                    >
+                      {isFollowing(tip.author.name) ? (
+                        <>
+                          <UserCheck size={12} className="mr-1" />
+                          Following
+                        </>
+                      ) : (
+                        <>
+                          <UserPlus size={12} className="mr-1" />
+                          Follow
+                        </>
+                      )}
+                    </Button>
                   </div>
+                </div>
+
+                {/* Interactive Buttons */}
+                <div className="flex items-center justify-between pt-2 border-t-2 border-gray-100">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className={`flex items-center space-x-1 text-xs border-2 border-transparent rounded-xl transition-all duration-300 active:scale-95 hover:bg-red-50/70 hover:backdrop-blur-sm ${
+                      isLiked(tip.id) ? 'text-red-600 bg-red-50/70 backdrop-blur-sm border-red-200' : 'text-gray-500'
+                    }`}
+                    onClick={() => toggleLike(tip.id)}
+                  >
+                    <Heart size={14} className={`transition-all duration-300 ${isLiked(tip.id) ? 'fill-current' : ''}`} />
+                    <span className="font-medium">{24 + (isLiked(tip.id) ? 1 : 0)}</span>
+                  </Button>
+                  
+                  <CommentModal postId={tip.id} onAddComment={addComment}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex items-center space-x-1 text-xs text-gray-500 border-2 border-transparent rounded-xl transition-all duration-300 active:scale-95 hover:bg-blue-50/70 hover:backdrop-blur-sm hover:text-blue-600"
+                    >
+                      <MessageCircle size={14} className="transition-all duration-300" />
+                      <span className="font-medium">{8 + getCommentCount(tip.id)}</span>
+                    </Button>
+                  </CommentModal>
+                  
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex items-center space-x-1 text-xs text-gray-500 border-2 border-transparent rounded-xl transition-all duration-300 active:scale-95 hover:bg-gray-50/70 hover:backdrop-blur-sm hover:text-gray-600"
+                    onClick={() => sharePost(tip.id)}
+                  >
+                    <Share size={14} className="transition-all duration-300" />
+                  </Button>
                 </div>
               </div>
             </div>
@@ -266,7 +336,7 @@ export default function StockTips() {
       </div>
 
       {/* Bottom Navigation */}
-      <BottomNavigation />
+      <BottomNavigation activeTab="stock-tips" onTabChange={() => {}} />
 
       {/* Create Post Modal */}
       <EnhancedCreatePostModal

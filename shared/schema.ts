@@ -19,7 +19,10 @@ export interface Post {
   createdAt: Date;
   likes: number;
   comments: number;
+  shares: number;
   imageUrl?: string;
+  isLiked?: boolean;
+  isFollowing?: boolean;
   // Stock tip specific fields
   stockName?: string;
   symbol?: string;
@@ -29,6 +32,33 @@ export interface Post {
   tipType?: 'buy' | 'sell';
   reasoning?: string;
   status?: 'active' | 'completed' | 'expired';
+}
+
+export interface Comment {
+  id: string;
+  postId: string;
+  userId: string;
+  content: string;
+  createdAt: Date;
+  likes: number;
+  isLiked?: boolean;
+}
+
+export interface Analytics {
+  totalPosts: number;
+  totalLikes: number;
+  totalComments: number;
+  totalShares: number;
+  totalFollowers: number;
+  totalFollowing: number;
+  weeklyGrowth: number;
+  topPerformingPosts: Post[];
+  engagementByDay: Array<{
+    date: string;
+    likes: number;
+    comments: number;
+    shares: number;
+  }>;
 }
 
 export interface MarketData {

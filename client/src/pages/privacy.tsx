@@ -7,11 +7,14 @@ export default function Privacy() {
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
-          <Link href="/create-account">
-            <Button variant="ghost" className="mb-4">
-              ← Back
-            </Button>
-          </Link>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="mb-4 p-2"
+            onClick={() => window.history.back()}
+          >
+            ← Back
+          </Button>
         </div>
 
         <Card>

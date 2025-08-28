@@ -1,21 +1,35 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MarketData } from "@shared/schema";
+import { BarChart3 } from "lucide-react";
 
 interface MarketOverviewProps {
   data?: MarketData[];
   isLoading?: boolean;
+  onViewAll?: () => void;
 }
 
-const MarketOverview = ({ data, isLoading = false }: MarketOverviewProps) => {
+const MarketOverview = ({ data, isLoading = false, onViewAll }: MarketOverviewProps) => {
   return (
     <div className="mx-0 my-4">
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base font-semibold">Today's Markets</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="flex divide-x divide-gray-200">
+      <div className="bg-white/70 backdrop-blur-md border-2 border-gray-200 shadow-lg rounded-2xl transition-all duration-300">
+        <div className="flex items-center justify-between p-4 pb-2">
+          <h3 className="text-base font-semibold">Today's Markets</h3>
+          {onViewAll && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs text-purple-600 border-2 border-transparent rounded-xl transition-all duration-300 active:scale-95"
+              onClick={onViewAll}
+            >
+              <BarChart3 size={14} className="mr-1" />
+              View All
+            </Button>
+          )}
+        </div>
+        <div className="p-0">
+          <div className="flex divide-x-2 divide-gray-200">
             {isLoading ? (
               // Skeleton loading state
               <>
@@ -76,8 +90,8 @@ const MarketOverview = ({ data, isLoading = false }: MarketOverviewProps) => {
               ))
             )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };

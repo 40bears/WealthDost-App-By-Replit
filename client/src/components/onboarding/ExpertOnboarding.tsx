@@ -511,7 +511,7 @@ export const ExpertOnboarding = ({ onBack }: ExpertOnboardingProps) => {
         <p className="text-sm text-blue-700">Your profile will be reviewed by our team. Verification badge will be awarded after checking your credentials.</p>
       </div>
 
-      <div className="mt-auto">
+      <div className="mt-auto pt-6 pb-4">
         <Button 
           onClick={handleSubmit} 
           className="w-full"

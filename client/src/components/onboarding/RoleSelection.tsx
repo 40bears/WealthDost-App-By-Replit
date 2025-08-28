@@ -24,11 +24,14 @@ export const RoleSelection = ({ onSelect }: RoleSelectionProps) => {
   return (
     <div className="px-4 py-6 flex flex-col h-full">
       <div className="flex items-center mb-6">
-        <Link href="/">
-          <Button variant="ghost" size="icon" className="text-gray-500">
-            <span className="material-icons">arrow_back</span>
-          </Button>
-        </Link>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="text-gray-500"
+          onClick={() => window.history.back()}
+        >
+          <span className="material-icons">arrow_back</span>
+        </Button>
         <h2 className="text-xl font-semibold ml-2">Choose your role</h2>
       </div>
 

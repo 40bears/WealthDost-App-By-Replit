@@ -2,6 +2,7 @@ import { Switch, Route, useLocation } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useState } from "react";
+import { InteractionProvider } from "@/lib/interactionContext";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import SignUp from "@/pages/signup";
@@ -23,6 +24,10 @@ import StockTips from "@/pages/stock-tips";
 import GlobalSearch from "@/pages/global-search";
 import Terms from "@/pages/terms";
 import Privacy from "@/pages/privacy";
+import Analytics from "@/pages/analytics";
+import HelpContact from "@/pages/help-contact";
+import HelpGuide from "@/pages/help-guide";
+import HelpCategory from "@/pages/help-category";
 import BottomNavigation from "@/components/dashboard/BottomNavigation";
 
 function Router() {
@@ -63,10 +68,14 @@ function Router() {
           <Route path="/my-posts" component={MyPosts} />
           <Route path="/activity" component={Activity} />
           <Route path="/settings" component={Settings} />
-          <Route path="/help" component={HelpCenter} />
+          <Route path="/help-center" component={HelpCenter} />
+          <Route path="/help/contact" component={HelpContact} />
+          <Route path="/help/guide" component={HelpGuide} />
+          <Route path="/help/category/:category" component={HelpCategory} />
           <Route path="/loops" component={Loops} />
           <Route path="/stock-tips" component={StockTips} />
           <Route path="/search" component={GlobalSearch} />
+          <Route path="/analytics" component={Analytics} />
           <Route path="/terms" component={Terms} />
           <Route path="/privacy" component={Privacy} />
           <Route component={NotFound} />
@@ -88,10 +97,12 @@ function Router() {
 function App() {
   return (
     <TooltipProvider>
-      <Toaster />
-      <div className="max-w-md mx-auto bg-white min-h-screen flex flex-col">
-        <Router />
-      </div>
+      <InteractionProvider>
+        <Toaster />
+        <div className="max-w-md mx-auto bg-white min-h-screen flex flex-col">
+          <Router />
+        </div>
+      </InteractionProvider>
     </TooltipProvider>
   );
 }
