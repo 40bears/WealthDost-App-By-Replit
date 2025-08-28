@@ -153,32 +153,44 @@ const EnhancedCreatePostModal = ({ isOpen, onClose, onPostCreated }: EnhancedCre
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md mx-auto max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-md mx-auto max-h-[90vh] overflow-y-auto bg-white/90 backdrop-blur-md border-2 border-gray-200/50 shadow-2xl">
         <DialogHeader>
           <DialogTitle>Create New Post</DialogTitle>
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "tweet" | "stock_tip")}>
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="tweet" className="flex items-center gap-2">
+          <div className="grid w-full grid-cols-2 p-1 bg-gray-100/50 backdrop-blur-sm rounded-xl border border-gray-200">
+            <button
+              onClick={() => setActiveTab("tweet")}
+              className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-all duration-300 font-medium ${
+                activeTab === "tweet"
+                  ? "bg-white/90 backdrop-blur-sm shadow-lg border-2 border-blue-200 text-blue-700"
+                  : "text-gray-600 hover:text-gray-800 hover:bg-white/50"
+              }`}
+            >
               <MessageSquare className="h-4 w-4" />
               Post
-            </TabsTrigger>
-            <TabsTrigger value="stock_tip" className="flex items-center gap-2">
+            </button>
+            <button
+              onClick={() => setActiveTab("stock_tip")}
+              className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-all duration-300 font-medium ${
+                activeTab === "stock_tip"
+                  ? "bg-white/90 backdrop-blur-sm shadow-lg border-2 border-green-200 text-green-700"
+                  : "text-gray-600 hover:text-gray-800 hover:bg-white/50"
+              }`}
+            >
               <TrendingUp className="h-4 w-4" />
               Stock Tip
-            </TabsTrigger>
-          </TabsList>
+            </button>
+          </div>
 
           <TabsContent value="tweet" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
+            <div className="bg-white/50 backdrop-blur-sm border-2 border-gray-200 hover:border-blue-300 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20">
+              <div className="p-6">
+                <div className="text-lg font-semibold flex items-center gap-2 mb-4">
                   <MessageSquare className="h-5 w-5" />
                   Share Your Thoughts
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+                </div>
                 <Form {...tweetForm}>
                   <form onSubmit={tweetForm.handleSubmit(onTweetSubmit)} className="space-y-4">
                     <FormField
@@ -275,19 +287,17 @@ const EnhancedCreatePostModal = ({ isOpen, onClose, onPostCreated }: EnhancedCre
                     </div>
                   </form>
                 </Form>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </TabsContent>
 
           <TabsContent value="stock_tip" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
+            <div className="bg-white/50 backdrop-blur-sm border-2 border-gray-200 hover:border-green-300 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20">
+              <div className="p-6">
+                <div className="text-lg font-semibold flex items-center gap-2 mb-4">
                   <TrendingUp className="h-5 w-5" />
                   Share a Stock Tip
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+                </div>
                 <Form {...stockTipForm}>
                   <form onSubmit={stockTipForm.handleSubmit(onStockTipSubmit)} className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
@@ -439,8 +449,8 @@ const EnhancedCreatePostModal = ({ isOpen, onClose, onPostCreated }: EnhancedCre
                     </div>
                   </form>
                 </Form>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </DialogContent>

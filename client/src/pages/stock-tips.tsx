@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import BottomNavigation from "@/components/dashboard/BottomNavigation";
 import EnhancedCreatePostModal from "@/components/dashboard/EnhancedCreatePostModal";
-import FloatingCreateButton from "@/components/FloatingCreateButton";
+
 
 // Demo stock tips data
 const demoStockTips = [
@@ -94,16 +94,16 @@ export default function StockTips() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
+      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={() => window.history.back()}
-              className="p-2"
+              className="p-2 border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-300 transform hover:scale-105 active:scale-95 rounded-lg"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -115,7 +115,7 @@ export default function StockTips() {
           <Button 
             onClick={() => setIsCreateModalOpen(true)}
             size="sm"
-            className="bg-blue-600 hover:bg-blue-700 text-white"
+            className="bg-blue-600/90 hover:bg-blue-600 text-white backdrop-blur-sm border border-blue-500/30 hover:border-blue-400 shadow-lg hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-105 active:scale-95 rounded-xl"
           >
             <Plus className="h-4 w-4 mr-1" />
             Create
@@ -136,7 +136,11 @@ export default function StockTips() {
               variant={filter === key ? "default" : "outline"}
               size="sm"
               onClick={() => setFilter(key as any)}
-              className="whitespace-nowrap"
+              className={`whitespace-nowrap transition-all duration-300 transform hover:scale-105 active:scale-95 rounded-xl ${
+                filter === key 
+                  ? 'shadow-lg hover:shadow-xl' 
+                  : 'border-2 hover:border-primary/50 hover:shadow-md hover:shadow-primary/20'
+              }`}
             >
               {label}
             </Button>
@@ -147,29 +151,29 @@ export default function StockTips() {
       {/* Stock Tips List */}
       <div className="p-4 pb-24 space-y-4">
         {filteredTips.length === 0 ? (
-          <Card className="text-center py-8">
-            <CardContent>
+          <div className="bg-white/70 backdrop-blur-md border-2 border-gray-200 hover:border-gray-300 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] rounded-2xl text-center py-8">
+            <div className="p-6">
               <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-600 mb-2">No Stock Tips Found</h3>
               <p className="text-gray-500">Try adjusting your filter or check back later for new tips.</p>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ) : (
           filteredTips.map((tip) => (
-            <Card key={tip.id} className="hover:shadow-md transition-shadow">
-              <CardHeader className="pb-3">
+            <div key={tip.id} className="bg-white/70 backdrop-blur-md border-2 border-gray-200 hover:border-gray-300 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] rounded-2xl overflow-hidden">
+              <div className="p-6 pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
-                      <div className={`p-2 rounded-lg ${
+                      <div className={`p-3 rounded-xl border-2 transition-all duration-300 ${
                         tip.tipType === 'buy' 
-                          ? 'bg-green-100 text-green-700' 
-                          : 'bg-red-100 text-red-700'
+                          ? 'bg-green-50 text-green-700 border-green-200 hover:border-green-300 hover:shadow-lg hover:shadow-green-500/20' 
+                          : 'bg-red-50 text-red-700 border-red-200 hover:border-red-300 hover:shadow-lg hover:shadow-red-500/20'
                       }`}>
                         {tip.tipType === 'buy' ? (
-                          <TrendingUp className="h-4 w-4" />
+                          <TrendingUp className="h-5 w-5" />
                         ) : (
-                          <TrendingDown className="h-4 w-4" />
+                          <TrendingDown className="h-5 w-5" />
                         )}
                       </div>
                       <div>
@@ -179,19 +183,27 @@ export default function StockTips() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant={tip.status === 'active' ? 'default' : 'secondary'}>
+                    <div className={`px-3 py-1 rounded-full border-2 text-sm font-medium transition-all duration-300 ${
+                      tip.status === 'active' 
+                        ? 'bg-blue-50 text-blue-700 border-blue-200 hover:border-blue-300 hover:shadow-md hover:shadow-blue-500/20'
+                        : 'bg-gray-50 text-gray-700 border-gray-200 hover:border-gray-300 hover:shadow-md'
+                    }`}>
                       {tip.status}
-                    </Badge>
-                    <Badge variant={tip.tipType === 'buy' ? 'default' : 'destructive'}>
+                    </div>
+                    <div className={`px-3 py-1 rounded-full border-2 text-sm font-medium transition-all duration-300 ${
+                      tip.tipType === 'buy'
+                        ? 'bg-green-50 text-green-700 border-green-200 hover:border-green-300 hover:shadow-md hover:shadow-green-500/20'
+                        : 'bg-red-50 text-red-700 border-red-200 hover:border-red-300 hover:shadow-md hover:shadow-red-500/20'
+                    }`}>
                       {tip.tipType.toUpperCase()}
-                    </Badge>
+                    </div>
                   </div>
                 </div>
-              </CardHeader>
+              </div>
 
-              <CardContent className="space-y-4">
+              <div className="px-6 pb-6 space-y-4">
                 {/* Price Information */}
-                <div className="grid grid-cols-3 gap-4 p-3 bg-gray-50 rounded-lg">
+                <div className="grid grid-cols-3 gap-4 p-4 bg-white/50 backdrop-blur-sm border-2 border-gray-200 hover:border-gray-300 rounded-xl transition-all duration-300 hover:shadow-lg">
                   <div className="text-center">
                     <p className="text-xs text-gray-500 mb-1">Entry Price</p>
                     <p className="font-bold text-lg">${tip.entryPrice}</p>
@@ -213,32 +225,31 @@ export default function StockTips() {
                 </div>
 
                 {/* Target Date */}
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-gray-600 p-3 bg-white/50 backdrop-blur-sm border-2 border-gray-200 hover:border-blue-300 rounded-xl transition-all duration-300 hover:shadow-md hover:shadow-blue-500/20">
                   <Calendar className="h-4 w-4" />
                   <span>Target Date: {formatDate(new Date(tip.targetDate))}</span>
                 </div>
 
                 {/* Reasoning */}
                 {tip.reasoning && (
-                  <div className="p-3 bg-blue-50 rounded-lg">
+                  <div className="p-4 bg-blue-50/70 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-300 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20">
                     <p className="text-sm text-gray-700">{tip.reasoning}</p>
                   </div>
                 )}
 
                 {/* Author Info */}
-                <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                <div className="flex items-center justify-between pt-3 border-t-2 border-gray-200">
                   <div className="flex items-center gap-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={tip.author.avatar} />
-                      <AvatarFallback>
-                        {tip.author.name.split(' ').map(n => n[0]).join('')}
-                      </AvatarFallback>
-                    </Avatar>
+                    <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-bold border-2 border-white shadow-lg">
+                      {tip.author.name.split(' ').map(n => n[0]).join('')}
+                    </div>
                     <div>
                       <div className="flex items-center gap-2">
                         <p className="text-sm font-medium">{tip.author.name}</p>
                         {tip.author.isExpert && (
-                          <Star className="h-3 w-3 text-yellow-500 fill-current" />
+                          <div className="p-1 bg-yellow-100 border-2 border-yellow-200 rounded-full">
+                            <Star className="h-3 w-3 text-yellow-600 fill-current" />
+                          </div>
                         )}
                       </div>
                       <p className="text-xs text-gray-500">{tip.author.expertise}</p>
@@ -248,14 +259,14 @@ export default function StockTips() {
                     {formatDate(tip.createdAt)}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))
         )}
       </div>
 
       {/* Bottom Navigation */}
-      <BottomNavigation activeTab="tips" onTabChange={() => {}} />
+      <BottomNavigation />
 
       {/* Create Post Modal */}
       <EnhancedCreatePostModal
@@ -267,8 +278,7 @@ export default function StockTips() {
         }}
       />
 
-      {/* Floating Create Button */}
-      <FloatingCreateButton />
+
     </div>
   );
 }

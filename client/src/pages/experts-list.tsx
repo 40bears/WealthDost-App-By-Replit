@@ -174,24 +174,24 @@ const ExpertsList = () => {
 
   const getSectorColor = (sector: string) => {
     const colors: { [key: string]: string } = {
-      financial: "bg-blue-100 text-blue-800",
-      technology: "bg-purple-100 text-purple-800",
-      energy: "bg-orange-100 text-orange-800",
-      healthcare: "bg-green-100 text-green-800",
-      industrials: "bg-gray-100 text-gray-800",
-      consumer: "bg-pink-100 text-pink-800"
+      financial: "bg-blue-100/70 text-blue-800 border-blue-200 hover:border-blue-300 hover:shadow-blue-500/20",
+      technology: "bg-purple-100/70 text-purple-800 border-purple-200 hover:border-purple-300 hover:shadow-purple-500/20",
+      energy: "bg-orange-100/70 text-orange-800 border-orange-200 hover:border-orange-300 hover:shadow-orange-500/20",
+      healthcare: "bg-green-100/70 text-green-800 border-green-200 hover:border-green-300 hover:shadow-green-500/20",
+      industrials: "bg-gray-100/70 text-gray-800 border-gray-200 hover:border-gray-300 hover:shadow-gray-500/20",
+      consumer: "bg-pink-100/70 text-pink-800 border-pink-200 hover:border-pink-300 hover:shadow-pink-500/20"
     };
-    return colors[sector] || "bg-gray-100 text-gray-800";
+    return colors[sector] || "bg-gray-100/70 text-gray-800 border-gray-200 hover:border-gray-300 hover:shadow-gray-500/20";
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50/30 to-gray-100">
       {/* Header */}
-      <div className="sticky top-0 bg-white border-b border-gray-100 z-20">
+      <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b-2 border-gray-200/50 shadow-lg z-20">
         <div className="max-w-md mx-auto px-4 py-3">
           <div className="flex items-center justify-between mb-3">
             <Link href="/dashboard">
-              <Button variant="ghost" size="sm" className="p-1 text-gray-600">
+              <Button variant="ghost" size="sm" className="p-1 text-gray-600 border-2 border-transparent hover:border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 transition-all duration-300 hover:scale-105 active:scale-95 rounded-xl">
                 <span className="material-icons text-lg">arrow_back</span>
               </Button>
             </Link>
@@ -202,7 +202,7 @@ const ExpertsList = () => {
           {/* Simplified Filters */}
           <div className="flex gap-2">
             <Select value={selectedSector} onValueChange={setSelectedSector}>
-              <SelectTrigger className="h-8 text-xs bg-gray-50 border-gray-200">
+              <SelectTrigger className="h-8 text-xs bg-white/70 backdrop-blur-sm border-2 border-gray-200 hover:border-purple-300 focus:border-purple-400 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 rounded-xl">
                 <SelectValue placeholder="Sector" />
               </SelectTrigger>
               <SelectContent>
@@ -215,7 +215,7 @@ const ExpertsList = () => {
             </Select>
             
             <Select value={selectedExpertType} onValueChange={setSelectedExpertType}>
-              <SelectTrigger className="h-8 text-xs bg-gray-50 border-gray-200">
+              <SelectTrigger className="h-8 text-xs bg-white/70 backdrop-blur-sm border-2 border-gray-200 hover:border-purple-300 focus:border-purple-400 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 rounded-xl">
                 <SelectValue placeholder="Type" />
               </SelectTrigger>
               <SelectContent>
@@ -233,13 +233,13 @@ const ExpertsList = () => {
       {/* Experts List */}
       <div className="max-w-md mx-auto">
         {filteredExperts.map((expert, index) => (
-          <div key={expert.id} className="border-b border-gray-100 px-4 py-3 hover:bg-gray-50 transition-colors">
+          <div key={expert.id} className="mx-4 mb-3 bg-white/70 backdrop-blur-md border-2 border-gray-200 hover:border-purple-300 shadow-lg hover:shadow-xl hover:shadow-purple-500/20 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] rounded-2xl px-4 py-3">
             <div className="flex items-center space-x-3">
               {/* Rank and Avatar */}
               <div className="flex items-center space-x-2">
                 <span className="text-xs font-medium text-gray-500 w-4">{index + 1}</span>
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback className="bg-purple-100 text-purple-600 text-xs font-medium">
+                <Avatar className="h-8 w-8 border-2 border-purple-200 hover:border-purple-300 transition-all duration-300">
+                  <AvatarFallback className="bg-purple-100/70 backdrop-blur-sm text-purple-600 text-xs font-medium">
                     {expert.name.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
@@ -257,7 +257,7 @@ const ExpertsList = () => {
                     </div>
                     <p className="text-xs text-gray-500 truncate">{expert.researchFirm}</p>
                     <div className="flex items-center space-x-3 mt-1">
-                      <Badge className={`text-xs px-1.5 py-0.5 ${getSectorColor(expert.sector)}`}>
+                      <Badge className={`text-xs px-1.5 py-0.5 border-2 hover:shadow-sm transition-all duration-300 ${getSectorColor(expert.sector)}`}>
                         {expert.sector.charAt(0).toUpperCase() + expert.sector.slice(1)}
                       </Badge>
                       <span className="text-xs text-purple-600 font-medium">
@@ -270,7 +270,7 @@ const ExpertsList = () => {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="text-xs px-2 py-1 h-6 border-purple-200 text-purple-600 hover:bg-purple-50"
+                      className="text-xs px-2 py-1 h-6 border-2 border-purple-200 text-purple-600 hover:border-purple-300 hover:bg-purple-50/70 hover:shadow-md hover:shadow-purple-500/20 transition-all duration-300 hover:scale-105 active:scale-95 rounded-lg backdrop-blur-sm"
                     >
                       View
                     </Button>
@@ -283,9 +283,9 @@ const ExpertsList = () => {
                     <span>Success Rate: {expert.successRate}%</span>
                     <span>{expert.followers.toLocaleString()} followers</span>
                   </div>
-                  <div className="flex w-full h-1.5 rounded-full overflow-hidden bg-gray-100">
+                  <div className="flex w-full h-1.5 rounded-full overflow-hidden bg-gray-100/70 backdrop-blur-sm border border-gray-200">
                     <div 
-                      className="bg-green-500" 
+                      className="bg-green-500/90 backdrop-blur-sm shadow-sm" 
                       style={{ width: `${expert.successRate}%` }}
                       title={`Success Rate: ${expert.successRate}%`}
                     ></div>
@@ -297,13 +297,13 @@ const ExpertsList = () => {
         ))}
 
         {filteredExperts.length === 0 && (
-          <div className="text-center py-12">
+          <div className="mx-4 bg-white/70 backdrop-blur-md border-2 border-gray-200 hover:border-gray-300 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] rounded-2xl text-center py-12">
             <span className="material-icons text-3xl text-gray-300 mb-2">person_search</span>
             <p className="text-gray-500 text-sm">No experts found</p>
             <Button 
               variant="ghost" 
               size="sm" 
-              className="mt-2 text-xs"
+              className="mt-2 text-xs border-2 border-transparent hover:border-purple-300 hover:shadow-md hover:shadow-purple-500/20 transition-all duration-300 hover:scale-105 active:scale-95 rounded-lg"
               onClick={() => {
                 setSelectedSector("all");
                 setSelectedExpertType("all");

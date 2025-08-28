@@ -73,6 +73,56 @@
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom);
   }
+  
+  /* Glassmorphism animation delays */
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  
+  /* Enhanced glassmorphism backdrop effects */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  }
+  
+  /* Glowing input focus effects */
+  .glow-input:focus {
+    box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
+    border-color: rgba(147, 51, 234, 0.6);
+  }
+  
+  /* Interactive card hover effects */
+  .interactive-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-width: 2px;
+  }
+  
+  .interactive-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .interactive-card:active {
+    transform: scale(0.95);
+  }
+  
+  /* Interactive button effects */
+  .interactive-button {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-width: 1px;
+  }
+  
+  .interactive-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  .interactive-button:active {
+    transform: scale(0.95);
+  }
+}
 
   .progress-bar {
     @apply h-1 bg-gray-200 rounded-sm my-2;
@@ -177,4 +227,3 @@
   .feature-btn {
     @apply transition-all duration-200 hover:shadow-md active:shadow-inner active:translate-y-0.5;
   }
-}
