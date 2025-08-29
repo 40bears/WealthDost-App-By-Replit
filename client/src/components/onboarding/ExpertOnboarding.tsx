@@ -322,7 +322,7 @@ export const ExpertOnboarding = ({ onBack }: ExpertOnboardingProps) => {
         </div>
       </form>
 
-      <div className="mt-auto">
+      <div className="mt-auto pb-6 safe-area-bottom">
         <Button onClick={goToNextStep} className="w-full">
           Next
         </Button>
@@ -431,7 +431,7 @@ export const ExpertOnboarding = ({ onBack }: ExpertOnboardingProps) => {
         </div>
       </div>
 
-      <div className="mt-auto flex space-x-3">
+      <div className="mt-auto flex space-x-3 pb-6 safe-area-bottom">
         <Button variant="outline" onClick={goToPreviousStep} className="flex-1">
           Back
         </Button>
@@ -511,7 +511,7 @@ export const ExpertOnboarding = ({ onBack }: ExpertOnboardingProps) => {
         <p className="text-sm text-blue-700">Your profile will be reviewed by our team. Verification badge will be awarded after checking your credentials.</p>
       </div>
 
-      <div className="mt-auto pt-6 pb-4">
+      <div className="mt-auto pt-6 pb-6 safe-area-bottom">
         <Button 
           onClick={handleSubmit} 
           className="w-full"

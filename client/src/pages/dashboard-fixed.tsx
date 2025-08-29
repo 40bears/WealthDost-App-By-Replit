@@ -184,7 +184,7 @@ const Dashboard = () => {
 
   // Function to handle View All click
   const handleViewAllMarkets = () => {
-    setLocation("/analytics");
+    setLocation("/market-highlights");
   };
   const [stockFormData, setStockFormData] = useState({
     stockName: "",
@@ -290,7 +290,9 @@ const Dashboard = () => {
         timestamp: new Date(Date.now() - 1000 * 60 * 30),
         likes: 24,
         comments: 7,
-        tags: ["tech", "stocks", "renewable"]
+        tags: ["tech", "stocks", "renewable"],
+        isFollowing: true,
+        isTrending: false
       },
       {
         id: 2,
@@ -301,7 +303,9 @@ const Dashboard = () => {
         timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
         likes: 15,
         comments: 12,
-        tags: ["mutualfunds", "smallcap"]
+        tags: ["mutualfunds", "smallcap"],
+        isFollowing: false,
+        isTrending: false
       },
       {
         id: 3,
@@ -312,9 +316,49 @@ const Dashboard = () => {
         timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5),
         likes: 32,
         comments: 8,
-        tags: ["sustainable", "greeninvesting"]
+        tags: ["sustainable", "greeninvesting"],
+        isFollowing: true,
+        isTrending: true
+      },
+      {
+        id: 4,
+        userId: 104,
+        author: "Aman Singh",
+        profileImageUrl: null,
+        content: "Breaking: Major tech stock movement today! Apple and Google showing strong momentum. Perfect time to analyze the charts.",
+        timestamp: new Date(Date.now() - 1000 * 60 * 15),
+        likes: 58,
+        comments: 23,
+        tags: ["breaking", "tech", "apple", "google"],
+        isFollowing: false,
+        isTrending: true
+      },
+      {
+        id: 5,
+        userId: 105,
+        author: "Sneha Kapoor",
+        profileImageUrl: null,
+        content: "Just completed my monthly SIP investment. Consistency is key in wealth building! What are your favorite SIP strategies?",
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 1),
+        likes: 19,
+        comments: 9,
+        tags: ["sip", "investing", "wealth"],
+        isFollowing: true,
+        isTrending: false
       }
     ];
+
+    // Filter posts based on feedFilter
+    const filteredMockPosts = (() => {
+      switch (feedFilter) {
+        case "trending":
+          return mockPosts.filter(post => post.isTrending);
+        case "following":
+          return mockPosts.filter(post => post.isFollowing);
+        default:
+          return mockPosts;
+      }
+    })();
 
     // User profile with interests
     const userInterests = ["Tech Stocks", "Renewable Energy", "Mutual Funds", "Real Estate"];
@@ -410,7 +454,16 @@ const Dashboard = () => {
             <ContentFeed posts={typedPosts} isLoading={isLoadingPosts} />
           ) : (
             <div className="space-y-4">
-              {mockPosts.map((post) => (
+              {filteredMockPosts.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">
+                    {feedFilter === "trending" && "No trending posts right now"}
+                    {feedFilter === "following" && "No posts from people you follow"}
+                    {feedFilter === "all" && "No posts available"}
+                  </p>
+                </div>
+              ) : (
+                filteredMockPosts.map((post) => (
                 <div key={post.id} className="bg-white border border-gray-200 rounded-lg p-4">
                   <div className="flex items-start mb-3">
                     <Avatar className="h-10 w-10 mr-3">
@@ -450,7 +503,8 @@ const Dashboard = () => {
                     </button>
                   </div>
                 </div>
-              ))}
+                ))
+              )}
             </div>
           )}
           

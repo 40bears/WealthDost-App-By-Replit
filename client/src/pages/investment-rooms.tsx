@@ -355,7 +355,7 @@ const InvestmentRooms = () => {
             </div>
             
             {/* Footer - Fixed */}
-            <div className="p-4 border-t-2 border-gray-200/50 flex-shrink-0 bg-white/50 backdrop-blur-sm">
+            <div className="p-4 pb-6 border-t-2 border-gray-200/50 flex-shrink-0 bg-white/50 backdrop-blur-sm safe-area-bottom">
               <div className="flex space-x-3">
                 <Button 
                   variant="outline" 
