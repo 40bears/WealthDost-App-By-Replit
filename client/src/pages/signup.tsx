@@ -90,11 +90,17 @@ const SignUp = () => {
 
         {/* Back Button */}
         <div className="text-center mb-4">
-          <Link href="/create-account">
-            <Button variant="ghost" className="text-gray-600 hover:text-gray-800">
+          {!role ? (
+            <Link href="/create-account">
+              <Button variant="ghost" className="text-gray-600 hover:text-gray-800">
+                ← Back
+              </Button>
+            </Link>
+          ) : (
+            <Button variant="ghost" className="text-gray-600 hover:text-gray-800" onClick={() => setRole(null)}>
               ← Back
             </Button>
-          </Link>
+          )}
         </div>
 
         <div className="mt-auto text-center text-xs text-gray-500">

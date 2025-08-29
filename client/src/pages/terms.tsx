@@ -9,8 +9,8 @@ export default function Terms() {
         <div className="mb-6">
           <Button 
             variant="ghost" 
-            size="sm" 
-            className="mb-4 p-2"
+            size="default" 
+            className="mb-4 h-9 px-3 text-sm border-2 border-transparent hover:border-gray-200 hover:bg-gray-100 transition-all duration-300 active:scale-95"
             onClick={() => window.history.back()}
           >
             ← Back

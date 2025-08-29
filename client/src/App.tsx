@@ -28,6 +28,7 @@ import Analytics from "@/pages/analytics";
 import HelpContact from "@/pages/help-contact";
 import HelpGuide from "@/pages/help-guide";
 import HelpCategory from "@/pages/help-category";
+import MarketHighlights from "@/pages/market-highlights";
 import BottomNavigation from "@/components/dashboard/BottomNavigation";
 
 function Router() {
@@ -76,6 +77,7 @@ function Router() {
           <Route path="/stock-tips" component={StockTips} />
           <Route path="/search" component={GlobalSearch} />
           <Route path="/analytics" component={Analytics} />
+          <Route path="/market-highlights" component={MarketHighlights} />
           <Route path="/terms" component={Terms} />
           <Route path="/privacy" component={Privacy} />
           <Route component={NotFound} />

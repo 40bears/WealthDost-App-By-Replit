@@ -267,7 +267,7 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
         </div>
       </form>
 
-      <div className="mt-auto">
+      <div className="mt-auto pb-6 safe-area-bottom">
         <Button onClick={goToNextStep} className="w-full">
           Next
         </Button>
@@ -357,7 +357,7 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
         </div>
       </div>
 
-      <div className="mt-auto flex space-x-3">
+      <div className="mt-auto flex space-x-3 pb-6 safe-area-bottom">
         <Button variant="outline" onClick={goToPreviousStep} className="flex-1">
           Back
         </Button>
@@ -428,7 +428,7 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
         </RadioGroup>
       </div>
 
-      <div className="mt-auto flex space-x-3">
+      <div className="mt-auto flex space-x-3 pb-6 safe-area-bottom">
         <Button variant="outline" onClick={goToPreviousStep} className="flex-1">
           Back
         </Button>
@@ -553,7 +553,7 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
           </div>
         </div>
 
-        <div className="mt-auto">
+        <div className="mt-auto pb-6 safe-area-bottom">
           <Button onClick={() => navigate("/dashboard")} className="w-full">
             Enter WealthDost
           </Button>
