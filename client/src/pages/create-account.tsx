@@ -10,7 +10,11 @@ export default function CreateAccount() {
   const [, setLocation] = useLocation();
   const [mobileNumber, setMobileNumber] = useState("");
   const [otp, setOtp] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
+  const [isOtpVerified, setIsOtpVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -54,8 +58,56 @@ export default function CreateAccount() {
     // Simulate OTP verification
     setTimeout(() => {
       setIsLoading(false);
-      setLocation("/signup");
+      setIsOtpVerified(true);
+      toast({
+        title: "Phone Verified",
+        description: "Now create your account credentials",
+      });
     }, 1500);
+  };
+
+  const handleCreateAccount = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validation
+    if (!email || !password || !confirmPassword) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast({
+        title: "Password Mismatch",
+        description: "Passwords do not match",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (password.length < 6) {
+      toast({
+        title: "Weak Password",
+        description: "Password must be at least 6 characters long",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    
+    // Simulate account creation
+    setTimeout(() => {
+      setIsLoading(false);
+      toast({
+        title: "Account Created",
+        description: "Welcome to WealthDost! Please complete your profile.",
+      });
+      setLocation("/signup");
+    }, 2000);
   };
 
   return (
@@ -92,12 +144,19 @@ export default function CreateAccount() {
           <div className="relative z-10">
             <div className="text-center mb-6">
               <h2 className="text-2xl font-bold text-white mb-2">
-                {isOtpSent ? "Verify OTP" : "Mobile Number"}
+                {!isOtpSent 
+                  ? "Mobile Number" 
+                  : !isOtpVerified 
+                    ? "Verify OTP" 
+                    : "Create Account"
+                }
               </h2>
               <p className="text-white/80">
-                {isOtpSent 
-                  ? `Enter the 6-digit OTP sent to +91 ${mobileNumber}`
-                  : "We'll send you a verification code"
+                {!isOtpSent 
+                  ? "We'll send you a verification code"
+                  : !isOtpVerified 
+                    ? `Enter the 6-digit OTP sent to +91 ${mobileNumber}`
+                    : "Set up your email and password for login"
                 }
               </p>
             </div>
@@ -136,7 +195,7 @@ export default function CreateAccount() {
                   <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
                 </Button>
               </form>
-            ) : (
+            ) : !isOtpVerified ? (
               <form onSubmit={handleVerifyOtp} className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="otp" className="text-white font-medium">Enter OTP</Label>
@@ -183,6 +242,78 @@ export default function CreateAccount() {
                     {!isLoading && (
                       <svg className="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    )}
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
+                </Button>
+              </form>
+            ) : (
+              <form onSubmit={handleCreateAccount} className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-white font-medium">Email Address</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/60 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-0 focus:shadow-lg focus:shadow-blue-500/20 transition-all duration-300 h-12"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-white font-medium">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Create a strong password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/60 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-0 focus:shadow-lg focus:shadow-blue-500/20 transition-all duration-300 h-12"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword" className="text-white font-medium">Confirm Password</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="Confirm your password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/60 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-0 focus:shadow-lg focus:shadow-blue-500/20 transition-all duration-300 h-12"
+                    required
+                  />
+                </div>
+                <div className="text-center">
+                  <button 
+                    type="button"
+                    onClick={() => {
+                      setIsOtpVerified(false);
+                      setIsOtpSent(false);
+                      setOtp("");
+                    }}
+                    className="text-white/90 hover:text-white relative inline-block group transition-colors duration-300 text-sm"
+                  >
+                    <span className="relative z-10">← Change phone number</span>
+                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-400 to-blue-400 transition-all duration-300 group-hover:w-full"></span>
+                  </button>
+                </div>
+                <Button 
+                  type="submit" 
+                  size="lg"
+                  className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold text-lg rounded-xl border border-white/20 shadow-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl hover:shadow-blue-500/30 focus:scale-[1.02] focus:shadow-xl focus:shadow-blue-500/30 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  disabled={isLoading || !email || !password || !confirmPassword}
+                >
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    {isLoading && (
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    )}
+                    {isLoading ? "Creating Account..." : "Create Account"}
+                    {!isLoading && (
+                      <svg className="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
                     )}
                   </span>
