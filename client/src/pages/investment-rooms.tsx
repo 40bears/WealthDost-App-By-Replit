@@ -21,13 +21,15 @@ const InvestmentRooms = () => {
       description: "Deep dive into fundamental analysis and long-term value investing strategies",
       creator: "Rajesh Kumar",
       creatorAvatar: "RK",
+      creatorUsername: "rajeshkumar",
       category: "Value Investing",
       memberCount: 1250,
       isPremium: true,
       premiumPrice: "299",
       isSponsored: false,
       sponsorName: null,
-      xpReward: 50,
+      tipsHits: 1250,
+      weeklyEngagement: 89,
       badges: ["Expert Verified", "High Activity"]
     },
     {
@@ -36,13 +38,15 @@ const InvestmentRooms = () => {
       description: "Analyze tech giants and emerging technology companies",
       creator: "Priya Sharma",
       creatorAvatar: "PS",
+      creatorUsername: "priyasharma",
       category: "Technology",
       memberCount: 890,
       isPremium: false,
       premiumPrice: null,
       isSponsored: true,
       sponsorName: "TechVest Pro",
-      xpReward: 30,
+      tipsHits: 890,
+      weeklyEngagement: 65,
       badges: ["Trending", "Active Community"]
     },
     {
@@ -51,13 +55,15 @@ const InvestmentRooms = () => {
       description: "Comprehensive analysis of banking and financial services",
       creator: "Vikram Patel",
       creatorAvatar: "VP",
+      creatorUsername: "vikrampatel",
       category: "Banking",
       memberCount: 650,
       isPremium: true,
       premiumPrice: "199",
       isSponsored: false,
       sponsorName: null,
-      xpReward: 40,
+      tipsHits: 650,
+      weeklyEngagement: 72,
       badges: ["Expert Led"]
     }
   ];
@@ -85,7 +91,7 @@ const InvestmentRooms = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-green-50/30 to-gray-100">
       {/* Header */}
       <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b-2 border-gray-200/50 shadow-lg z-20">
-        <div className="max-w-md mx-auto p-4">
+        <div className="max-w-md mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-3">
             <Link href="/dashboard">
               <Button variant="ghost" size="sm" className="p-1 text-gray-600 border-2 border-transparent hover:border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 transition-all duration-300 hover:scale-105 active:scale-95 rounded-xl">
@@ -139,7 +145,7 @@ const InvestmentRooms = () => {
       </div>
 
       {/* Rooms List */}
-      <div className="max-w-md mx-auto p-4 space-y-4">
+      <div className="max-w-md mx-auto px-4 pb-24 space-y-4">
         {filteredRooms.map((room) => (
           <div key={room.id} className="bg-white/70 backdrop-blur-md border-2 border-gray-200 hover:border-gray-300 shadow-lg hover:shadow-xl hover:shadow-gray-500/20 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] rounded-2xl relative">
             <div className="p-4">
@@ -177,8 +183,12 @@ const InvestmentRooms = () => {
                       {room.memberCount.toLocaleString()}
                     </span>
                     <span className="flex items-center">
-                      <span className="material-icons text-sm mr-1">stars</span>
-                      +{room.xpReward} XP
+                      <span className="material-icons text-sm mr-1">trending_up</span>
+                      {room.tipsHits} hits
+                    </span>
+                    <span className="flex items-center">
+                      <span className="material-icons text-sm mr-1">bar_chart</span>
+                      {room.weeklyEngagement}% weekly
                     </span>
                   </div>
                 </div>

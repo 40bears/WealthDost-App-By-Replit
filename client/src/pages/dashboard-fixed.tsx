@@ -173,7 +173,7 @@ const Dashboard = () => {
   const [isPortfolioModalOpen, setIsPortfolioModalOpen] = useState(false);
   const [portfolioStocks, setPortfolioStocks] = useState<any[]>([]);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
-  const [feedFilter, setFeedFilter] = useState<"all" | "trending" | "following">("all");
+  const [showFollowingOnly, setShowFollowingOnly] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const [, setLocation] = useLocation();
 
@@ -348,17 +348,10 @@ const Dashboard = () => {
       }
     ];
 
-    // Filter posts based on feedFilter
-    const filteredMockPosts = (() => {
-      switch (feedFilter) {
-        case "trending":
-          return mockPosts.filter(post => post.isTrending);
-        case "following":
-          return mockPosts.filter(post => post.isFollowing);
-        default:
-          return mockPosts;
-      }
-    })();
+    // Filter posts based on showFollowingOnly
+    const filteredMockPosts = showFollowingOnly 
+      ? mockPosts.filter(post => post.isFollowing)
+      : mockPosts; // Show all posts by default (trending)
 
     // User profile with interests
     const userInterests = ["Tech Stocks", "Renewable Energy", "Mutual Funds", "Real Estate"];
@@ -418,35 +411,20 @@ const Dashboard = () => {
         {/* Community Posts Section */}
         <div className="relative">
           <div className="flex justify-between items-center mb-3">
-            <h3 className="font-semibold">Community Feed</h3>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-xs flex items-center">
-                  <span className="material-icons text-sm mr-1">filter_list</span>
-                  Filter ({feedFilter})
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40">
-                <DropdownMenuItem 
-                  onClick={() => setFeedFilter("all")}
-                  className={feedFilter === "all" ? "bg-blue-50" : ""}
-                >
-                  All Posts
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => setFeedFilter("trending")}
-                  className={feedFilter === "trending" ? "bg-blue-50" : ""}
-                >
-                  Trending
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => setFeedFilter("following")}
-                  className={feedFilter === "following" ? "bg-blue-50" : ""}
-                >
-                  Following
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <h3 className="font-semibold">Trending</h3>
+            <div className="flex items-center space-x-2">
+              <input 
+                type="checkbox" 
+                id="following-only" 
+                checked={showFollowingOnly}
+                onChange={(e) => setShowFollowingOnly(e.target.checked)}
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                data-testid="checkbox-following-only"
+              />
+              <label htmlFor="following-only" className="text-xs text-gray-600 cursor-pointer">
+                Following only
+              </label>
+            </div>
           </div>
           
           {/* Show API posts if available, otherwise show mock posts */}
@@ -457,9 +435,10 @@ const Dashboard = () => {
               {filteredMockPosts.length === 0 ? (
                 <div className="text-center py-8">
                   <p className="text-gray-500">
-                    {feedFilter === "trending" && "No trending posts right now"}
-                    {feedFilter === "following" && "No posts from people you follow"}
-                    {feedFilter === "all" && "No posts available"}
+                    {showFollowingOnly 
+                      ? "No posts from people you follow" 
+                      : "No trending posts right now"
+                    }
                   </p>
                 </div>
               ) : (

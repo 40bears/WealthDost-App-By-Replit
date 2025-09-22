@@ -47,7 +47,7 @@ const Settings = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="sticky top-0 bg-white border-b border-gray-200 z-20 shadow-sm">
-        <div className="max-w-md mx-auto p-4">
+        <div className="max-w-md mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link href="/dashboard">
               <Button variant="ghost" size="sm" className="p-1 text-gray-600">
@@ -61,7 +61,7 @@ const Settings = () => {
       </div>
 
       {/* Settings Content */}
-      <div className="max-w-md mx-auto p-4 space-y-4">
+      <div className="max-w-md mx-auto px-4 pb-24 space-y-4">
         
         {/* Notification Settings */}
         <Card>

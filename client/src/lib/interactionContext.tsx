@@ -32,17 +32,20 @@ export function InteractionProvider({ children }: { children: React.ReactNode })
   });
 
   const toggleLike = useCallback((postId: string) => {
+    const currentlyLiked = state.likes[postId] || false;
+    const newLikedState = !currentlyLiked;
+    
     setState(prev => ({
       ...prev,
       likes: {
         ...prev.likes,
-        [postId]: !prev.likes[postId]
+        [postId]: newLikedState
       }
     }));
 
     toast({
-      title: state.likes[postId] ? "Unliked" : "Liked",
-      description: state.likes[postId] ? "Removed from liked posts" : "Added to liked posts",
+      title: newLikedState ? "Liked" : "Unliked",
+      description: newLikedState ? "Added to liked posts" : "Removed from liked posts",
       duration: 2000
     });
   }, [state.likes, toast]);
