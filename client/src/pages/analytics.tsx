@@ -105,7 +105,7 @@ const Analytics = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50/30 to-gray-100">
       {/* Header */}
       <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b-2 border-gray-200/50 shadow-lg z-20">
-        <div className="max-w-md mx-auto p-4">
+        <div className="max-w-md mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-3">
             <Link href="/dashboard">
               <Button variant="ghost" size="sm" className="p-1 text-gray-600 border-2 border-transparent rounded-xl transition-all duration-300 active:scale-95">
@@ -153,7 +153,7 @@ const Analytics = () => {
       </div>
 
       {/* Content */}
-      <div className="max-w-md mx-auto p-4">
+      <div className="max-w-md mx-auto px-4 pb-24">
         {activeTab === "overview" && (
           <div className="space-y-4">
             {/* Summary Cards */}

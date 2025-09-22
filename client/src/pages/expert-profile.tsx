@@ -328,7 +328,7 @@ const ExpertProfile = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header with Back Button */}
       <div className="sticky top-0 bg-white border-b border-gray-200 z-20 shadow-sm">
-        <div className="max-w-md mx-auto p-4">
+        <div className="max-w-md mx-auto px-4 py-4">
           {/* Back Button */}
           <div className="flex items-center mb-3">
             <Link href="/experts">
@@ -389,7 +389,7 @@ const ExpertProfile = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-md mx-auto pb-20">
+      <div className="max-w-md mx-auto px-4 pb-24">
         <Tabs defaultValue="performance" className="w-full">
           <div className="sticky top-[140px] bg-gray-50 z-10 px-4 pt-2">
             <TabsList className="grid w-full grid-cols-4 mb-2">
@@ -596,7 +596,7 @@ const ExpertProfile = () => {
 
       {/* Fixed Bottom Action Buttons */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-20">
-        <div className="max-w-md mx-auto p-4">
+        <div className="max-w-md mx-auto px-4 py-4">
           <div className="flex space-x-3">
             <Button 
               className="flex-1 bg-purple-600 text-white text-sm" 

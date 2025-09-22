@@ -68,7 +68,7 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="mt-auto text-center text-xs text-gray-500 px-4 py-2">
+      <div className="mt-auto text-center text-xs text-gray-500 px-4 py-6">
         By signing up, you agree to our Terms of Service and Privacy Policy
       </div>
     </div>
