@@ -394,14 +394,17 @@ const Dashboard = () => {
           </div>
         );
       default:
-        return activeTab === "home" ? (
-          <div className="px-4 py-6">
-            <WelcomeCard />
-            <MarketOverview data={typedMarketData} isLoading={isLoadingMarketData} />
-            <ContentFeed posts={typedPosts} isLoading={isLoadingPosts} />
-          </div>
-        ) : activeTab === "experts" ? (
-          <div className="px-4 py-6">
+        if (activeTab === "home") {
+          return (
+            <div className="px-4 py-6">
+              <WelcomeCard />
+              <MarketOverview data={typedMarketData} isLoading={isLoadingMarketData} />
+              <ContentFeed posts={typedPosts} isLoading={isLoadingPosts} />
+            </div>
+          );
+        } else if (activeTab === "experts") {
+          return (
+            <div className="px-4 py-6">
             <h2 className="text-xl font-semibold mb-4">Ask an Expert</h2>
             <p className="text-gray-600 mb-4">Get answers from verified financial experts.</p>
             <div className="bg-gray-50 rounded-lg p-4 mb-6">
@@ -433,8 +436,10 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-        ) : activeTab === "top-analyst" ? (
-          <div className="px-4 py-6">
+          );
+        } else if (activeTab === "top-analyst") {
+          return (
+            <div className="px-4 py-6">
             <h2 className="text-xl font-semibold mb-4">Top Analysts</h2>
             <p className="text-gray-600 mb-4">Track and follow performance of community analysts.</p>
             
@@ -530,8 +535,10 @@ const Dashboard = () => {
               </button>
             </div>
           </div>
-        ) : activeTab === "invroom" ? (
-          <div className="px-4 py-6">
+          );
+        } else if (activeTab === "invroom") {
+          return (
+            <div className="px-4 py-6">
             <h2 className="text-xl font-semibold mb-4">Investment Rooms</h2>
             <p className="text-gray-600 mb-4">Virtual portfolio-building and discussion spaces.</p>
             
@@ -579,7 +586,9 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-        ) : (
+          );
+        } else {
+          return (
           <div className="px-4 py-6">
             <h2 className="text-xl font-semibold mb-4">Explore</h2>
             <p className="text-gray-600 mb-4">Discover trending content, new users, and tools.</p>
@@ -669,15 +678,8 @@ const Dashboard = () => {
               </button>
             </div>
           </div>
-        );
-      default:
-        return (
-          <>
-            <WelcomeCard />
-            <MarketOverview data={typedMarketData} isLoading={isLoadingMarketData} />
-            <ContentFeed posts={typedPosts} isLoading={isLoadingPosts} />
-          </>
-        );
+          );
+        }
     }
   };
 
