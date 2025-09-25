@@ -29,6 +29,7 @@ import HelpContact from "@/pages/help-contact";
 import HelpGuide from "@/pages/help-guide";
 import HelpCategory from "@/pages/help-category";
 import MarketHighlights from "@/pages/market-highlights";
+import TribeDetail from "@/pages/tribe-detail";
 import BottomNavigation from "@/components/dashboard/BottomNavigation";
 
 function Router() {
@@ -63,6 +64,7 @@ function Router() {
           <Route path="/experts" component={ExpertsList} />
           <Route path="/expert/:id" component={ExpertProfile} />
           <Route path="/investment-rooms" component={InvestmentRooms} />
+          <Route path="/room/:id" component={TribeDetail} />
           <Route path="/watchlist" component={Watchlist} />
           <Route path="/portfolio-upload" component={PortfolioUpload} />
           <Route path="/profile" component={UserProfile} />

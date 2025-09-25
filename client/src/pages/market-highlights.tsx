@@ -172,7 +172,7 @@ const MarketHighlights = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="sticky top-0 bg-white border-b border-gray-200 z-20 shadow-sm">
-        <div className="max-w-md mx-auto p-4">
+        <div className="max-w-md mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link href="/dashboard">
               <Button variant="ghost" size="sm" className="p-2 text-gray-600 hover:text-gray-800 transition-all duration-300 active:scale-95">
@@ -186,7 +186,7 @@ const MarketHighlights = () => {
       </div>
 
       {/* Market Summary Cards */}
-      <div className="max-w-md mx-auto p-4 space-y-4">
+      <div className="max-w-md mx-auto px-4 pb-24 space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <Card className="bg-white/70 backdrop-blur-md border-2 border-gray-200 shadow-lg rounded-xl">
             <CardContent className="p-4 text-center">
