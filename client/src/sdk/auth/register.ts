@@ -1,9 +1,30 @@
-import { UserRegistrationDetails, UserRegistrationDriver } from "@/api/auth/register";
+import type { InitRegisterUser, UserRegistrationDriver } from "@/api/auth/register";
+import type { FinalizeUserRegistration } from "@/api/auth/register/finalize";
+import type { VerifyUserRegistration } from "@/api/auth/register/verify";
 import { apiClient } from "@/lib/api";
-import useAspidaSWR from "@aspida/swr";
 
-export async function RegisterUser(driver: UserRegistrationDriver, body: UserRegistrationDetails) {
-    const { data, error } = useAspidaSWR(apiClient.auth.register.post({ body }), { query: { driver }});
-    console.log(data)
-    return [data, error]
+export async function initRegistration(
+  driver: UserRegistrationDriver,
+  body: InitRegisterUser
+) {
+  try {
+    return apiClient.auth.register.$post({ query: { driver }, body });
+  } catch (error) {
+    throw error
+  }
 }
+
+export async function verifyRegistration(body: VerifyUserRegistration) {
+  return apiClient.auth.register.verify.$post({ body });
+}
+
+export async function finalizeRegistration(body: FinalizeUserRegistration) {
+  return apiClient.auth.register.finalize.$post({ body });
+}
+
+export type {
+  FinalizeUserRegistration, InitRegisterUser,
+  UserRegistrationDriver,
+  VerifyUserRegistration
+};
+

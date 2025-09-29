@@ -1,10 +1,6 @@
-import SignUp from '@/pages/signup'
+import CreateAccount from '@/pages/create-account'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/signup')({
-  component: RouteComponent,
+  component: CreateAccount,
 })
-
-function RouteComponent() {
-  return <SignUp />
-}
