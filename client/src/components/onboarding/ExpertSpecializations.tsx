@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
+import { useState } from "react";
 
 type Props = {
   selected: string[];
@@ -12,7 +13,15 @@ type Props = {
 };
 
 export function ExpertSpecializations({ selected, onChange, onBack, onNext, progress }: Props) {
+  const [showError, setShowError] = useState(false);
   const isDisabled = (key: string) => selected.length >= 3 && !selected.includes(key);
+  const handleNext = () => {
+    if (selected.length === 0) {
+      setShowError(true);
+      return;
+    }
+    onNext();
+  };
   return (
     <div className="px-4 py-4 flex flex-col w-full h-screen overflow-auto">
       <div className="flex items-center mb-4">
@@ -41,11 +50,13 @@ export function ExpertSpecializations({ selected, onChange, onBack, onNext, prog
           </div>
         ))}
       </div>
+      {showError && selected.length === 0 && (
+        <p className="text-xs text-red-600 mb-2">Select at least one specialization</p>
+      )}
       <div className="mt-auto flex space-x-3 pb-6 safe-area-bottom">
         <Button variant="outline" onClick={onBack} className="flex-1">Back</Button>
-        <Button onClick={onNext} className="flex-1" disabled={selected.length === 0}>Next</Button>
+        <Button onClick={handleNext} className="flex-1">Next</Button>
       </div>
     </div>
   );
 }
-

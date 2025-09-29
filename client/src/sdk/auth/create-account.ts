@@ -185,15 +185,6 @@ export function useCreateAccount() {
     }
   }, [otp, pendingId]);
 
-  const createAccountAction = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      await createAccount(email, password, confirmPassword, pendingId);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [email, password, confirmPassword, pendingId]);
-
   const finalizeProfileAction = useCallback(async (input: FinalizeProfileInput) => {
     setIsLoading(true);
     try {
@@ -226,7 +217,6 @@ export function useCreateAccount() {
     // actions
     sendOtp: sendOtpAction,
     verifyOtp: verifyOtpAction,
-    createAccount: createAccountAction,
     finalizeProfile: finalizeProfileAction,
   } as const;
 }

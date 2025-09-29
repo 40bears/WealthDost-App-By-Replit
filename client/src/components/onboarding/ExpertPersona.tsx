@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useState } from "react";
 
 type Props = {
   value: string;
@@ -12,6 +13,7 @@ type Props = {
 };
 
 export function ExpertPersona({ value, onChange, onBack, onNext, progress }: Props) {
+  const [showError, setShowError] = useState(false);
   return (
     <div className="px-4 py-6 flex flex-col w-full">
       <div className="flex items-center mb-6">
@@ -51,10 +53,12 @@ export function ExpertPersona({ value, onChange, onBack, onNext, progress }: Pro
           </div>
         </RadioGroup>
       </div>
+      {showError && !value && (
+        <p className="text-xs text-red-600 mb-4">Select an expert persona to continue</p>
+      )}
       <div className="mt-auto pt-6 pb-6 safe-area-bottom">
-        <Button onClick={onNext} className="w-full" disabled={!value}>Create Expert Profile</Button>
+        <Button onClick={() => { if (!value) { setShowError(true); return; } onNext(); }} className="w-full">Create Expert Profile</Button>
       </div>
     </div>
   );
 }
-

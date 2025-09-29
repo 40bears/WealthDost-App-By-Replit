@@ -37,6 +37,7 @@ export const InvestorOnboarding = ({ onBack, onComplete }: InvestorOnboardingPro
     riskPersona: "",
   });
 
+
   // Step 1: Basic profile data
   const handleBasicProfileChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;

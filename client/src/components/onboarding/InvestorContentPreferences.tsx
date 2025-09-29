@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
+import { useState } from "react";
 
 type Props = {
   selected: string[];
@@ -12,6 +13,7 @@ type Props = {
 };
 
 export function InvestorContentPreferences({ selected, onChange, onBack, onNext, progress }: Props) {
+  const [showError, setShowError] = useState(false);
   const items = [
     { key: 'stocks', title: '📈 Stock Market', desc: 'Equities, indices, and market analysis' },
     { key: 'crypto', title: '🚀 Crypto & Web3', desc: 'Blockchain and digital assets' },
@@ -40,11 +42,13 @@ export function InvestorContentPreferences({ selected, onChange, onBack, onNext,
           </div>
         ))}
       </div>
+      {showError && selected.length === 0 && (
+        <p className="text-xs text-red-600 mb-2">Select at least one topic</p>
+      )}
       <div className="mt-auto flex space-x-3 pb-6 safe-area-bottom">
         <Button variant="outline" onClick={onBack} className="flex-1">Back</Button>
-        <Button onClick={onNext} className="flex-1">Next</Button>
+        <Button onClick={() => { if (selected.length === 0) { setShowError(true); return; } onNext(); }} className="flex-1">Next</Button>
       </div>
     </div>
   );
 }
-

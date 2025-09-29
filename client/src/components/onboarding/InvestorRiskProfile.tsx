@@ -62,9 +62,11 @@ export function InvestorRiskProfile({ value, onChange, onBack, onNext, progress 
       </div>
       <div className="mt-auto flex space-x-3 pb-6 safe-area-bottom">
         <Button variant="outline" onClick={onBack} className="flex-1">Back</Button>
-        <Button onClick={onNext} className="flex-1">Finish</Button>
+        {!value && (
+          <span className="flex-1 text-xs text-red-600 self-center">Please select a risk preference</span>
+        )}
+        <Button onClick={() => { if (!value) return; onNext(); }} className="flex-1">Finish</Button>
       </div>
     </div>
   );
 }
-

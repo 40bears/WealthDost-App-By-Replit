@@ -182,6 +182,9 @@ dependencies:
   little-state-machine:
     specifier: ^5.0.1
     version: 5.0.1(react@18.3.1)
+  lodash:
+    specifier: ^4.17.21
+    version: 4.17.21
   lucide-react:
     specifier: ^0.453.0
     version: 0.453.0(react@18.3.1)
@@ -294,6 +297,9 @@ devDependencies:
   '@types/express-session':
     specifier: ^1.18.0
     version: 1.18.2
+  '@types/lodash':
+    specifier: ^4.17.20
+    version: 4.17.20
   '@types/node':
     specifier: 20.16.11
     version: 20.16.11
@@ -3126,6 +3132,10 @@ packages:
 
   /@types/http-errors@2.0.5:
     resolution: {integrity: sha512-r8Tayk8HJnX0FztbZN7oVqGccWgw98T/0neJphO91KkmOzug1KkofZURD4UaD5uH8AqcFLfdPErnBod0u71/qg==}
+    dev: true
+
+  /@types/lodash@4.17.20:
+    resolution: {integrity: sha512-H3MHACvFUEiujabxhaI/ImO6gUrd8oOurg7LQtS7mbwIXA/cUqWrvBsaeJ23aZEPk1TAYkurjfMbSELfoCXlGA==}
     dev: true
 
   /@types/memoizee@0.4.12:
