@@ -9,21 +9,25 @@ import { ExpertOnboarding } from "@/components/onboarding/ExpertOnboarding";
 import { InvestorOnboarding } from "@/components/onboarding/InvestorOnboarding";
 import { type Role as ChosenRole } from "@/components/onboarding/RoleSelection";
 import { useCreateAccount } from "@/sdk/auth/create-account";
+import { useLocation } from "wouter";
 import { UI } from "@/ui";
 import { useState } from "react";
 
 export default function CreateAccount() {
+  const [, navigate] = useLocation();
   const {
     mobileNumber,
     otp,
     isOtpSent,
     isOtpVerified,
     isLoading,
+    pendingId,
     updateMobile,
     updateOtp,
     setIsOtpSent,
     sendOtp: sendOtpAction,
     verifyOtp: verifyOtpAction,
+    finalizeProfile,
   } = useCreateAccount();
   const toast = UI.toast;
 
@@ -118,11 +122,51 @@ export default function CreateAccount() {
         />
         <FlowRoute
           name="investor"
-          element={<InvestorOnboarding onBack={() => { setRole(null); try { window.localStorage.removeItem('signup.role'); } catch { }; flow.go('role'); }} />}
+          element={<InvestorOnboarding onBack={() => { setRole(null); try { window.localStorage.removeItem('signup.role'); } catch { }; flow.go('role'); }} onComplete={async (data) => {
+            try {
+              const [first_name = "", ...rest] = (data.fullName || "").split(" ");
+              const last_name = rest.join(" ");
+              await finalizeProfile({
+                username: data.username || (data.fullName ? data.fullName.replace(/\s+/g, '').toLowerCase() : 'user'),
+                first_name,
+                last_name,
+                additional: {
+                  role: 'investor',
+                  investor: data,
+                  phone: mobileNumber,
+                  pendingId,
+                },
+              });
+              UI.toast.success('Welcome!', 'Your account is ready.');
+              navigate('/dashboard');
+            } catch (err: any) {
+              UI.toast.error('Could not create account', err?.message || 'Please try again.');
+            }
+          }} />}
         />
         <FlowRoute
           name="expert"
-          element={<ExpertOnboarding onBack={() => { setRole(null); try { window.localStorage.removeItem('signup.role'); } catch { }; flow.go('role'); }} />}
+          element={<ExpertOnboarding onBack={() => { setRole(null); try { window.localStorage.removeItem('signup.role'); } catch { }; flow.go('role'); }} onComplete={async (data) => {
+            try {
+              const [first_name = "", ...rest] = (data.fullName || "").split(" ");
+              const last_name = rest.join(" ");
+              await finalizeProfile({
+                username: data.username || (data.fullName ? data.fullName.replace(/\s+/g, '').toLowerCase() : 'user'),
+                first_name,
+                last_name,
+                additional: {
+                  role: 'expert',
+                  expert: data,
+                  phone: mobileNumber,
+                  pendingId,
+                },
+              });
+              UI.toast.success('Welcome!', 'Your account is ready.');
+              navigate('/dashboard');
+            } catch (err: any) {
+              UI.toast.error('Could not create account', err?.message || 'Please try again.');
+            }
+          }} />}
         />
       </FlowRoutes>
 

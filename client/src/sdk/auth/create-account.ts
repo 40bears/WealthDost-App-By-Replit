@@ -96,6 +96,40 @@ export async function createAccount(
   });
 }
 
+export interface FinalizeProfileInput {
+  username: string;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  password?: string;
+  additional?: Record<string, any>;
+}
+
+function generateStrongPassword(length = 16) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+';
+  let out = '';
+  for (let i = 0; i < length; i++) out += chars[Math.floor(Math.random() * chars.length)];
+  return out;
+}
+
+export async function finalizeAccountWithProfile(pendingId: string, input: FinalizeProfileInput): Promise<void> {
+  if (!pendingId) throw new Error("Missing registration context. Please verify OTP again.");
+  const password = input.password || generateStrongPassword();
+  const confirm_password = password;
+  const username = input.username || (input.email ? input.email.split('@')[0] : 'user');
+  await finalizeRegistration({
+    driver: "totp",
+    pendingId,
+    email: input.email,
+    username,
+    first_name: input.first_name || "",
+    last_name: input.last_name || "",
+    password,
+    confirm_password,
+    additional: input.additional || {},
+  });
+}
+
 export function useCreateAccount() {
   const [mobileNumber, setMobileNumber] = useState("");
   const [otp, setOtp] = useState("");
@@ -160,6 +194,15 @@ export function useCreateAccount() {
     }
   }, [email, password, confirmPassword, pendingId]);
 
+  const finalizeProfileAction = useCallback(async (input: FinalizeProfileInput) => {
+    setIsLoading(true);
+    try {
+      await finalizeAccountWithProfile(pendingId, input);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [pendingId]);
+
   return {
     // state
     mobileNumber,
@@ -184,5 +227,6 @@ export function useCreateAccount() {
     sendOtp: sendOtpAction,
     verifyOtp: verifyOtpAction,
     createAccount: createAccountAction,
+    finalizeProfile: finalizeProfileAction,
   } as const;
 }
