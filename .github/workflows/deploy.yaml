@@ -3,7 +3,7 @@ name: deploy image to test server and build the app
 on:
   push:
     branches:
-      - main
+      - release/dev
 
 jobs:
   deploy:
