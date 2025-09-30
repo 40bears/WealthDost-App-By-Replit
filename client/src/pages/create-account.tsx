@@ -9,9 +9,9 @@ import { ExpertOnboarding } from "@/components/onboarding/ExpertOnboarding";
 import { InvestorOnboarding } from "@/components/onboarding/InvestorOnboarding";
 import { type Role as ChosenRole } from "@/components/onboarding/RoleSelection";
 import { useCreateAccount } from "@/sdk/auth/create-account";
-import { useLocation } from "wouter";
 import { UI } from "@/ui";
 import { useState } from "react";
+import { useLocation } from "wouter";
 
 export default function CreateAccount() {
   const [, navigate] = useLocation();
@@ -42,7 +42,6 @@ export default function CreateAccount() {
     },
   });
 
-  // Persisted role selection
   type Role = ChosenRole | null;
   const [role, setRole] = useState<Role>(() => {
     const saved = typeof window !== 'undefined' ? window.localStorage.getItem('signup.role') : null;
@@ -63,9 +62,15 @@ export default function CreateAccount() {
       toast.success("OTP Sent", "We've sent a 6-digit OTP to your mobile number");
       flow.send("OTP_SENT");
     } catch (err: any) {
-      if(err.response.status === 409) {
-        flow.send("OTP_SENT");
-        return 
+      if (err.response.status === 409) {
+        if (err.response.data.data.pendingId) {
+          flow.send("OTP_SENT");
+          return
+        }
+
+        toast.error(err.response.data.message);
+
+        return
       }
       toast.error("Invalid Mobile Number", err?.message || "Please enter a valid 10-digit mobile number");
     }
@@ -79,6 +84,76 @@ export default function CreateAccount() {
       flow.send("OTP_VERIFIED");
     } catch (err: any) {
       toast.error("Invalid OTP", err?.message || "Please enter a valid 6-digit OTP");
+    }
+  };
+
+  // Explicit handlers to replace inline callbacks
+  const handleChangeNumber = () => {
+    setIsOtpSent(false);
+    flow.send("BACK");
+  };
+
+  const handleInvestorBack = () => {
+    setRole(null);
+    try {
+      window.localStorage.removeItem('signup.role');
+    } catch { }
+    flow.go('role');
+  };
+
+  const handleExpertBack = () => {
+    setRole(null);
+    try {
+      window.localStorage.removeItem('signup.role');
+    } catch { }
+    flow.go('role');
+  };
+
+  const handleInvestorComplete = async (data: any) => {
+    try {
+      const [first_name = "", ...rest] = (data.fullName || "").split(" ");
+      const last_name = rest.join(" ");
+      await finalizeProfile({
+        username: data.username,
+        first_name,
+        last_name,
+        password: data.password || undefined,
+        confirm_password: data.confirm_password || undefined,
+        additional: {
+          role: 'investor',
+          investor: data,
+          phone: mobileNumber,
+          pendingId,
+        },
+      });
+      UI.toast.success('Welcome!', 'Your account is ready.');
+      navigate('/dashboard');
+    } catch (err: any) {
+      UI.toast.error('Could not create account', err?.message || 'Please try again.');
+    }
+  };
+
+  const handleExpertComplete = async (data: any) => {
+    try {
+      const [first_name = "", ...rest] = (data.fullName || "").split(" ");
+      const last_name = rest.join(" ");
+      await finalizeProfile({
+        username: data.username,
+        first_name,
+        last_name,
+        password: data.password || undefined,
+        confirm_password: data.confirm_password || undefined,
+        additional: {
+          role: 'expert',
+          expert: data,
+          phone: mobileNumber,
+          pendingId,
+        },
+      });
+      UI.toast.success('Welcome!', 'Your account is ready.');
+      navigate('/dashboard');
+    } catch (err: any) {
+      UI.toast.error('Could not create account', err?.message || 'Please try again.');
     }
   };
 
@@ -110,7 +185,7 @@ export default function CreateAccount() {
                 mobileNumber={mobileNumber}
                 onChange={updateOtp}
                 onSubmit={handleVerifyOtp}
-                onChangeNumber={() => { setIsOtpSent(false); flow.send("BACK"); }}
+                onChangeNumber={handleChangeNumber}
                 onResend={handleSendOtp}
               />
             </SignupLayout1>
@@ -122,51 +197,11 @@ export default function CreateAccount() {
         />
         <FlowRoute
           name="investor"
-          element={<InvestorOnboarding onBack={() => { setRole(null); try { window.localStorage.removeItem('signup.role'); } catch { }; flow.go('role'); }} onComplete={async (data) => {
-            try {
-              const [first_name = "", ...rest] = (data.fullName || "").split(" ");
-              const last_name = rest.join(" ");
-              await finalizeProfile({
-                username: data.username || (data.fullName ? data.fullName.replace(/\s+/g, '').toLowerCase() : 'user'),
-                first_name,
-                last_name,
-                additional: {
-                  role: 'investor',
-                  investor: data,
-                  phone: mobileNumber,
-                  pendingId,
-                },
-              });
-              UI.toast.success('Welcome!', 'Your account is ready.');
-              navigate('/dashboard');
-            } catch (err: any) {
-              UI.toast.error('Could not create account', err?.message || 'Please try again.');
-            }
-          }} />}
+          element={<InvestorOnboarding onBack={handleInvestorBack} onComplete={handleInvestorComplete} />}
         />
         <FlowRoute
           name="expert"
-          element={<ExpertOnboarding onBack={() => { setRole(null); try { window.localStorage.removeItem('signup.role'); } catch { }; flow.go('role'); }} onComplete={async (data) => {
-            try {
-              const [first_name = "", ...rest] = (data.fullName || "").split(" ");
-              const last_name = rest.join(" ");
-              await finalizeProfile({
-                username: data.username || (data.fullName ? data.fullName.replace(/\s+/g, '').toLowerCase() : 'user'),
-                first_name,
-                last_name,
-                additional: {
-                  role: 'expert',
-                  expert: data,
-                  phone: mobileNumber,
-                  pendingId,
-                },
-              });
-              UI.toast.success('Welcome!', 'Your account is ready.');
-              navigate('/dashboard');
-            } catch (err: any) {
-              UI.toast.error('Could not create account', err?.message || 'Please try again.');
-            }
-          }} />}
+          element={<ExpertOnboarding onBack={handleExpertBack} onComplete={handleExpertComplete} />}
         />
       </FlowRoutes>
 

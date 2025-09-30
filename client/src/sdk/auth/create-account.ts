@@ -21,7 +21,6 @@ export async function sendOtp(phoneNumber: string): Promise<string> {
     
     return String(pendingId);
   } catch (err: any) {
-    console.log(err)
     if (err?.issues?.length) {
       throw new Error(err.issues[0].message);
     }
@@ -98,24 +97,15 @@ export async function createAccount(
 
 export interface FinalizeProfileInput {
   username: string;
-  first_name?: string;
+  first_name: string;
   last_name?: string;
   email?: string;
-  password?: string;
+  password: string;
+  confirm_password: string;
   additional?: Record<string, any>;
 }
-
-function generateStrongPassword(length = 16) {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+';
-  let out = '';
-  for (let i = 0; i < length; i++) out += chars[Math.floor(Math.random() * chars.length)];
-  return out;
-}
-
 export async function finalizeAccountWithProfile(pendingId: string, input: FinalizeProfileInput): Promise<void> {
   if (!pendingId) throw new Error("Missing registration context. Please verify OTP again.");
-  const password = input.password || generateStrongPassword();
-  const confirm_password = password;
   const username = input.username || (input.email ? input.email.split('@')[0] : 'user');
   await finalizeRegistration({
     driver: "totp",
@@ -124,8 +114,8 @@ export async function finalizeAccountWithProfile(pendingId: string, input: Final
     username,
     first_name: input.first_name || "",
     last_name: input.last_name || "",
-    password,
-    confirm_password,
+    password: input.password,
+    confirm_password: input.confirm_password,
     additional: input.additional || {},
   });
 }
@@ -165,8 +155,7 @@ export function useCreateAccount() {
       if(err.response.status === 409) {
         if(err.response.data.data.pendingId) {
           setPendingId(err.response.data.data.pendingId)
-        }
-        return 
+        } 
       }
       throw err
     }

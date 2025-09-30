@@ -29,6 +29,8 @@ export const ExpertOnboarding = ({ onBack, onComplete }: ExpertOnboardingProps) 
     fullName: "",
     username: "",
     profileBio: "",
+    password: "",
+    confirmPassword: "",
     detailedBio: "",
     education: "",
     achievements: [] as string[],

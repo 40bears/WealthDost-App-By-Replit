@@ -4,14 +4,17 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { checkUsernameThrottled } from "@/sdk/auth/username";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { z } from "zod";
+import { PasswordInput } from "./PasswordInput";
+import { UsernameInput } from "./UsernameInput";
 
 type FormData = {
   fullName: string;
   username: string;
   profileBio: string;
+  password: string;
+  confirmPassword: string;
   experienceLevel: string;
 };
 
@@ -30,57 +33,53 @@ export function InvestorBasicProfile({
   onExperienceLevelChange: (value: string) => void;
   progress: number;
 }) {
-  const Schema = useMemo(() => z.object({
-    fullName: z.string().min(1, "Full name is required"),
-    username: z.string().min(3, "Username must be at least 3 characters"),
-    profileBio: z.string().optional().or(z.literal("")),
-    experienceLevel: z.enum(["beginner", "intermediate", "advanced"], { message: "Please select your experience level" }),
-  }), []);
+  const Schema = useMemo(
+    () =>
+      z
+        .object({
+          fullName: z.string().min(1, "Full name is required"),
+          username: z.string().min(3, "Username must be at least 3 characters"),
+          profileBio: z.string().optional().or(z.literal("")),
+          experienceLevel: z.enum(["beginner", "intermediate", "advanced"], {
+            message: "Please select your experience level",
+          }),
+          password: z.string().min(1, "Password is required"),
+          confirmPassword: z.string().min(1, "Please confirm your password"),
+        })
+        .refine((v) => v.password === v.confirmPassword, {
+          message: "Passwords do not match",
+          path: ["confirmPassword"],
+        }),
+    []
+  );
 
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
   const [checking, setChecking] = useState(false);
-  const [usernameStatus, setUsernameStatus] = useState<'idle'|'checking'|'available'|'error'|'warning'>("idle");
-  const [usernameMessage, setUsernameMessage] = useState<string | undefined>(undefined);
-  const usernameRef = useRef("");
+
 
   function setUsernameError(message?: string) {
     setErrors((prev) => ({ ...prev, username: message }));
   }
 
-  async function handleUsernameChange(e: React.ChangeEvent<HTMLInputElement>) {
-    onBasicChange(e);
-    const val = (e.target.value || "").trim().toLowerCase();
-    usernameRef.current = val;
-    setUsernameError(undefined);
-    setUsernameMessage(undefined);
-    if (val.length < 3) {
-      setChecking(false);
-      setUsernameStatus('warning');
-      setUsernameMessage('At least 3 characters required');
-      return;
-    }
-    setChecking(true);
-    setUsernameStatus('checking');
-    try {
-      const { available } = await checkUsernameThrottled(val);
-      if (usernameRef.current !== val) return; // stale response, ignore
-      setChecking(false);
-      if (!available) {
-        setUsernameError("Username is already taken");
-        setUsernameStatus('error');
-        setUsernameMessage('Username is already taken');
-      } else {
-        setUsernameError(undefined);
-        setUsernameStatus('available');
-        setUsernameMessage('Username available');
-      }
-    } catch (_) {
-      if (usernameRef.current !== val) return;
-      setChecking(false);
-      setUsernameError("Could not validate username. Please try again.");
-      setUsernameStatus('warning');
-      setUsernameMessage('Could not validate username. Please try again.');
-    }
+  function handleUsernameValueChange(v: string) {
+    const synthetic = { target: { name: 'username', value: v } } as any;
+    onBasicChange(synthetic);
+  }
+
+  function handleUsernameStatusChange(st: any, msg?: string) {
+    if (st === 'checking') setChecking(true); else setChecking(false);
+    if (st === 'error') setUsernameError(msg || 'Username is already taken');
+    else setUsernameError(undefined);
+  }
+
+  function handlePasswordChange(v: string) {
+    const synthetic = { target: { name: 'password', value: v } } as any;
+    onBasicChange(synthetic);
+  }
+
+  function handleConfirmPasswordChange(v: string) {
+    const synthetic = { target: { name: 'confirmPassword', value: v } } as any;
+    onBasicChange(synthetic);
   }
 
   const handleNextClick = async () => {
@@ -125,47 +124,39 @@ export function InvestorBasicProfile({
             <p className="text-xs text-red-600 mt-1">{errors.fullName}</p>
           )}
         </div>
-        <div>
-          <div className="flex items-center justify-between">
-            <Label htmlFor="username">Finance Username</Label>
-            {checking && (
-              <span className="flex items-center gap-1 text-xs text-gray-500">
-                <span className="w-3 h-3 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></span>
-                Checking
-              </span>
-            )}
-          </div>
-          <div className="flex mt-1 relative w-full">
-            <div className="bg-gray-100 flex items-center px-3 rounded-l-lg border border-r-0 border-gray-300">
-              <span className="text-gray-500">@</span>
-            </div>
-            <Input
-              id="username"
-              name="username"
-              value={formData.username}
-              onChange={handleUsernameChange}
-              className={`rounded-l-none pr-9 ${usernameStatus==='available' ? 'ring-2 ring-green-500 focus:ring-green-500 ring-offset-2' : ''} ${usernameStatus==='error' ? 'ring-2 ring-red-500 focus:ring-red-500 ring-offset-2' : ''} ${usernameStatus==='warning' ? 'ring-2 ring-yellow-500 ring-offset-2' : ''}`}
-              placeholder="StockGuru, CryptoWhale"
-            />
-            {usernameStatus === 'available' && (
-              <span className="material-icons text-green-500 absolute right-2 top-1/2 -translate-y-1/2 text-base">check_circle</span>
-            )}
-          </div>
-          <p className="text-xs text-gray-500 mt-1">Choose a finance-themed username</p>
-          {usernameStatus === 'available' && usernameMessage && (
-            <p className="text-xs text-green-600 mt-1">{usernameMessage}</p>
-          )}
-          {usernameStatus === 'warning' && usernameMessage && (
-            <p className="text-xs text-yellow-600 mt-1">{usernameMessage}</p>
-          )}
-          {(usernameStatus === 'error' || errors?.username) && (
-            <p className="text-xs text-red-600 mt-1">{errors.username || usernameMessage}</p>
-          )}
-        </div>
+        <UsernameInput
+          label="Finance Username"
+          value={formData.username}
+          onChange={handleUsernameValueChange}
+          placeholder="StockGuru, CryptoWhale"
+          onStatusChange={handleUsernameStatusChange}
+        />
         <div>
           <Label htmlFor="profileBio">Profile Bio</Label>
           <Textarea id="profileBio" name="profileBio" value={formData.profileBio} onChange={onBasicChange} className="mt-1" placeholder="Long-term investor | Tech stocks | AI enthusiast" rows={3} />
           <p className="text-xs text-gray-500 mt-1">Optional: Add a finance-related tagline</p>
+        </div>
+        <div>
+          <PasswordInput
+            id="password"
+            name="password"
+            label="Password"
+            placeholder="Create a strong password"
+            value={formData.password}
+            error={errors?.password}
+            onChange={(v) => handlePasswordChange(v)}
+          />
+        </div>
+        <div>
+          <PasswordInput
+            id="confirmPassword"
+            name="confirmPassword"
+            label="Confirm Password"
+            placeholder="Re-enter password"
+            value={formData.confirmPassword}
+            error={errors?.confirmPassword}
+            onChange={(v) => handleConfirmPasswordChange(v)}
+          />
         </div>
         <div>
           <Label className="block text-sm font-medium text-gray-700 mb-3">Investment Experience Level</Label>

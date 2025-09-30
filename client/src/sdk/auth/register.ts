@@ -7,11 +7,7 @@ export async function initRegistration(
   driver: UserRegistrationDriver,
   body: InitRegisterUser
 ) {
-  try {
-    return apiClient.auth.register.$post({ query: { driver }, body });
-  } catch (error) {
-    throw error
-  }
+  return apiClient.auth.register.$post({ query: { driver }, body });
 }
 
 export async function verifyRegistration(body: VerifyUserRegistration) {

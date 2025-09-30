@@ -29,6 +29,8 @@ export const InvestorOnboarding = ({ onBack, onComplete }: InvestorOnboardingPro
     fullName: "",
     username: "",
     profileBio: "",
+    password: "",
+    confirmPassword: "",
     detailedBio: "",
     experienceLevel: "",
     interests: [] as string[],
