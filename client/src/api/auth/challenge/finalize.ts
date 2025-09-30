@@ -1,8 +1,8 @@
 import type { DefineMethods } from "aspida";
-import { UserRegistrationDriver } from ".";
+import { ChallengeRequestDriver } from "./request";
 
 export interface FinalizeUserRegistration {
-    driver: UserRegistrationDriver,
+    driver: ChallengeRequestDriver,
     pendingId: string,
     email?: string,
     username: string,

@@ -1,7 +1,7 @@
 import { ChooseRoleScreen } from "@/components/auth/register/ChooseRoleScreen";
 import { OtpVerificationScreen } from "@/components/auth/register/OtpVerificationScreen";
 import { PhoneNumberScreen } from "@/components/auth/register/PhoneNumberScreen";
-import { SignupLayout1 } from "@/components/auth/register/SignupLayout1";
+import { SignupLayout } from "@/components/auth/register/SignupLayout";
 import { FlowMachineProvider, useFlowMachine } from "@/components/flow/FlowMachine";
 import { FlowRoute } from "@/components/flow/FlowRoute";
 import { FlowRoutes } from "@/components/flow/FlowRoutes";
@@ -164,21 +164,21 @@ export default function CreateAccount() {
         <FlowRoute
           name="phone"
           element={
-            <SignupLayout1>
+            <SignupLayout>
               <PhoneNumberScreen
                 mobileNumber={mobileNumber}
                 isLoading={isLoading}
                 onChange={updateMobile}
                 onSubmit={handleSendOtp}
               />
-            </SignupLayout1>
+            </SignupLayout>
 
           }
         />
         <FlowRoute
           name="otp"
           element={
-            <SignupLayout1>
+            <SignupLayout>
               <OtpVerificationScreen
                 otp={otp}
                 isLoading={isLoading}
@@ -188,7 +188,7 @@ export default function CreateAccount() {
                 onChangeNumber={handleChangeNumber}
                 onResend={handleSendOtp}
               />
-            </SignupLayout1>
+            </SignupLayout>
           }
         />
         <FlowRoute

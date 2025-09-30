@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 import { Link } from "wouter";
 
-export function SignupLayout1({ children }: { children: React.ReactElement | React.ReactElement[] }) {
+export function SignupLayout({ children }: { children: React.ReactElement | React.ReactElement[] }) {
 
     const childrenArr = React.Children.toArray(children)
 
