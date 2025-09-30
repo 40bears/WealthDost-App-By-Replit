@@ -12,13 +12,13 @@ const PhoneNumberSchema = z
 export async function sendOtp(phoneNumber: string): Promise<string> {
   try {
     const parsedPhoneNumber = PhoneNumberSchema.parse(phoneNumber);
-    const res: any = await initRegistration("totp", { phone: parsedPhoneNumber });
+    const res: any = await initRegistration({ driver: "totp", phone: parsedPhoneNumber });
     const pendingId = res?.pendingId ?? res?.pending_id ?? res?.id;
-    
+
     if (!pendingId) {
       throw new Error("Missing pendingId in response");
     }
-    
+
     return String(pendingId);
   } catch (err: any) {
     if (err?.issues?.length) {
@@ -38,11 +38,11 @@ const OtpSchema = z
 export async function verifyOtp(otp: string, pendingId: string): Promise<void> {
   try {
     const parsedOtp = OtpSchema.parse(otp);
-    
-    if (!pendingId){
+
+    if (!pendingId) {
       throw new Error("Missing verification context. Please resend OTP.");
     }
-    
+
     await verifyRegistration({ driver: "totp", pendingId, code: parsedOtp });
   } catch (err: any) {
     if (err?.issues?.length) {
@@ -151,11 +151,11 @@ export function useCreateAccount() {
       const id = await sendOtp(mobileNumber);
       setPendingId(id);
       setIsOtpSent(true);
-    } catch(err: any) {
-      if(err.response.status === 409) {
-        if(err.response.data.data.pendingId) {
+    } catch (err: any) {
+      if (err.response.status === 409) {
+        if (err.response.data.data.pendingId) {
           setPendingId(err.response.data.data.pendingId)
-        } 
+        }
       }
       throw err
     }
