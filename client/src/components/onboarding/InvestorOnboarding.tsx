@@ -31,6 +31,9 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
     detailedBio: "",
     experienceLevel: "",
     interests: [] as string[],
+    industrySector: "",
+    searchableTags: [] as string[],
+    followingExperts: [] as string[],
     riskLevel: "",
     returnTarget: "",
     riskPersona: "",
@@ -52,7 +55,32 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
     }));
   };
 
-  // Step 3: Risk profile
+  // Step 3: Industry sector
+  const handleIndustrySectorChange = (value: string) => {
+    setFormData(prev => ({ ...prev, industrySector: value }));
+  };
+
+  // Step 4: Searchable tags
+  const handleSearchableTagsChange = (value: string, checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      searchableTags: checked 
+        ? [...prev.searchableTags, value]
+        : prev.searchableTags.filter(tag => tag !== value)
+    }));
+  };
+
+  // Step 6: Recommended experts
+  const handleExpertFollowChange = (expertId: string, checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      followingExperts: checked 
+        ? [...prev.followingExperts, expertId]
+        : prev.followingExperts.filter(id => id !== expertId)
+    }));
+  };
+
+  // Step 5: Risk profile
   const handleRiskProfileChange = (value: string) => {
     let riskPersona = "";
     let returnTarget = "";
@@ -148,11 +176,14 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
 
   const getProgressPercentage = () => {
     switch (step) {
-      case 1: return 40;
-      case 2: return 60;
-      case 3: return 80;
-      case 4: return 100;
-      default: return 25;
+      case 1: return 15;
+      case 2: return 30;
+      case 3: return 45;
+      case 4: return 60;
+      case 5: return 75;
+      case 6: return 90;
+      case 7: return 100;
+      default: return 15;
     }
   };
 
@@ -164,8 +195,14 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
       case 2:
         return renderContentPreferences();
       case 3:
-        return renderRiskProfile();
+        return renderIndustrySector();
       case 4:
+        return renderSearchableTags();
+      case 5:
+        return renderRiskProfile();
+      case 6:
+        return renderRecommendedExperts();
+      case 7:
         return renderGeneratedProfile();
       default:
         return renderBasicProfile();
@@ -179,7 +216,7 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
         <Button variant="ghost" size="icon" onClick={onBack} className="text-gray-500">
           <span className="material-icons">arrow_back</span>
         </Button>
-        <h2 className="text-lg font-semibold ml-2">Wealth Enthusiast Profile</h2>
+        <h2 className="text-lg font-semibold ml-2">Wealth Seeker Profile</h2>
       </div>
 
       {/* Progress Bar */}
@@ -368,7 +405,193 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
     </div>
   );
 
-  // Step 3: Risk Profile
+  // Step 3: Industry Sector
+  const renderIndustrySector = () => (
+    <div className="px-4 py-4 flex flex-col w-full h-screen overflow-auto">
+      <div className="flex items-center mb-4">
+        <Button variant="ghost" size="icon" onClick={goToPreviousStep} className="text-gray-500">
+          <span className="material-icons">arrow_back</span>
+        </Button>
+        <h2 className="text-lg font-semibold ml-2">Industry Sector</h2>
+      </div>
+
+      {/* Progress Bar */}
+      <Progress value={getProgressPercentage()} className="h-1 mb-4" />
+
+      <p className="text-gray-600 mb-4 text-sm">What industry sector interests you most?</p>
+
+      <RadioGroup 
+        value={formData.industrySector}
+        onValueChange={handleIndustrySectorChange}
+        className="space-y-2 mb-4 flex-1"
+      >
+        <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+          <RadioGroupItem value="technology" id="tech" className="mr-3" />
+          <Label htmlFor="tech" className="flex-1 cursor-pointer">
+            <span className="font-medium text-gray-800">💻 Technology</span>
+            <p className="text-sm text-gray-700">Software, hardware, AI, and tech innovation</p>
+          </Label>
+        </div>
+        
+        <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+          <RadioGroupItem value="healthcare" id="healthcare" className="mr-3" />
+          <Label htmlFor="healthcare" className="flex-1 cursor-pointer">
+            <span className="font-medium text-gray-800">🏥 Healthcare & Pharmaceuticals</span>
+            <p className="text-sm text-gray-700">Medical devices, biotech, and pharma companies</p>
+          </Label>
+        </div>
+        
+        <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+          <RadioGroupItem value="financial" id="financial" className="mr-3" />
+          <Label htmlFor="financial" className="flex-1 cursor-pointer">
+            <span className="font-medium text-gray-800">🏦 Financial Services</span>
+            <p className="text-sm text-gray-700">Banks, insurance, fintech, and payment systems</p>
+          </Label>
+        </div>
+        
+        <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+          <RadioGroupItem value="energy" id="energy" className="mr-3" />
+          <Label htmlFor="energy" className="flex-1 cursor-pointer">
+            <span className="font-medium text-gray-800">⚡ Energy & Utilities</span>
+            <p className="text-sm text-gray-700">Renewable energy, oil & gas, power generation</p>
+          </Label>
+        </div>
+        
+        <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+          <RadioGroupItem value="consumer" id="consumer" className="mr-3" />
+          <Label htmlFor="consumer" className="flex-1 cursor-pointer">
+            <span className="font-medium text-gray-800">🛍️ Consumer Goods</span>
+            <p className="text-sm text-gray-700">Retail, food & beverage, lifestyle brands</p>
+          </Label>
+        </div>
+        
+        <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+          <RadioGroupItem value="industrial" id="industrial" className="mr-3" />
+          <Label htmlFor="industrial" className="flex-1 cursor-pointer">
+            <span className="font-medium text-gray-800">🏭 Industrial & Manufacturing</span>
+            <p className="text-sm text-gray-700">Machinery, aerospace, automotive, logistics</p>
+          </Label>
+        </div>
+      </RadioGroup>
+
+      <div className="mt-auto flex space-x-3 pb-6 safe-area-bottom">
+        <Button variant="outline" onClick={goToPreviousStep} className="flex-1">
+          Back
+        </Button>
+        <Button onClick={goToNextStep} className="flex-1">
+          Next
+        </Button>
+      </div>
+    </div>
+  );
+
+  // Step 4: Searchable Tags
+  const renderSearchableTags = () => (
+    <div className="px-4 py-4 flex flex-col w-full h-screen overflow-auto">
+      <div className="flex items-center mb-4">
+        <Button variant="ghost" size="icon" onClick={goToPreviousStep} className="text-gray-500">
+          <span className="material-icons">arrow_back</span>
+        </Button>
+        <h2 className="text-lg font-semibold ml-2">Searchable Tags</h2>
+      </div>
+
+      {/* Progress Bar */}
+      <Progress value={getProgressPercentage()} className="h-1 mb-4" />
+
+      <p className="text-gray-600 mb-4 text-sm">Select tags that describe your investment style and interests:</p>
+
+      <div className="space-y-2 mb-4 flex-1">
+        <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+          <Checkbox 
+            id="value-investor" 
+            checked={formData.searchableTags.includes("value-investor")} 
+            onCheckedChange={(checked) => handleSearchableTagsChange("value-investor", checked as boolean)}
+            className="mr-3" 
+          />
+          <Label htmlFor="value-investor" className="flex-1 cursor-pointer">
+            <span className="font-medium text-gray-800">#ValueInvestor</span>
+            <p className="text-sm text-gray-700">Focus on undervalued stocks with strong fundamentals</p>
+          </Label>
+        </div>
+        
+        <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+          <Checkbox 
+            id="growth-investor" 
+            checked={formData.searchableTags.includes("growth-investor")} 
+            onCheckedChange={(checked) => handleSearchableTagsChange("growth-investor", checked as boolean)}
+            className="mr-3" 
+          />
+          <Label htmlFor="growth-investor" className="flex-1 cursor-pointer">
+            <span className="font-medium text-gray-800">#GrowthInvestor</span>
+            <p className="text-sm text-gray-700">Invest in companies with high growth potential</p>
+          </Label>
+        </div>
+        
+        <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+          <Checkbox 
+            id="dividend-investor" 
+            checked={formData.searchableTags.includes("dividend-investor")} 
+            onCheckedChange={(checked) => handleSearchableTagsChange("dividend-investor", checked as boolean)}
+            className="mr-3" 
+          />
+          <Label htmlFor="dividend-investor" className="flex-1 cursor-pointer">
+            <span className="font-medium text-gray-800">#DividendInvestor</span>
+            <p className="text-sm text-gray-700">Focus on dividend-paying stocks for steady income</p>
+          </Label>
+        </div>
+        
+        <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+          <Checkbox 
+            id="swing-trader" 
+            checked={formData.searchableTags.includes("swing-trader")} 
+            onCheckedChange={(checked) => handleSearchableTagsChange("swing-trader", checked as boolean)}
+            className="mr-3" 
+          />
+          <Label htmlFor="swing-trader" className="flex-1 cursor-pointer">
+            <span className="font-medium text-gray-800">#SwingTrader</span>
+            <p className="text-sm text-gray-700">Short to medium-term trading strategies</p>
+          </Label>
+        </div>
+        
+        <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+          <Checkbox 
+            id="long-term-investor" 
+            checked={formData.searchableTags.includes("long-term-investor")} 
+            onCheckedChange={(checked) => handleSearchableTagsChange("long-term-investor", checked as boolean)}
+            className="mr-3" 
+          />
+          <Label htmlFor="long-term-investor" className="flex-1 cursor-pointer">
+            <span className="font-medium text-gray-800">#LongTermInvestor</span>
+            <p className="text-sm text-gray-700">Buy and hold strategy for wealth building</p>
+          </Label>
+        </div>
+        
+        <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+          <Checkbox 
+            id="esg-investor" 
+            checked={formData.searchableTags.includes("esg-investor")} 
+            onCheckedChange={(checked) => handleSearchableTagsChange("esg-investor", checked as boolean)}
+            className="mr-3" 
+          />
+          <Label htmlFor="esg-investor" className="flex-1 cursor-pointer">
+            <span className="font-medium text-gray-800">#ESGInvestor</span>
+            <p className="text-sm text-gray-700">Environmental, social, and governance focused investing</p>
+          </Label>
+        </div>
+      </div>
+
+      <div className="mt-auto flex space-x-3 pb-6 safe-area-bottom">
+        <Button variant="outline" onClick={goToPreviousStep} className="flex-1">
+          Back
+        </Button>
+        <Button onClick={goToNextStep} className="flex-1">
+          Next
+        </Button>
+      </div>
+    </div>
+  );
+
+  // Step 5: Risk Profile
   const renderRiskProfile = () => (
     <div className="px-4 py-4 flex flex-col w-full h-screen overflow-auto">
       <div className="flex items-center mb-4">
@@ -432,14 +655,131 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
         <Button variant="outline" onClick={goToPreviousStep} className="flex-1">
           Back
         </Button>
-        <Button onClick={handleSubmit} className="flex-1">
-          Finish
+        <Button onClick={goToNextStep} className="flex-1">
+          Next
         </Button>
       </div>
     </div>
   );
 
-  // Step 4: Generated Profile
+  // Step 6: Recommended Experts
+  const renderRecommendedExperts = () => {
+    const recommendedExperts = [
+      {
+        id: "expert1",
+        name: "Rajesh Kumar",
+        title: "Value Investor | 10Y Exp | NISM Certified",
+        followers: "8.5K",
+        successRate: "86%",
+        avgReturn: "+20.20%",
+        avatar: null,
+        specialization: "Technology & Financial Stocks"
+      },
+      {
+        id: "expert2", 
+        name: "Priya Sharma",
+        title: "Growth Investor | Energy Specialist",
+        followers: "14.6K",
+        successRate: "82%",
+        avgReturn: "+40.30%",
+        avatar: null,
+        specialization: "Energy & Renewable Sector"
+      },
+      {
+        id: "expert3",
+        name: "Vikram Patel", 
+        title: "Technical Analyst | Options Trading",
+        followers: "10.9K",
+        successRate: "78%",
+        avgReturn: "+21.00%",
+        avatar: null,
+        specialization: "Options & Derivatives"
+      },
+      {
+        id: "expert4",
+        name: "Anita Desai",
+        title: "Sector Rotation Expert | Corporate Insider",
+        followers: "11.4K", 
+        successRate: "74%",
+        avgReturn: "+29.20%",
+        avatar: null,
+        specialization: "Technology & Corporate Analysis"
+      },
+      {
+        id: "expert5",
+        name: "Arjun Singh",
+        title: "Momentum Trader | Growth Stocks",
+        followers: "23.9K",
+        successRate: "79%", 
+        avgReturn: "+31.00%",
+        avatar: null,
+        specialization: "Growth & Momentum Trading"
+      }
+    ];
+
+    return (
+      <div className="px-4 py-4 flex flex-col w-full h-screen overflow-auto">
+        <div className="flex items-center mb-4">
+          <Button variant="ghost" size="icon" onClick={goToPreviousStep} className="text-gray-500">
+            <span className="material-icons">arrow_back</span>
+          </Button>
+          <h2 className="text-lg font-semibold ml-2">Recommended Experts</h2>
+        </div>
+
+        {/* Progress Bar */}
+        <Progress value={getProgressPercentage()} className="h-1 mb-4" />
+
+        <p className="text-gray-600 mb-4 text-sm">Follow these top-performing experts to get personalized investment insights:</p>
+
+        <div className="space-y-3 mb-4 flex-1">
+          {recommendedExperts.map((expert) => (
+            <div key={expert.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+              <div className="flex items-start">
+                <Avatar className="h-12 w-12 mr-3">
+                  <AvatarFallback className="bg-primary/10 text-primary">
+                    {expert.name.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                
+                <div className="flex-1">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h4 className="font-semibold text-sm">{expert.name}</h4>
+                      <p className="text-xs text-gray-600">{expert.title}</p>
+                      <p className="text-xs text-blue-600 mt-1">{expert.specialization}</p>
+                    </div>
+                    
+                    <Checkbox 
+                      checked={formData.followingExperts.includes(expert.id)} 
+                      onCheckedChange={(checked) => handleExpertFollowChange(expert.id, checked as boolean)}
+                      data-testid={`checkbox-follow-${expert.id}`}
+                    />
+                  </div>
+                  
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span>{expert.followers} followers</span>
+                    <span>{expert.successRate} success rate</span>
+                    <span className="text-green-600">{expert.avgReturn} avg return</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-auto flex space-x-3 pb-6 safe-area-bottom">
+          <Button variant="outline" onClick={goToPreviousStep} className="flex-1">
+            Back
+          </Button>
+          <Button onClick={goToNextStep} className="flex-1">
+            Next
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
+  // Step 7: Generated Profile
   const renderGeneratedProfile = () => {
     // Determine risk persona emoji and color
     let personaEmoji = "🦊";
@@ -462,7 +802,7 @@ export const InvestorOnboarding = ({ onBack }: InvestorOnboardingProps) => {
           <Button variant="ghost" size="icon" onClick={goToPreviousStep} className="text-gray-500">
             <span className="material-icons">arrow_back</span>
           </Button>
-          <h2 className="text-lg sm:text-xl font-semibold ml-2">Your Wealth Enthusiast Profile</h2>
+          <h2 className="text-lg sm:text-xl font-semibold ml-2">Your Wealth Seeker Profile</h2>
         </div>
 
         {/* Progress Bar */}

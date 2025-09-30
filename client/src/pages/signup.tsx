@@ -58,7 +58,7 @@ const SignUp = () => {
                     <span className="material-icons text-white text-xl">trending_up</span>
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-lg">I'm a Wealth Enthusiast</h3>
+                    <h3 className="font-semibold text-lg">I'm a Wealth Seeker</h3>
                     <p className="text-white/80 text-sm">Learn, track investments, and get expert advice</p>
                   </div>
                   <span className="material-icons text-white/60">arrow_forward_ios</span>
@@ -83,7 +83,7 @@ const SignUp = () => {
             </div>
           ) : (
             <Button onClick={handleStartOnboarding} className="w-full bg-white text-primary hover:bg-white/90 font-semibold transition-all duration-200 transform hover:scale-[1.02]">
-              Continue as {role === "investor" ? "Wealth Enthusiast" : "Expert"}
+              Continue as {role === "investor" ? "Wealth Seeker" : "Expert"}
             </Button>
           )}
         </div>
