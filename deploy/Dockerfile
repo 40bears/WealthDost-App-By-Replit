@@ -1,27 +1,53 @@
-# Stage 1: Build the client
-FROM node:22-alpine AS builder
+# build stage
+FROM node:22-alpine AS build-stage
 
 WORKDIR /app
 
-# Install dependencies
-COPY package*.json ./
-RUN npm install
+RUN corepack enable \
+  && corepack prepare pnpm@9.12.3 --activate
 
-# Copy source code
+# Copy the application code
 COPY . .
 
-# Build the client
-RUN npm run build
+# Install app dependencies
+RUN pnpm install
 
-# Stage 2: Serve static files
-FROM nginx:alpine
+# Convert the template.env file to format:
+# FOO=___FOO___
+# Used to change those vars in runtime
+RUN sed -i "s/\([^=]*\)=\(.*\)/\1=___\1___/" /app/.env.sample
+RUN cp .env.sample .env.production
+
+RUN  npm run api:build && NODE_ENV=production npm run build
+
+
+
+#production stage
+# Production stage using Caddy
+FROM caddy:2-alpine AS production-stage
 
 # Copy built client files
 COPY --from=builder /app/dist/public /usr/share/nginx/html
 
-# Copy nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy Caddyfile
+COPY deploy/Caddyfile /etc/caddy/Caddyfile
+
+# Copy built assets from build-stage
+COPY --from=build-stage /app/dist /usr/share/caddy/html
+
+# Copy environment example for reference (if needed)
+COPY --from=build-stage /app/.env.sample /usr/share/caddy/.env.sample
+
+# Update build date in index.html
+RUN sed -i "s/VERSION_BUILD_DATE/$(date +%s)/" /usr/share/caddy/html/public/index.html
 
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+# # Set up entrypoint
+COPY deploy/entrypoint.sh /entrypoint.sh
+
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+
+

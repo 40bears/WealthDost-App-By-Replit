@@ -1,87 +1,49 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
 
-type Role = "investor" | "expert" | null;
+export type Role = "investor" | "expert" | null;
 
 interface RoleSelectionProps {
+  role: Role,
   onSelect: (role: Role) => void;
 }
 
-export const RoleSelection = ({ onSelect }: RoleSelectionProps) => {
-  const [selectedRole, setSelectedRole] = useState<Role>(null);
+export const RoleSelection = ({ role, onSelect }: RoleSelectionProps) => {
 
   const handleRoleSelect = (role: Role) => {
-    setSelectedRole(role);
-  };
-
-  const handleContinue = () => {
-    if (selectedRole) {
-      onSelect(selectedRole);
-    }
+    onSelect(role);
   };
 
   return (
-    <div className="px-4 py-6 flex flex-col h-full">
-      <div className="flex items-center mb-6">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="text-gray-500"
-          onClick={() => window.history.back()}
-        >
-          <span className="material-icons">arrow_back</span>
-        </Button>
-        <h2 className="text-xl font-semibold ml-2">Choose your role</h2>
+    <div className="space-y-4">
+      <div
+        className="bg-white/10 backdrop-blur-sm p-4 rounded-lg border border-white/20 cursor-pointer hover:bg-white/20 transition-all duration-200"
+        onClick={() => handleRoleSelect("investor")}
+      >
+        <div className="flex items-center space-x-3">
+          <div className="bg-white/20 p-2 rounded-lg">
+            <span className="material-icons text-white text-xl">trending_up</span>
+          </div>
+          <div className="flex-1">
+            <h3 className="font-semibold text-lg">I'm a Wealth Enthusiast</h3>
+            <p className="text-white/80 text-sm">Learn, track investments, and get expert advice</p>
+          </div>
+          <span className="material-icons text-white/60">arrow_forward_ios</span>
+        </div>
       </div>
 
-      {/* Progress Bar */}
-      <div className="progress-bar">
-        <div className="progress-fill" style={{ width: "20%" }}></div>
-      </div>
-
-      <p className="text-gray-600 mb-6">Select the option that best describes you:</p>
-
-      <div className="space-y-4 mb-8">
-        <button 
-          onClick={() => handleRoleSelect("investor")}
-          className={`w-full bg-white border border-gray-200 hover:border-primary p-4 rounded-xl text-left transition flex items-start ${
-            selectedRole === "investor" ? "border-primary bg-primary bg-opacity-5" : ""
-          }`}
-        >
-          <div className="bg-primary bg-opacity-10 p-2 rounded-lg mr-4">
-            <span className="material-icons text-primary">account_balance</span>
+      <div
+        className="bg-white/10 backdrop-blur-sm p-4 rounded-lg border border-white/20 cursor-pointer hover:bg-white/20 transition-all duration-200"
+        onClick={() => handleRoleSelect("expert")}
+      >
+        <div className="flex items-center space-x-3">
+          <div className="bg-white/20 p-2 rounded-lg">
+            <span className="material-icons text-white text-xl">school</span>
           </div>
-          <div>
-            <h3 className="font-semibold text-lg">Investor or Finance Enthusiast</h3>
-            <p className="text-gray-600 text-sm">I want to learn, track investments and connect with others</p>
+          <div className="flex-1">
+            <h3 className="font-semibold text-lg">I'm an Expert</h3>
+            <p className="text-white/80 text-sm">Share knowledge, build following, and monetize expertise</p>
           </div>
-        </button>
-
-        <button 
-          onClick={() => handleRoleSelect("expert")}
-          className={`w-full bg-white border border-gray-200 hover:border-primary p-4 rounded-xl text-left transition flex items-start ${
-            selectedRole === "expert" ? "border-primary bg-primary bg-opacity-5" : ""
-          }`}
-        >
-          <div className="bg-primary bg-opacity-10 p-2 rounded-lg mr-4">
-            <span className="material-icons text-primary">psychology</span>
-          </div>
-          <div>
-            <h3 className="font-semibold text-lg">Financial Expert</h3>
-            <p className="text-gray-600 text-sm">I have professional finance experience and want to share my knowledge</p>
-          </div>
-        </button>
-      </div>
-
-      <div className="mt-auto">
-        <Button 
-          onClick={handleContinue}
-          className="w-full"
-          disabled={!selectedRole}
-        >
-          Continue
-        </Button>
+          <span className="material-icons text-white/60">arrow_forward_ios</span>
+        </div>
       </div>
     </div>
   );
