@@ -1,8 +1,9 @@
 services:
-  wealth-dost:
-    image: 'app-wealthdost:latest'
-    container_name: wealthdost
+  wealth-dost-client:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile
+    container_name: wealthdost-client
     ports:
-      - "5000:5000"
-    env_file:
-      - .env
+      - "5012:80"
+    restart: unless-stopped
