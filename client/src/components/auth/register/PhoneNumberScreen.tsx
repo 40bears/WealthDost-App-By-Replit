@@ -26,7 +26,7 @@ export function PhoneNumberScreen({ mobileNumber, isLoading, onChange, onSubmit 
           <Input
             id="mobile"
             type="tel"
-            placeholder="Enter your 10-digit mobile number"
+            placeholder="Enter your mobile number"
             value={mobileNumber}
             onChange={(e) => onChange(e.target.value)}
             className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/60 rounded-r-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-0 focus:shadow-lg focus:shadow-blue-500/20 transition-all duration-300 h-12 flex-1"
