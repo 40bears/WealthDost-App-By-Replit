@@ -1,4 +1,6 @@
+import { getProfile } from "@/sdk/auth/profile";
 import { finalizeRegistration, initRegistration, verifyRegistration } from "@/sdk/auth/register";
+import type { VerifyOtpResponse } from "@/types";
 import { useCallback, useState } from "react";
 import { z } from "zod";
 
@@ -35,7 +37,7 @@ const OtpSchema = z
     message: "Please enter a valid 6-digit OTP",
   });
 
-export async function verifyOtp(otp: string, pendingId: string): Promise<void> {
+export async function verifyOtp(otp: string, pendingId: string): Promise<VerifyOtpResponse> {
   try {
     const parsedOtp = OtpSchema.parse(otp);
 
@@ -43,7 +45,18 @@ export async function verifyOtp(otp: string, pendingId: string): Promise<void> {
       throw new Error("Missing verification context. Please resend OTP.");
     }
 
-    await verifyRegistration({ driver: "totp", pendingId, code: parsedOtp });
+    const response = await verifyRegistration({ driver: "totp", pendingId, code: parsedOtp });
+    // If login flow, fetch user profile
+    if (response.flow === 'login' && response.accessToken) {
+      const userObj = await getProfile(response.accessToken);
+      // Attach profile data to response
+      return {
+        ...response,
+        user: userObj,
+      };
+    }
+
+    return response;
   } catch (err: any) {
     if (err?.issues?.length) {
       throw new Error(err.issues[0].message);
@@ -149,7 +162,6 @@ export function useCreateAccount() {
     setIsLoading(true);
     try {
       const id = await sendOtp(mobileNumber);
-      console.log("Pending ID:", id);
       setPendingId(id);
       setIsOtpSent(true);
     } catch (err: any) {
@@ -165,11 +177,12 @@ export function useCreateAccount() {
     }
   }, [mobileNumber]);
 
-  const verifyOtpAction = useCallback(async () => {
+  const verifyOtpAction = useCallback(async (): Promise<VerifyOtpResponse> => {
     setIsLoading(true);
     try {
-      await verifyOtp(otp, pendingId);
+      const response = await verifyOtp(otp, pendingId);
       setIsOtpVerified(true);
+      return response;
     } finally {
       setIsLoading(false);
     }

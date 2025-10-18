@@ -1,36 +1,36 @@
-import { Switch, Route, useLocation } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { useState } from "react";
 import { InteractionProvider } from "@/lib/interactionContext";
-import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
+import NotFound from "@/pages/not-found";
 import SignUp from "@/pages/signup";
-import Login from "@/pages/login";
+import { useState } from "react";
+import { Route, Switch, useLocation } from "wouter";
+
+import BottomNavigation from "@/components/dashboard/BottomNavigation";
+import Activity from "@/pages/activity";
+import Analytics from "@/pages/analytics";
 import CreateAccount from "@/pages/create-account";
 import Dashboard from "@/pages/dashboard-fixed";
 import ExpertProfile from "@/pages/expert-profile";
 import ExpertsList from "@/pages/experts-list";
-import InvestmentRooms from "@/pages/investment-rooms";
-import Watchlist from "@/pages/watchlist";
-import PortfolioUpload from "@/pages/portfolio-upload";
-import UserProfile from "@/pages/user-profile";
-import MyPosts from "@/pages/my-posts";
-import Activity from "@/pages/activity";
-import Settings from "@/pages/settings";
-import HelpCenter from "@/pages/help-center";
-import Loops from "@/pages/loops";
-import StockTips from "@/pages/stock-tips";
 import GlobalSearch from "@/pages/global-search";
-import Terms from "@/pages/terms";
-import Privacy from "@/pages/privacy";
-import Analytics from "@/pages/analytics";
+import HelpCategory from "@/pages/help-category";
+import HelpCenter from "@/pages/help-center";
 import HelpContact from "@/pages/help-contact";
 import HelpGuide from "@/pages/help-guide";
-import HelpCategory from "@/pages/help-category";
+import InvestmentRooms from "@/pages/investment-rooms";
+import Loops from "@/pages/loops";
 import MarketHighlights from "@/pages/market-highlights";
+import MyPosts from "@/pages/my-posts";
+import PortfolioUpload from "@/pages/portfolio-upload";
+import Privacy from "@/pages/privacy";
+import Settings from "@/pages/settings";
+import StockTips from "@/pages/stock-tips";
+import Terms from "@/pages/terms";
 import TribeDetail from "@/pages/tribe-detail";
-import BottomNavigation from "@/components/dashboard/BottomNavigation";
+import UserProfile from "@/pages/user-profile";
+import Watchlist from "@/pages/watchlist";
 
 function Router() {
   const [location] = useLocation();
@@ -49,7 +49,7 @@ function Router() {
   };
 
   // Pages that should not show the bottom navigation
-  const pagesWithoutNav = ['/', '/create-account', '/signup', '/login'];
+  const pagesWithoutNav = ['/', '/create-account', '/signup'];
   const showBottomNav = !pagesWithoutNav.includes(location);
 
   return (
@@ -59,7 +59,6 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/create-account" component={CreateAccount} />
           <Route path="/signup" component={SignUp} />
-          <Route path="/login" component={Login} />
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/experts" component={ExpertsList} />
           <Route path="/expert/:id" component={ExpertProfile} />

@@ -1,11 +1,6 @@
-import { useState, useEffect } from "react";
+import { User } from "@/types";
+import { useEffect, useState } from "react";
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  isLoggedIn: boolean;
-}
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -17,9 +12,7 @@ export const useAuth = () => {
     if (storedUser) {
       try {
         const userData = JSON.parse(storedUser);
-        if (userData.isLoggedIn) {
-          setUser(userData);
-        }
+        setUser(userData);
       } catch (error) {
         console.error('Error parsing stored user data:', error);
         localStorage.removeItem('user');
@@ -38,7 +31,7 @@ export const useAuth = () => {
     localStorage.removeItem('user');
   };
 
-  const isAuthenticated = !!user?.isLoggedIn;
+  const isAuthenticated = !!user?.id;
 
   return {
     user,
