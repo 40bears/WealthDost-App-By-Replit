@@ -27,6 +27,7 @@ export const InvestorOnboarding = ({ onBack, onComplete }: InvestorOnboardingPro
   });
   const [formData, setFormData] = useState({
     fullName: "",
+    email: "",
     username: "",
     profileBio: "",
     password: "",

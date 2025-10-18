@@ -149,6 +149,7 @@ export function useCreateAccount() {
     setIsLoading(true);
     try {
       const id = await sendOtp(mobileNumber);
+      console.log("Pending ID:", id);
       setPendingId(id);
       setIsOtpSent(true);
     } catch (err: any) {

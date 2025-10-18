@@ -115,10 +115,11 @@ export default function CreateAccount() {
       const last_name = rest.join(" ");
       await finalizeProfile({
         username: data.username,
+        email: data.email,
         first_name,
         last_name,
-        password: data.password || undefined,
-        confirm_password: data.confirm_password || undefined,
+        password: data.password,
+        confirm_password: data.confirmPassword,
         additional: {
           role: 'investor',
           investor: data,
