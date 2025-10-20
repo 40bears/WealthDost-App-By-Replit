@@ -3,6 +3,6 @@ services:
     image: 'app-wealthdost:latest'
     container_name: wealthdost
     ports:
-      - "5000:5000"
+      - "5000:80"
     env_file:
       - .env

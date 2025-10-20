@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { RoleSelection } from "@/components/onboarding/RoleSelection";
-import { InvestorOnboarding } from "@/components/onboarding/InvestorOnboarding";
 import { ExpertOnboarding } from "@/components/onboarding/ExpertOnboarding";
+import { InvestorOnboarding } from "@/components/onboarding/InvestorOnboarding";
+import { RoleSelection } from "@/components/onboarding/RoleSelection";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { Link } from "wouter";
 
 type Role = "investor" | "expert" | null;
@@ -26,20 +26,6 @@ const SignUp = () => {
   if (showWelcome) {
     return (
       <div className="px-4 py-6 flex flex-col min-h-screen">
-        {/* Top Navigation Bar */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center">
-            {/* Placeholder for back button */}
-          </div>
-          <div className="text-right text-sm text-gray-500">
-            <Link href="/dashboard">
-              <Button variant="ghost" size="sm" className="rounded-full">
-                Go to Dashboard
-              </Button>
-            </Link>
-          </div>
-        </div>
-
         {/* Role Selection Section */}
         <div className="bg-primary rounded-xl p-6 text-white mb-6 flex-1 flex flex-col justify-center">
           <div className="text-center mb-8">
