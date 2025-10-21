@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthStockTipsRouteImport } from './routes/_auth.stock-tips'
 import { Route as AuthDashboardRouteImport } from './routes/_auth.dashboard'
 
 const SignupRoute = SignupRouteImport.update({
@@ -28,6 +29,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthStockTipsRoute = AuthStockTipsRouteImport.update({
+  id: '/stock-tips',
+  path: '/stock-tips',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthDashboardRoute = AuthDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -38,11 +44,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/signup': typeof SignupRoute
   '/dashboard': typeof AuthDashboardRoute
+  '/stock-tips': typeof AuthStockTipsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/signup': typeof SignupRoute
   '/dashboard': typeof AuthDashboardRoute
+  '/stock-tips': typeof AuthStockTipsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -50,13 +58,20 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren
   '/signup': typeof SignupRoute
   '/_auth/dashboard': typeof AuthDashboardRoute
+  '/_auth/stock-tips': typeof AuthStockTipsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/signup' | '/dashboard'
+  fullPaths: '/' | '/signup' | '/dashboard' | '/stock-tips'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/signup' | '/dashboard'
-  id: '__root__' | '/' | '/_auth' | '/signup' | '/_auth/dashboard'
+  to: '/' | '/signup' | '/dashboard' | '/stock-tips'
+  id:
+    | '__root__'
+    | '/'
+    | '/_auth'
+    | '/signup'
+    | '/_auth/dashboard'
+    | '/_auth/stock-tips'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -88,6 +103,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_auth/stock-tips': {
+      id: '/_auth/stock-tips'
+      path: '/stock-tips'
+      fullPath: '/stock-tips'
+      preLoaderRoute: typeof AuthStockTipsRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/dashboard': {
       id: '/_auth/dashboard'
       path: '/dashboard'
@@ -100,10 +122,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthRouteChildren {
   AuthDashboardRoute: typeof AuthDashboardRoute
+  AuthStockTipsRoute: typeof AuthStockTipsRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthDashboardRoute: AuthDashboardRoute,
+  AuthStockTipsRoute: AuthStockTipsRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)

@@ -1,29 +1,31 @@
-import { Link, useLocation } from "wouter";
+import { useNavigate, useLocation } from "@tanstack/react-router";
 
 type Tab = "home" | "experts" | "explore" | "invroom" | "tips";
 
-interface BottomNavigationProps {
-  activeTab: Tab;
-  onTabChange: (tab: Tab) => void;
-}
-
-const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => {
-  const [, setLocation] = useLocation();
+const BottomNavigation = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   
   const tabs = [
     { id: "home", icon: "home", label: "Home", href: "/dashboard" },
     { id: "tips", icon: "trending_up", label: "Tips", href: "/stock-tips" },
-    { id: "explore", icon: "search", label: "Explore", href: "/search" },
-    { id: "experts", icon: "psychology", label: "Experts", href: "/experts" },
+    { id: "explore", icon: "search", label: "Explore", href: "/global-search" },
+    { id: "experts", icon: "psychology", label: "Experts", href: "/experts-list" },
     { id: "invroom", icon: "meeting_room", label: "Tribe", href: "/investment-rooms" },
   ];
 
   const handleTabClick = (tab: any) => {
-    // Update active tab state
-    onTabChange(tab.id as Tab);
-    // Navigate using SPA routing
-    setLocation(tab.href);
+    navigate({ to: tab.href });
   };
+
+  // Determine active tab based on current pathname
+  const getActiveTab = (): Tab => {
+    const pathname = location.pathname;
+    const activeTabItem = tabs.find(tab => tab.href === pathname);
+    return (activeTabItem?.id as Tab) || "home";
+  };
+
+  const activeTab = getActiveTab();
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t-2 border-gray-200/50 shadow-lg z-10 safe-bottom">
