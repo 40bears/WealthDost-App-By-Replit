@@ -18,8 +18,8 @@ export function SignupLayout({ children }: { children: React.ReactElement | Reac
             <div className="w-full max-w-md mx-auto flex-1 flex flex-col justify-center relative z-10">
                 {/* Header */}
                 <div className="flex justify-center mb-12">
-                    <div style={{backgroundColor: "white"}} className="header p-2 inline-block w-3/4 h-32 flex flex-col-reverse">
-                        <img src="https://yt3.googleusercontent.com/q4_xCmCQxMk5_QWUSPKhn-SV7o1wQMlRNNBzg0aAuBjnQzgMGwKAIessr2UEiHfskSzeldbw8Q=s160-c-k-c0x00ffffff-no-rj" alt="WealthDost Logo" className="h-16 mx-auto mb-2" />
+                    <div className="header p-2 inline-block w-3/4 h-32 flex flex-col-reverse">
+                        <img src="/logo.png" alt="WealthDost Logo" className="h-16 mx-auto mb-2" />
                     </div>
                 </div>
 

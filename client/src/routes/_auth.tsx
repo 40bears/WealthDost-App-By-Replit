@@ -1,7 +1,6 @@
-import { createFileRoute, Outlet, redirect, useRouter } from '@tanstack/react-router'
-
-
-import { useAuth } from '../components/auth/auth-context'
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
+import Header from '@/components/layout/Header'
+import BottomNavigation from '@/components/dashboard/BottomNavigation'
 
 export const Route = createFileRoute('/_auth')({
   beforeLoad: ({ context, location }) => {
@@ -19,22 +18,18 @@ export const Route = createFileRoute('/_auth')({
 })
 
 function AuthLayout() {
-
-  const router = useRouter()
-  const navigate = Route.useNavigate()
-  const auth = useAuth()
-
-  const handleLogout = () => {
-    if (window.confirm('Are you sure you want to logout?')) {
-      auth.logout().then(() => {
-        router.invalidate().finally(() => {
-          navigate({ to: '/' })
-        })
-      })
-    }
-
-    return (<div>
-      <Outlet />
-    </div>)
-  }
+  return (
+    <div className="flex flex-col h-screen">
+      {/* Header - Fixed at top */}
+      <Header />
+      
+      {/* Main Content - Scrollable */}
+      <div className="flex-1 overflow-auto pb-16">
+        <Outlet />
+      </div>
+      
+      {/* Bottom Navigation - Fixed at bottom */}
+      <BottomNavigation />
+    </div>
+  )
 }

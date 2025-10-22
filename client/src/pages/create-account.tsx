@@ -12,10 +12,11 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCreateAccount } from "@/sdk/auth/create-account";
 import { UI } from "@/ui";
 import { useEffect, useState } from "react";
-import { useLocation } from "wouter";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 
 export default function CreateAccount() {
-  const [location, navigate] = useLocation();
+  const navigate = useNavigate();
+  const search = useSearch({ from: '/' });
   const auth = useAuth();
   const {
     mobileNumber,
@@ -36,11 +37,10 @@ export default function CreateAccount() {
   // Check if user is already logged in and redirect accordingly
   useEffect(() => {
     if (auth.isAuthenticated && !auth.isLoading) {
-      const urlParams = new URLSearchParams(location.search);
-      const redirectUrl = urlParams.get('redirect') || '/dashboard';
-      navigate(redirectUrl);
+      const redirectUrl = (search as any)?.redirect || '/dashboard';
+      navigate({ to: redirectUrl });
     }
-  }, [auth.isAuthenticated, auth.isLoading, location.search, navigate]);
+  }, [auth.isAuthenticated, auth.isLoading, search, navigate]);
 
   const flow = useFlowMachine({
     initial: isOtpVerified ? "role" : isOtpSent ? "otp" : "phone",
@@ -93,7 +93,7 @@ export default function CreateAccount() {
       const response = await verifyOtpAction();
       if (response?.flow === 'login' && response.user) {
         auth.login(response.user);
-        navigate('/dashboard');
+        navigate({ to: '/dashboard' });
         return;
       }
       toast.success("Phone Verified", "Choose your role to continue");
@@ -144,7 +144,7 @@ export default function CreateAccount() {
         },
       });
       UI.toast.success('Welcome!', 'Your account is ready.');
-      navigate('/dashboard');
+      navigate({ to: '/dashboard' });
     } catch (err: any) {
       UI.toast.error('Could not create account', err?.message || 'Please try again.');
     }
@@ -168,7 +168,7 @@ export default function CreateAccount() {
         },
       });
       UI.toast.success('Welcome!', 'Your account is ready.');
-      navigate('/dashboard');
+      navigate({ to: '/dashboard' });
     } catch (err: any) {
       UI.toast.error('Could not create account', err?.message || 'Please try again.');
     }
