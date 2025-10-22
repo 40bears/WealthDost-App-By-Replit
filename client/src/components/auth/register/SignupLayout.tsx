@@ -15,11 +15,11 @@ export function SignupLayout({ children }: { children: React.ReactElement | Reac
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-purple-400/20 to-blue-400/20 rounded-full blur-3xl"></div>
             </div>
 
-            <div className="w-full max-w-md mx-auto flex-1 flex flex-col justify-center relative z-10">
+            <div className="w-full max-w-md mx-auto flex-1 flex flex-col justify-center relative z-10 page-signup">
                 {/* Header */}
                 <div className="flex justify-center mb-12">
-                    <div className="header p-2 inline-block w-3/4 h-32 flex flex-col-reverse">
-                        <img src="/logo.png" alt="WealthDost Logo" className="h-16 mx-auto mb-2" />
+                    <div className="header p-2 inline-block w-3/4 h-32 flex flex-col-reverse bg-white">
+                        <img src="/images/logo.png" alt="WealthDost Logo" className="h-16 mx-auto mb-2" />
                     </div>
                 </div>
 

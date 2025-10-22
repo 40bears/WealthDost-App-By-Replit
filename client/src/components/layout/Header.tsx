@@ -1,14 +1,12 @@
+import { useAuth } from "@/components/auth/auth-context";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { useAuth } from "@/components/auth/auth-context";
 import { getUsername } from "@/lib/user-utils";
 import { useNavigate } from "@tanstack/react-router";
 
@@ -42,7 +40,7 @@ const Header = () => {
         <div className="flex items-center space-x-3">
           {/* Logo */}
           <img
-            src="/logo.png"
+            src="/images/mini-logo.png"
             alt="WealthDost Logo"
             className="w-10 h-10 object-contain"
           />
@@ -55,7 +53,7 @@ const Header = () => {
 
           {/* Owl Icon */}
           <img
-            src="/owl.png"
+            src="/images/owl.png"
             alt="Owl"
             className="w-6 h-6 object-contain"
           />
