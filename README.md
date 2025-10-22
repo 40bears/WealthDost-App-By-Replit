@@ -2,30 +2,23 @@
 
 ## Overview
 
-This project is a web application named WealthDost. It uses Node.js, Vite, and React for the frontend and backend development. The project can be run locally or using Docker.
+This project is a React web application named WealthDost. It uses Vite for the frontend development. The API is implemented in a separate project. The project can be run locally or using Docker.
 
 ## Running the Project with Docker
 
 ### Prerequisites
 
 - Docker and Docker Compose installed on your machine.
-- A `.env` file in the project root with necessary environment variables.
 
 ### Steps to Run
 
-1. Build the Docker image:
+1. Build and start the application using Docker Compose:
 
    ```bash
-   docker build -f deploy/Dockerfile -t app-wealthdost:latest .
+   docker-compose up --build
    ```
 
-2. Start the application using Docker Compose:
-
-   ```bash
-   docker-compose up
-   ```
-
-3. Access the application at:
+2. Access the application at:
    ```
    http://localhost:5000
    ```
@@ -33,10 +26,9 @@ This project is a web application named WealthDost. It uses Node.js, Vite, and R
 ### Docker Details
 
 - The Dockerfile uses a multi-stage build:
-  - Stage 1: Builds the app using Node.js 22 Alpine.
-  - Stage 2: Creates a production image with dependencies and built app.
-- The app runs on port 5000 inside the container, which is mapped to port 5000 on the host.
-- Environment variables are loaded from the `.env` file.
+  - Stage 1: Builds the client using Node.js 22 Alpine.
+  - Stage 2: Serves static files using Nginx Alpine.
+- The app runs on port 80 inside the container, which is mapped to port 5000 on the host.
 
 ## Running the Project Locally (Without Docker)
 
@@ -66,17 +58,16 @@ This project is a web application named WealthDost. It uses Node.js, Vite, and R
 ## Scripts
 
 - `npm run dev`: Runs the development server.
-- `npm run build`: Builds the frontend and backend for production.
-- `npm start`: Runs the production build.
+- `npm run build`: Builds the frontend for production.
+- `npm start`: Runs the production build (serves static files).
 - `npm run check`: Runs TypeScript type checking.
-- `npm run db:push`: Pushes database schema changes using Drizzle Kit.
 
 ## Additional Information
 
 - The project uses Vite as the build tool.
-- The backend is built with Express and TypeScript.
 - The frontend uses React with various Radix UI components.
 - Tailwind CSS is used for styling.
+- API calls should be configured to point to the separate API project.
 
 ## Troubleshooting
 
@@ -84,4 +75,4 @@ This project is a web application named WealthDost. It uses Node.js, Vite, and R
   ```bash
   docker-compose logs
   ```
-- Ensure the `.env` file is properly configured with all required environment variables.
+- Ensure the API project is running and accessible for API calls.

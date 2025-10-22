@@ -8,13 +8,15 @@ import { FlowRoutes } from "@/components/flow/FlowRoutes";
 import { ExpertOnboarding } from "@/components/onboarding/ExpertOnboarding";
 import { InvestorOnboarding } from "@/components/onboarding/InvestorOnboarding";
 import { type Role as ChosenRole } from "@/components/onboarding/RoleSelection";
+import { useAuth } from "@/hooks/useAuth";
 import { useCreateAccount } from "@/sdk/auth/create-account";
 import { UI } from "@/ui";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 
 export default function CreateAccount() {
-  const [, navigate] = useLocation();
+  const [location, navigate] = useLocation();
+  const auth = useAuth();
   const {
     mobileNumber,
     otp,
@@ -30,6 +32,15 @@ export default function CreateAccount() {
     finalizeProfile,
   } = useCreateAccount();
   const toast = UI.toast;
+
+  // Check if user is already logged in and redirect accordingly
+  useEffect(() => {
+    if (auth.isAuthenticated && !auth.isLoading) {
+      const urlParams = new URLSearchParams(location.search);
+      const redirectUrl = urlParams.get('redirect') || '/dashboard';
+      navigate(redirectUrl);
+    }
+  }, [auth.isAuthenticated, auth.isLoading, location.search, navigate]);
 
   const flow = useFlowMachine({
     initial: isOtpVerified ? "role" : isOtpSent ? "otp" : "phone",
@@ -79,7 +90,12 @@ export default function CreateAccount() {
   const handleVerifyOtp = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     try {
-      await verifyOtpAction();
+      const response = await verifyOtpAction();
+      if (response?.flow === 'login' && response.user) {
+        auth.login(response.user);
+        navigate('/dashboard');
+        return;
+      }
       toast.success("Phone Verified", "Choose your role to continue");
       flow.send("OTP_VERIFIED");
     } catch (err: any) {
@@ -115,10 +131,11 @@ export default function CreateAccount() {
       const last_name = rest.join(" ");
       await finalizeProfile({
         username: data.username,
+        email: data.email,
         first_name,
         last_name,
-        password: data.password || undefined,
-        confirm_password: data.confirm_password || undefined,
+        password: data.password,
+        confirm_password: data.confirmPassword,
         additional: {
           role: 'investor',
           investor: data,

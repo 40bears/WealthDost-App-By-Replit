@@ -11,6 +11,7 @@ import { UsernameInput } from "./UsernameInput";
 
 type FormData = {
   fullName: string;
+  email: string;
   username: string;
   profileBio: string;
   password: string;
@@ -38,12 +39,13 @@ export function InvestorBasicProfile({
       z
         .object({
           fullName: z.string().min(1, "Full name is required"),
+          email: z.string().min(1, "Email is required").email("Please enter a valid email address"),
           username: z.string().min(3, "Username must be at least 3 characters"),
           profileBio: z.string().optional().or(z.literal("")),
           experienceLevel: z.enum(["beginner", "intermediate", "advanced"], {
             message: "Please select your experience level",
           }),
-          password: z.string().min(1, "Password is required"),
+          password: z.string().min(6, "Password must be at least 6 characters"),
           confirmPassword: z.string().min(1, "Please confirm your password"),
         })
         .refine((v) => v.password === v.confirmPassword, {
@@ -122,6 +124,13 @@ export function InvestorBasicProfile({
           <Input id="fullName" name="fullName" value={formData.fullName} onChange={onBasicChange} className="mt-1" placeholder="Your name" />
           {errors?.fullName && (
             <p className="text-xs text-red-600 mt-1">{errors.fullName}</p>
+          )}
+        </div>
+        <div>
+          <Label htmlFor="email">Email</Label>
+          <Input id="email" name="email" type="email" value={formData.email} onChange={onBasicChange} className="mt-1" placeholder="your.email@example.com" />
+          {errors?.email && (
+            <p className="text-xs text-red-600 mt-1">{errors.email}</p>
           )}
         </div>
         <UsernameInput
