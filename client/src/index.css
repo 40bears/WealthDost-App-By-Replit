@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -83,12 +83,12 @@
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom);
   }
-  
+
   /* Glassmorphism animation delays */
   .animation-delay-2000 {
     animation-delay: 2s;
   }
-  
+
   /* Enhanced glassmorphism backdrop effects */
   .glass-card {
     background: rgba(255, 255, 255, 0.1);
@@ -97,143 +97,150 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   }
-  
+
   /* Glowing input focus effects */
   .glow-input:focus {
     box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
     border-color: rgba(147, 51, 234, 0.6);
   }
-  
+
   /* Interactive card hover effects */
   .interactive-card {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border-width: 2px;
   }
-  
+
   .interactive-card:hover {
     transform: scale(1.05);
   }
-  
+
   .interactive-card:active {
     transform: scale(0.95);
   }
-  
+
   /* Interactive button effects */
   .interactive-button {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border-width: 1px;
   }
-  
+
   .interactive-button:hover {
     transform: scale(1.05);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   }
-  
+
   .interactive-button:active {
     transform: scale(0.95);
   }
 }
 
-  .progress-bar {
-    @apply h-1 bg-gray-200 rounded-sm my-2;
-  }
+.progress-bar {
+  @apply h-1 bg-gray-200 rounded-sm my-2;
+}
 
-  .progress-fill {
-    @apply h-full rounded-sm bg-primary transition-all duration-300 ease-in-out;
-  }
+.progress-fill {
+  @apply h-full rounded-sm bg-primary transition-all duration-300 ease-in-out;
+}
 
-  .checkmark {
-    @apply absolute top-0 left-0 h-5 w-5 bg-white border border-gray-300 rounded;
-  }
+.checkmark {
+  @apply absolute top-0 left-0 h-5 w-5 bg-white border border-gray-300 rounded;
+}
 
-  .checkbox-container {
-    @apply relative pl-7 cursor-pointer select-none;
-  }
+.checkbox-container {
+  @apply relative pl-7 cursor-pointer select-none;
+}
 
-  .checkbox-container input {
-    @apply absolute opacity-0 cursor-pointer h-0 w-0;
-  }
+.checkbox-container input {
+  @apply absolute opacity-0 cursor-pointer h-0 w-0;
+}
 
-  .checkbox-container:hover input ~ .checkmark {
-    @apply bg-gray-50;
-  }
+.checkbox-container:hover input ~ .checkmark {
+  @apply bg-gray-50;
+}
 
-  .checkbox-container input:checked ~ .checkmark {
-    @apply bg-primary border-primary;
-  }
+.checkbox-container input:checked ~ .checkmark {
+  @apply bg-primary border-primary;
+}
 
-  .checkmark:after {
-    @apply content-[''] absolute hidden;
-  }
+.checkmark:after {
+  @apply content-[''] absolute hidden;
+}
 
-  .checkbox-container input:checked ~ .checkmark:after {
-    @apply block;
-  }
+.checkbox-container input:checked ~ .checkmark:after {
+  @apply block;
+}
 
-  .checkbox-container .checkmark:after {
-    @apply left-[7px] top-[3px] w-[6px] h-[10px] border-r-2 border-b-2 border-white rotate-45;
-  }
-  
-  /* Button Animation Classes */
-  .btn-pulse {
-    @apply transition-all duration-200 transform active:scale-95 hover:brightness-105;
-  }
-  
-  .btn-ripple {
-    position: relative;
-    overflow: hidden;
-    transform: translate3d(0, 0, 0);
-  }
-  
-  .btn-ripple:after {
-    content: "";
-    display: block;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
-    background-repeat: no-repeat;
-    background-position: 50%;
-    transform: scale(10, 10);
-    opacity: 0;
-    transition: transform .5s, opacity 1s;
-  }
-  
-  .btn-ripple:active:after {
-    transform: scale(0, 0);
-    opacity: 0.3;
-    transition: 0s;
-  }
-  
-  .click-bounce {
-    @apply transition-transform duration-150 active:scale-95;
-  }
-  
-  .tab-slide {
-    position: relative;
-    transition: all 0.3s ease;
-  }
-  
-  .tab-slide::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background-color: hsl(var(--primary));
-    transition: all 0.3s ease;
-    transform: translateX(-50%);
-  }
-  
-  .tab-slide:hover::after,
-  .tab-slide.active::after {
-    width: 70%;
-  }
-  
-  .feature-btn {
-    @apply transition-all duration-200 hover:shadow-md active:shadow-inner active:translate-y-0.5;
-  }
+.checkbox-container .checkmark:after {
+  @apply left-[7px] top-[3px] w-[6px] h-[10px] border-r-2 border-b-2 border-white rotate-45;
+}
+
+/* Button Animation Classes */
+.btn-pulse {
+  @apply transition-all duration-200 transform active:scale-95 hover:brightness-105;
+}
+
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+.btn-ripple:after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10, 10);
+  opacity: 0;
+  transition:
+    transform 0.5s,
+    opacity 1s;
+}
+
+.btn-ripple:active:after {
+  transform: scale(0, 0);
+  opacity: 0.3;
+  transition: 0s;
+}
+
+.click-bounce {
+  @apply transition-transform duration-150 active:scale-95;
+}
+
+.tab-slide {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.tab-slide::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: hsl(var(--primary));
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.tab-slide:hover::after,
+.tab-slide.active::after {
+  width: 70%;
+}
+
+.feature-btn {
+  @apply transition-all duration-200 hover:shadow-md active:shadow-inner active:translate-y-0.5;
+}
+
+.page-signup .header {
+  border-end-end-radius: 1rem;
+  border-end-start-radius: 1rem;
+}

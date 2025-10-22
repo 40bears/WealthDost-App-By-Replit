@@ -11,8 +11,8 @@ import { type Role as ChosenRole } from "@/components/onboarding/RoleSelection";
 import { useAuth } from "@/hooks/useAuth";
 import { useCreateAccount } from "@/sdk/auth/create-account";
 import { UI } from "@/ui";
-import { useEffect, useState } from "react";
 import { useNavigate, useSearch } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 
 export default function CreateAccount() {
   const navigate = useNavigate();
@@ -73,7 +73,7 @@ export default function CreateAccount() {
       toast.success("OTP Sent", "We've sent a 6-digit OTP to your mobile number");
       flow.send("OTP_SENT");
     } catch (err: any) {
-      if (err.response.status === 409) {
+      if (err.response?.status === 409) {
         if (err.response.data.data.pendingId) {
           flow.send("OTP_SENT");
           return
