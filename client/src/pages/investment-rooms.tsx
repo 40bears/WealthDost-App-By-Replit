@@ -145,7 +145,7 @@ const InvestmentRooms = () => {
       </div>
 
       {/* Rooms List */}
-      <div className="max-w-md mx-auto px-4 pb-24 space-y-4">
+      <div className="max-w-md mx-auto px-4 pt-4 pb-24 space-y-4">
         {filteredRooms.map((room) => (
           <div key={room.id} className="bg-white/70 backdrop-blur-md border-2 border-gray-200 hover:border-gray-300 shadow-lg hover:shadow-xl hover:shadow-gray-500/20 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] rounded-2xl relative">
             <div className="p-4">

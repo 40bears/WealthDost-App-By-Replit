@@ -11,7 +11,7 @@ const BottomNavigation = () => {
     { id: "tips", icon: "trending_up", label: "Tips", href: "/stock-tips" },
     { id: "explore", icon: "search", label: "Explore", href: "/global-search" },
     { id: "experts", icon: "psychology", label: "Experts", href: "/experts-list" },
-    { id: "invroom", icon: "meeting_room", label: "Tribe", href: "/investment-rooms" },
+    { id: "tribes", icon: "meeting_room", label: "Tribe", href: "/tribes" },
   ];
 
   const handleTabClick = (tab: any) => {
