@@ -7,111 +7,88 @@ import { useNavigate } from "@tanstack/react-router";
 const ExpertsList = () => {
   const [selectedSector, setSelectedSector] = useState("all");
   const [selectedExpertType, setSelectedExpertType] = useState("all");
+  const [followedExperts, setFollowedExperts] = useState<number[]>([3]); // Initialize with expert id 3 as followed
 
   const expertsData = [
     {
       id: 1,
       name: "Rajesh Kumar",
-      researchFirm: "Berenberg Bank",
+      username: "@rajesh_k",
       sector: "financial",
       expertType: "broker",
-      rating: 5,
-      distribution: { buy: 60, hold: 30, sell: 10 },
-      successRate: 86,
-      avgReturn: "+20.20%",
-      followers: 9692,
-      isFollowing: false
+      avgReturn: "+20% returns",
+      categories: ["Finance", "Banking"],
+      bio: "Tech Analyst | Sebi registered | Tech Analyst | Sebi registered | Tech Analyst | Sebi registered"
     },
     {
       id: 2,
       name: "Priya Sharma",
-      researchFirm: "Raymond James",
+      username: "@priya_s",
       sector: "energy",
       expertType: "individual",
-      rating: 5,
-      distribution: { buy: 55, hold: 35, sell: 10 },
-      successRate: 82,
-      avgReturn: "+40.30%",
-      followers: 14627,
-      isFollowing: false
+      avgReturn: "+40% returns",
+      categories: ["Energy", "Renewables"],
+      bio: "Energy sector expert with 10+ years experience in renewable energy investments and market analysis"
     },
     {
       id: 3,
       name: "Vikram Patel",
-      researchFirm: "Truist Financial",
+      username: "@vikram_p",
       sector: "financial",
       expertType: "broker",
-      rating: 4,
-      distribution: { buy: 72, hold: 23, sell: 5 },
-      successRate: 78,
-      avgReturn: "+21.00%",
-      followers: 10968,
-      isFollowing: true
+      avgReturn: "+21% returns",
+      categories: ["Finance", "Stocks"],
+      bio: "SEBI registered investment advisor specializing in equity research and portfolio management"
     },
     {
       id: 4,
       name: "Anita Desai",
-      researchFirm: "Tech Insider",
+      username: "@anita_tech",
       sector: "technology",
       expertType: "corporate",
-      rating: 5,
-      distribution: { buy: 48, hold: 42, sell: 10 },
-      successRate: 74,
-      avgReturn: "+29.20%",
-      followers: 11498,
-      isFollowing: false
+      avgReturn: "+29% returns",
+      categories: ["Technology", "AI"],
+      bio: "Corporate insider and technology analyst focusing on AI, cloud computing, and semiconductor sectors"
     },
     {
       id: 5,
       name: "Arjun Singh",
-      researchFirm: "UBS",
+      username: "@arjun_trades",
       sector: "technology",
       expertType: "broker",
-      rating: 5,
-      distribution: { buy: 59, hold: 31, sell: 10 },
-      successRate: 79,
-      avgReturn: "+31.00%",
-      followers: 23972,
-      isFollowing: false
+      avgReturn: "+31% returns",
+      categories: ["Technology", "Growth Stocks"],
+      bio: "Growth stock specialist with expertise in technology sector analysis and momentum trading strategies"
     },
     {
       id: 6,
       name: "Meera Jain",
-      researchFirm: "Citizens JMP",
+      username: "@meera_invest",
       sector: "financial",
       expertType: "individual",
-      rating: 4,
-      distribution: { buy: 70, hold: 25, sell: 5 },
-      successRate: 69,
-      avgReturn: "+29.20%",
-      followers: 4603,
-      isFollowing: false
+      avgReturn: "+29% returns",
+      categories: ["Finance", "Value Investing"],
+      bio: "Value investor following Warren Buffett's principles with focus on undervalued financial sector stocks"
     },
     {
       id: 7,
       name: "Rohit Gupta",
-      researchFirm: "Citi",
+      username: "@rohit_industrial",
       sector: "industrials",
       expertType: "broker",
-      rating: 4,
-      distribution: { buy: 74, hold: 20, sell: 6 },
-      successRate: 71,
-      avgReturn: "+25.60%",
-      followers: 2048,
-      isFollowing: false
+      avgReturn: "+25% returns",
+      categories: ["Industrials", "Manufacturing"],
+      bio: "Industrial sector analyst covering manufacturing, infrastructure, and capital goods companies"
     },
     {
       id: 8,
       name: "Kavya Reddy",
-      researchFirm: "Oppenheimer",
+      username: "@kavya_finance",
       sector: "financial",
       expertType: "individual",
-      rating: 4,
-      distribution: { buy: 61, hold: 33, sell: 6 },
-      successRate: 71,
-      avgReturn: "+24.50%",
-      followers: 8005,
-      isFollowing: false
+      avgReturn: "+24% returns",
+      categories: ["Finance", "Banking"],
+      bio: "Banking and financial services analyst with focus on PSU banks and NBFC sector opportunities"
     }
   ];
 
@@ -121,49 +98,19 @@ const ExpertsList = () => {
     return sectorMatch && typeMatch;
   });
 
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <span
-        key={i}
-        className={`material-icons text-sm ${i < rating ? 'text-yellow-400' : 'text-gray-300'}`}
-      >
-        star
-      </span>
-    ));
-  };
-
-  const renderDistributionBar = (distribution: { buy: number; hold: number; sell: number }) => {
-    return (
-      <div className="flex w-full h-2 rounded-full overflow-hidden bg-gray-100">
-        <div 
-          className="bg-green-500" 
-          style={{ width: `${distribution.buy}%` }}
-        ></div>
-        <div 
-          className="bg-gray-400" 
-          style={{ width: `${distribution.hold}%` }}
-        ></div>
-        <div 
-          className="bg-red-500" 
-          style={{ width: `${distribution.sell}%` }}
-        ></div>
-      </div>
-    );
-  };
-
-  const getSectorColor = (sector: string) => {
-    const colors: { [key: string]: string } = {
-      financial: "bg-blue-100/70 text-blue-800 border-blue-200 hover:border-blue-300 hover:shadow-blue-500/20",
-      technology: "bg-purple-100/70 text-purple-800 border-purple-200 hover:border-purple-300 hover:shadow-purple-500/20",
-      energy: "bg-orange-100/70 text-orange-800 border-orange-200 hover:border-orange-300 hover:shadow-orange-500/20",
-      healthcare: "bg-green-100/70 text-green-800 border-green-200 hover:border-green-300 hover:shadow-green-500/20",
-      industrials: "bg-gray-100/70 text-gray-800 border-gray-200 hover:border-gray-300 hover:shadow-gray-500/20",
-      consumer: "bg-pink-100/70 text-pink-800 border-pink-200 hover:border-pink-300 hover:shadow-pink-500/20"
-    };
-    return colors[sector] || "bg-gray-100/70 text-gray-800 border-gray-200 hover:border-gray-300 hover:shadow-gray-500/20";
-  };
-
   const navigate = useNavigate();
+
+  const handleFollowClick = (expertId: number) => {
+    setFollowedExperts(prev => {
+      if (prev.includes(expertId)) {
+        // Unfollow: remove from array
+        return prev.filter(id => id !== expertId);
+      } else {
+        // Follow: add to array
+        return [...prev, expertId];
+      }
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50/30 to-gray-100">
@@ -177,18 +124,17 @@ const ExpertsList = () => {
 
       {/* Experts List */}
       <div className="px-4 pt-4 space-y-3 pb-20">
-        {filteredExperts.map((expert, index) => (
+        {filteredExperts.map((expert) => (
           <ExpertCard
             key={expert.id}
-            rank={index + 1}
             name={expert.name}
-            researchFirm={expert.researchFirm}
-            sector={expert.sector}
-            rating={expert.rating}
+            username={expert.username}
             avgReturn={expert.avgReturn}
-            successRate={expert.successRate}
-            followers={expert.followers}
-            onViewClick={() => navigate({ to: `/expert/${expert.id}` })}
+            categories={expert.categories}
+            bio={expert.bio}
+            isFollowing={followedExperts.includes(expert.id)}
+            onFollowClick={() => handleFollowClick(expert.id)}
+            onCardClick={() => navigate({ to: `/expert/${expert.id}` })}
           />
         ))}
 
