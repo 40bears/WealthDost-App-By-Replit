@@ -12,8 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthTribesRouteImport } from './routes/_auth.tribes'
 import { Route as AuthStockTipsRouteImport } from './routes/_auth.stock-tips'
+import { Route as AuthGlobalSearchRouteImport } from './routes/_auth.global-search'
+import { Route as AuthExpertsListRouteImport } from './routes/_auth.experts-list'
 import { Route as AuthDashboardRouteImport } from './routes/_auth.dashboard'
+import { Route as AuthTribeIdRouteImport } from './routes/_auth.tribe.$id'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -29,9 +33,24 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthTribesRoute = AuthTribesRouteImport.update({
+  id: '/tribes',
+  path: '/tribes',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthStockTipsRoute = AuthStockTipsRouteImport.update({
   id: '/stock-tips',
   path: '/stock-tips',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthGlobalSearchRoute = AuthGlobalSearchRouteImport.update({
+  id: '/global-search',
+  path: '/global-search',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthExpertsListRoute = AuthExpertsListRouteImport.update({
+  id: '/experts-list',
+  path: '/experts-list',
   getParentRoute: () => AuthRoute,
 } as any)
 const AuthDashboardRoute = AuthDashboardRouteImport.update({
@@ -39,18 +58,31 @@ const AuthDashboardRoute = AuthDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthTribeIdRoute = AuthTribeIdRouteImport.update({
+  id: '/tribe/$id',
+  path: '/tribe/$id',
+  getParentRoute: () => AuthRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/signup': typeof SignupRoute
   '/dashboard': typeof AuthDashboardRoute
+  '/experts-list': typeof AuthExpertsListRoute
+  '/global-search': typeof AuthGlobalSearchRoute
   '/stock-tips': typeof AuthStockTipsRoute
+  '/tribes': typeof AuthTribesRoute
+  '/tribe/$id': typeof AuthTribeIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/signup': typeof SignupRoute
   '/dashboard': typeof AuthDashboardRoute
+  '/experts-list': typeof AuthExpertsListRoute
+  '/global-search': typeof AuthGlobalSearchRoute
   '/stock-tips': typeof AuthStockTipsRoute
+  '/tribes': typeof AuthTribesRoute
+  '/tribe/$id': typeof AuthTribeIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -58,20 +90,44 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren
   '/signup': typeof SignupRoute
   '/_auth/dashboard': typeof AuthDashboardRoute
+  '/_auth/experts-list': typeof AuthExpertsListRoute
+  '/_auth/global-search': typeof AuthGlobalSearchRoute
   '/_auth/stock-tips': typeof AuthStockTipsRoute
+  '/_auth/tribes': typeof AuthTribesRoute
+  '/_auth/tribe/$id': typeof AuthTribeIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/signup' | '/dashboard' | '/stock-tips'
+  fullPaths:
+    | '/'
+    | '/signup'
+    | '/dashboard'
+    | '/experts-list'
+    | '/global-search'
+    | '/stock-tips'
+    | '/tribes'
+    | '/tribe/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/signup' | '/dashboard' | '/stock-tips'
+  to:
+    | '/'
+    | '/signup'
+    | '/dashboard'
+    | '/experts-list'
+    | '/global-search'
+    | '/stock-tips'
+    | '/tribes'
+    | '/tribe/$id'
   id:
     | '__root__'
     | '/'
     | '/_auth'
     | '/signup'
     | '/_auth/dashboard'
+    | '/_auth/experts-list'
+    | '/_auth/global-search'
     | '/_auth/stock-tips'
+    | '/_auth/tribes'
+    | '/_auth/tribe/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -103,11 +159,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_auth/tribes': {
+      id: '/_auth/tribes'
+      path: '/tribes'
+      fullPath: '/tribes'
+      preLoaderRoute: typeof AuthTribesRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/stock-tips': {
       id: '/_auth/stock-tips'
       path: '/stock-tips'
       fullPath: '/stock-tips'
       preLoaderRoute: typeof AuthStockTipsRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/global-search': {
+      id: '/_auth/global-search'
+      path: '/global-search'
+      fullPath: '/global-search'
+      preLoaderRoute: typeof AuthGlobalSearchRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/experts-list': {
+      id: '/_auth/experts-list'
+      path: '/experts-list'
+      fullPath: '/experts-list'
+      preLoaderRoute: typeof AuthExpertsListRouteImport
       parentRoute: typeof AuthRoute
     }
     '/_auth/dashboard': {
@@ -117,17 +194,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthDashboardRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/tribe/$id': {
+      id: '/_auth/tribe/$id'
+      path: '/tribe/$id'
+      fullPath: '/tribe/$id'
+      preLoaderRoute: typeof AuthTribeIdRouteImport
+      parentRoute: typeof AuthRoute
+    }
   }
 }
 
 interface AuthRouteChildren {
   AuthDashboardRoute: typeof AuthDashboardRoute
+  AuthExpertsListRoute: typeof AuthExpertsListRoute
+  AuthGlobalSearchRoute: typeof AuthGlobalSearchRoute
   AuthStockTipsRoute: typeof AuthStockTipsRoute
+  AuthTribesRoute: typeof AuthTribesRoute
+  AuthTribeIdRoute: typeof AuthTribeIdRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthDashboardRoute: AuthDashboardRoute,
+  AuthExpertsListRoute: AuthExpertsListRoute,
+  AuthGlobalSearchRoute: AuthGlobalSearchRoute,
   AuthStockTipsRoute: AuthStockTipsRoute,
+  AuthTribesRoute: AuthTribesRoute,
+  AuthTribeIdRoute: AuthTribeIdRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
