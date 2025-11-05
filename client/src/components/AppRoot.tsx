@@ -3,14 +3,25 @@ import { routeTree } from '@/routeTree.gen';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { AuthProvider } from './auth/auth-context';
 
-const router = createRouter({ routeTree })
+const router = createRouter({
+    routeTree,
+    context: {
+        auth: undefined!, // This will be set by the RouterProvider
+    },
+})
 
-function AppRoot() {
+function RouterWrapper() {
     const auth = useAuth()
 
     return (
+        <RouterProvider router={router} context={{ auth }} />
+    );
+}
+
+function AppRoot() {
+    return (
         <AuthProvider>
-            <RouterProvider router={router} context={{ auth }} />
+            <RouterWrapper />
         </AuthProvider>
     );
 }

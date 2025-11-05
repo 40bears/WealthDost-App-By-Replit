@@ -34,7 +34,6 @@ export default function CreateAccount() {
   } = useCreateAccount();
   const toast = UI.toast;
 
-  // Check if user is already logged in and redirect accordingly
   useEffect(() => {
     if (auth.isAuthenticated && !auth.isLoading) {
       const redirectUrl = (search as any)?.redirect || '/dashboard';
@@ -92,8 +91,17 @@ export default function CreateAccount() {
     try {
       const response = await verifyOtpAction();
       if (response?.flow === 'login' && response.user) {
-        auth.login(response.user);
-        navigate({ to: '/dashboard' });
+        if (response.accessToken) {
+          localStorage.setItem('accessToken', response.accessToken);
+        }
+        if (response.refreshToken) {
+          localStorage.setItem('refreshToken', response.refreshToken);
+        }
+        const userWithLoginFlag = { ...response.user, isLoggedIn: true };
+        await auth.login(userWithLoginFlag);
+        setTimeout(() => {
+          navigate({ to: '/dashboard' });
+        }, 100);
         return;
       }
       toast.success("Phone Verified", "Choose your role to continue");
@@ -103,7 +111,6 @@ export default function CreateAccount() {
     }
   };
 
-  // Explicit handlers to replace inline callbacks
   const handleChangeNumber = () => {
     setIsOtpSent(false);
     flow.send("BACK");
@@ -129,7 +136,7 @@ export default function CreateAccount() {
     try {
       const [first_name = "", ...rest] = (data.fullName || "").split(" ");
       const last_name = rest.join(" ");
-      await finalizeProfile({
+      const response = await finalizeProfile({
         username: data.username,
         email: data.email,
         first_name,
@@ -143,8 +150,16 @@ export default function CreateAccount() {
           pendingId,
         },
       });
+
+      if (response?.user) {
+        const userWithLoginFlag = { ...response.user, isLoggedIn: true };
+        await auth.login(userWithLoginFlag);
+      }
+
       UI.toast.success('Welcome!', 'Your account is ready.');
-      navigate({ to: '/dashboard' });
+      setTimeout(() => {
+        navigate({ to: '/dashboard' });
+      }, 100);
     } catch (err: any) {
       UI.toast.error('Could not create account', err?.message || 'Please try again.');
     }
@@ -154,12 +169,13 @@ export default function CreateAccount() {
     try {
       const [first_name = "", ...rest] = (data.fullName || "").split(" ");
       const last_name = rest.join(" ");
-      await finalizeProfile({
+      const response = await finalizeProfile({
         username: data.username,
+        email: data.email,
         first_name,
         last_name,
-        password: data.password || undefined,
-        confirm_password: data.confirm_password || undefined,
+        password: data.password,
+        confirm_password: data.confirmPassword,
         additional: {
           role: 'expert',
           expert: data,
@@ -167,8 +183,16 @@ export default function CreateAccount() {
           pendingId,
         },
       });
+
+      if (response?.user) {
+        const userWithLoginFlag = { ...response.user, isLoggedIn: true };
+        await auth.login(userWithLoginFlag);
+      }
+
       UI.toast.success('Welcome!', 'Your account is ready.');
-      navigate({ to: '/dashboard' });
+      setTimeout(() => {
+        navigate({ to: '/dashboard' });
+      }, 100);
     } catch (err: any) {
       UI.toast.error('Could not create account', err?.message || 'Please try again.');
     }

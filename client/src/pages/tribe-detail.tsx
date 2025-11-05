@@ -1,46 +1,89 @@
 import { useState } from "react";
 import { useParams } from "@tanstack/react-router";
 import { useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, TrendingUp, BarChart3, ArrowLeft } from "lucide-react";
+import { apiClient } from "@/lib/api";
+import type { Tribe } from "@/types";
 
 const TribeDetail = () => {
   const { id } = useParams({ from: '/_auth/tribe/$id' });
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("discussion");
 
-  // Mock data - would be fetched from API based on tribe ID
+  const fixMinioUrl = (url: string | undefined): string | undefined => {
+    if (!url) return undefined;
+    return url.replace('http://minio:', 'http://localhost:');
+  };
+  const { data: tribeData, isLoading, error } = useQuery({
+    queryKey: ['tribe', id],
+    queryFn: async () => {
+      const response = await apiClient.tribes._id(Number(id)).$get();
+      return response;
+    },
+    enabled: !!id,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading tribe...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !tribeData) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">Error loading tribe</p>
+          <Button onClick={() => navigate({ to: '/investment-rooms' })}>
+            Back to Tribes
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const creatorName = tribeData.user ? `${tribeData.user.firstName} ${tribeData.user.lastName}`.trim() : "Expert User";
+  const creatorUsername = tribeData.user?.username || `user${tribeData.userId}`;
+  const coverImageUrl = fixMinioUrl(tribeData.coverImage?.publicUrl);
+
   const tribe = {
-    id: Number(id),
-    name: "Value Investing Masters",
-    createdDate: "March 2024",
-    description: "Deep dive into fundamental analysis and long-term value investing strategies. Learn from experienced investors and\nshare your insights.",
-    creator: "Rajesh Kumar",
+    id: tribeData.id,
+    name: tribeData.name,
+    createdDate: new Date(tribeData.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+    description: tribeData.description || "No description available",
+    creator: creatorName || "Expert User",
     creatorAvatar: "",
-    creatorUsername: "rajesh.kumar",
-    category: "Value Investing",
-    memberCount: 1250,
-    isPremium: false,
-    premiumPrice: "299",
-    tipsHits: 1250,
-    weeklyFeeds: 15,
-    badges: ["Expert Verified", "High Activity"],
-    coverImage: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=400&fit=crop",
+    creatorUsername: creatorUsername,
+    category: tribeData.category || "General",
+    memberCount: 0,
+    isPremium: tribeData.isPremium,
+    premiumPrice: tribeData.price || "0",
+    tipsHits: 0,
+    weeklyFeeds: 0,
+    badges: [],
+    coverImage: coverImageUrl || "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=400&fit=crop",
     rules: [
-      "Keep discussions relevant to value investing",
+      "Keep discussions relevant to the tribe's topic",
       "No spam or promotional content",
       "Respect all members and their opinions",
       "Share quality research and insights"
     ],
     stats: {
-      totalMembers: 1250,
-      tipsHits: 1250,
-      category: "Value Investing",
-      weeklyEngagement: "89%"
+      totalMembers: 0,
+      tipsHits: 0,
+      category: tribeData.category || "General",
+      weeklyEngagement: "N/A"
     }
   };
 
@@ -55,7 +98,6 @@ const TribeDetail = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Tabs */}
       <div className="sticky top-0 bg-white border-b border-gray-200 z-10">
         <div className="flex">
           <button
@@ -87,13 +129,10 @@ const TribeDetail = () => {
         </div>
       </div>
 
-      {/* Content */}
       <div className="px-4 py-4 pb-24">
         {activeTab === "discussion" && (
           <div className="space-y-4">
-            {/* Tribe Card */}
             <Card className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
-              {/* Cover Image */}
               <div className="relative">
                 {tribe.coverImage && (
                   <div className="w-full h-40 overflow-hidden">
@@ -105,7 +144,6 @@ const TribeDetail = () => {
                   </div>
                 )}
 
-                {/* Avatar - Overlapping */}
                 <div className="absolute -bottom-12 left-5">
                   <Avatar className="h-16 w-16 flex-shrink-0 border-4 border-white shadow-md">
                     {tribe.creatorAvatar ? (
@@ -119,12 +157,8 @@ const TribeDetail = () => {
               </div>
 
               <div className="p-5 pt-2">
-                {/* Header Section with Avatar space, Name and Price */}
                 <div className="flex items-start gap-3 mb-4">
-                  {/* Space for overlapping avatar */}
                   <div className="w-16 flex-shrink-0"></div>
-
-                  {/* Title and Date */}
                   <div className="flex-1 min-w-0 -mt-1">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1">
@@ -136,7 +170,6 @@ const TribeDetail = () => {
                         </p>
                       </div>
 
-                      {/* Price */}
                       <div className="text-right flex-shrink-0">
                         <div className="text-xl font-bold text-purple-600">
                           ₹{tribe.isPremium ? tribe.premiumPrice : "0"}
@@ -147,12 +180,10 @@ const TribeDetail = () => {
                   </div>
                 </div>
 
-                {/* Description */}
                 <p className="text-sm text-gray-700 leading-relaxed mb-4 whitespace-pre-line">
                   {tribe.description}
                 </p>
 
-                {/* Creator Info */}
                 <div className="flex items-center gap-2 mb-4">
                   <Avatar className="h-6 w-6 flex-shrink-0">
                     {tribe.creatorAvatar ? (
@@ -167,7 +198,6 @@ const TribeDetail = () => {
                   </span>
                 </div>
 
-                {/* Stats */}
                 <div className="flex items-center gap-6 mb-4 text-sm text-gray-600">
                   <div className="flex items-center gap-1.5">
                     <Users className="h-4 w-4" />
@@ -183,29 +213,46 @@ const TribeDetail = () => {
                   </div>
                 </div>
 
-                {/* Badges */}
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {tribe.badges.map((badge, index) => (
-                    <Badge
-                      key={index}
-                      variant="outline"
-                      className="text-xs px-3 py-1 border-gray-300 bg-white font-medium"
-                    >
-                      {badge}
-                    </Badge>
-                  ))}
-                </div>
+                {tribeData.features && tribeData.features.length > 0 && (
+                  <div className="mb-4">
+                    <h4 className="text-sm font-semibold text-gray-900 mb-2">Features:</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {tribeData.features.map((feature, index) => (
+                        <Badge
+                          key={index}
+                          variant="outline"
+                          className="text-xs px-3 py-1 border-purple-300 bg-purple-50 text-purple-700 font-medium"
+                        >
+                          {feature}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
-                {/* Leave Tribe Button */}
+                {tribe.badges.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {tribe.badges.map((badge, index) => (
+                      <Badge
+                        key={index}
+                        variant="outline"
+                        className="text-xs px-3 py-1 border-gray-300 bg-white font-medium"
+                      >
+                        {badge}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+
                 <Button
                   className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium transition-all duration-200"
+                  onClick={() => {}}
                 >
-                  Leave Tribe
+                  {tribe.isPremium ? `Subscribe for ₹${tribe.premiumPrice}/month` : "Join Tribe"}
                 </Button>
               </div>
             </Card>
 
-            {/* Tribe Rules */}
             <Card className="bg-white border border-gray-200 rounded-2xl p-5">
               <h3 className="font-bold text-base text-gray-900 mb-4">Tribe Rules</h3>
               <ol className="space-y-3">
@@ -245,7 +292,6 @@ const TribeDetail = () => {
 
         {activeTab === "about" && (
           <div className="space-y-4">
-            {/* Tribe Rules */}
             <Card className="bg-white border border-gray-200 rounded-2xl p-5">
               <h3 className="font-bold text-base text-gray-900 mb-4">Tribe Rules</h3>
               <ol className="space-y-3">
@@ -258,7 +304,6 @@ const TribeDetail = () => {
               </ol>
             </Card>
 
-            {/* Tribe Stats */}
             <Card className="bg-white border border-gray-200 rounded-2xl p-5">
               <h3 className="font-bold text-base text-gray-900 mb-4">Tribe Stats</h3>
               <div className="grid grid-cols-2 gap-6">
