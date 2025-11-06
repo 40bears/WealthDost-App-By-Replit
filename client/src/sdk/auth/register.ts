@@ -14,7 +14,8 @@ export async function verifyRegistration(body: VerifyChallengeRequest): Promise<
   return apiClient.auth.challenge.verify.$post({ body });
 }
 
-export async function finalizeRegistration(body: FinalizeUserRegistration) {
-  return apiClient.auth.challenge.finalize.$post({ body });
+export async function finalizeRegistration(body: FinalizeUserRegistration): Promise<any> {
+  const response = await apiClient.auth.challenge.finalize.$post({ body });
+  return response;
 }
 

@@ -117,10 +117,10 @@ export interface FinalizeProfileInput {
   confirm_password: string;
   additional?: Record<string, any>;
 }
-export async function finalizeAccountWithProfile(pendingId: string, input: FinalizeProfileInput): Promise<void> {
+export async function finalizeAccountWithProfile(pendingId: string, input: FinalizeProfileInput): Promise<any> {
   if (!pendingId) throw new Error("Missing registration context. Please verify OTP again.");
   const username = input.username || (input.email ? input.email.split('@')[0] : 'user');
-  await finalizeRegistration({
+  const user = await finalizeRegistration({
     driver: "totp",
     pendingId,
     email: input.email,
@@ -131,6 +131,9 @@ export async function finalizeAccountWithProfile(pendingId: string, input: Final
     confirm_password: input.confirm_password,
     additional: input.additional || {},
   });
+
+  // The finalize endpoint returns the user object directly
+  return { user };
 }
 
 export function useCreateAccount() {
@@ -191,7 +194,8 @@ export function useCreateAccount() {
   const finalizeProfileAction = useCallback(async (input: FinalizeProfileInput) => {
     setIsLoading(true);
     try {
-      await finalizeAccountWithProfile(pendingId, input);
+      const response = await finalizeAccountWithProfile(pendingId, input);
+      return response;
     } finally {
       setIsLoading(false);
     }

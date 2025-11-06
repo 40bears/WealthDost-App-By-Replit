@@ -1,9 +1,12 @@
 import { MarketNews } from "@/components/dashboard/MarketNews";
 import StockPerformance from "@/components/dashboard/StockPerformance";
 import { TrendingFeed } from "@/components/dashboard/TrendingFeed";
+import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 const Dashboard = () => {
+  const auth = useAuth();
 
   // Fetch market data
   const { data: marketData, isLoading: isLoadingMarketData } = useQuery({

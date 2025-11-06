@@ -12,6 +12,7 @@ import { z } from "zod";
 
 type FormData = {
   fullName: string;
+  email: string;
   username: string;
   profileBio: string;
   password: string;
@@ -42,6 +43,7 @@ export function ExpertBasicProfile({
       z
         .object({
           fullName: z.string().min(1, "Full name is required"),
+          email: z.string().min(1, "Email is required").email("Invalid email address"),
           username: z.string().min(3, "Username must be at least 3 characters"),
           profileBio: z.string().optional().or(z.literal("")),
           education: z.string().min(1, "Please select your qualification"),
@@ -58,7 +60,6 @@ export function ExpertBasicProfile({
 
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
   const [checking, setChecking] = useState(false);
-  // usernameRef not needed since UsernameInput handles staleness
 
   function setUsernameError(message?: string) {
     setErrors((prev) => ({ ...prev, username: message }));
@@ -127,6 +128,13 @@ export function ExpertBasicProfile({
           <Input id="fullName" name="fullName" value={formData.fullName} onChange={onBasicChange} className="mt-1" placeholder="Your name" />
           {errors?.fullName && (
             <p className="text-xs text-red-600 mt-1">{errors.fullName}</p>
+          )}
+        </div>
+        <div>
+          <Label htmlFor="email">Email Address</Label>
+          <Input id="email" name="email" type="email" value={formData.email} onChange={onBasicChange} className="mt-1" placeholder="your@email.com" />
+          {errors?.email && (
+            <p className="text-xs text-red-600 mt-1">{errors.email}</p>
           )}
         </div>
         <UsernameInput

@@ -177,7 +177,7 @@ export default function TribeCard({
           }}
           className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium transition-all duration-200"
         >
-          {isPremium ? "Join now for Free" : "Join now for Free"}
+          {isPremium ? "Subscribe Now" : "Join for Free"}
         </Button>
       </div>
     </Card>

@@ -27,6 +27,7 @@ export const ExpertOnboarding = ({ onBack, onComplete }: ExpertOnboardingProps) 
   });
   const [formData, setFormData] = useState({
     fullName: "",
+    email: "",
     username: "",
     profileBio: "",
     password: "",

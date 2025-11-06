@@ -4,14 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import TribeCard from "@/components/dashboard/TribeCard";
 import { useNavigate } from "@tanstack/react-router";
+import { apiClient } from "@/lib/api";
+import type { Tribe } from "@/types";
 
 const InvestmentRooms = () => {
   const [filterCategory, setFilterCategory] = useState("all");
-  const [filterType, setFilterType] = useState("all"); // all, free, premium, sponsored
+  const [filterType, setFilterType] = useState("all");
   const navigate = useNavigate();
+  const { data: tribes = [], isLoading, error } = useQuery({
+    queryKey: ['tribes'],
+    queryFn: async () => {
+      const response = await apiClient.tribes.$get();
+      return response;
+    }
+  });
 
-  // Mock data - would be fetched from API
-  const rooms = [
+  const mockRooms = [
     {
       id: 1,
       name: "Value Investing Masters",
@@ -65,6 +73,33 @@ const InvestmentRooms = () => {
     }
   ];
 
+  const fixMinioUrl = (url: string | undefined): string | undefined => {
+    if (!url) return undefined;
+    return url.replace('http://minio:', 'http://localhost:');
+  };
+  const rooms = tribes.map((tribe) => {
+    const creatorName = tribe.user ? `${tribe.user.firstName} ${tribe.user.lastName}`.trim() : "Expert User";
+    const creatorUsername = tribe.user?.username || `user${tribe.userId}`;
+
+    return {
+      id: tribe.id,
+      name: tribe.name,
+      createdDate: new Date(tribe.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+      description: tribe.description,
+      creator: creatorName || "Expert User",
+      creatorAvatar: "",
+      creatorUsername: creatorUsername,
+      category: tribe.category,
+      memberCount: tribe.member_count || 0,
+      isPremium: tribe.isPremium,
+      premiumPrice: tribe.price || "0",
+      tipsHits: tribe.tips_hits || 0,
+      weeklyFeeds: tribe.weekly_feeds || 0,
+      badges: tribe.badges || [],
+      coverImage: fixMinioUrl(tribe.coverImage?.publicUrl) || mockRooms.find(m => m.category === tribe.category)?.coverImage || "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=400&fit=crop"
+    };
+  });
+
   const categories = ["all", "Value Investing", "Technology", "Banking", "Healthcare", "Energy"];
   const filterTypes = [
     { value: "all", label: "All Rooms" },
@@ -82,18 +117,33 @@ const InvestmentRooms = () => {
   });
 
   const handleJoinClick = (roomId: number) => {
-    console.log("Join clicked for room:", roomId);
-    // Add join logic here
   };
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-green-50/30 to-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading tribes...</p>
+        </div>
+      </div>
+    );
+  }
 
-
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-green-50/30 to-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">Error loading tribes</p>
+          <Button onClick={() => window.location.reload()}>Retry</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-green-50/30 to-gray-100">
-      {/* Header */}
       <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b-2 border-gray-200/50 shadow-lg z-20">
         <div className="max-w-md mx-auto px-4 py-4">
-          {/* Dropdown Filters */}
           <div className="flex gap-3">
             <div className="flex-1">
               <Select value={filterType} onValueChange={setFilterType}>
@@ -128,7 +178,6 @@ const InvestmentRooms = () => {
         </div>
       </div>
 
-      {/* Rooms List */}
       <div className="max-w-md mx-auto px-4 pt-4 pb-24 space-y-4">
         {filteredRooms.map((room) => (
           <TribeCard
@@ -165,7 +214,6 @@ const InvestmentRooms = () => {
         )}
       </div>
 
-      {/* Bottom padding for safe area */}
       <div className="h-20"></div>
     </div>
   );
