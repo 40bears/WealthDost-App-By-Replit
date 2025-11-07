@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useQueryClient } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
@@ -68,6 +69,7 @@ export default function CreateTribeModal({ isOpen, onClose, onTribeCreated }: Cr
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const [uploadedFileId, setUploadedFileId] = useState<number | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const queryClient = useQueryClient()
   const { toast } = useToast()
 
   const {
@@ -179,6 +181,9 @@ export default function CreateTribeModal({ isOpen, onClose, onTribeCreated }: Cr
       const response = await apiClient.tribes.$post({
         body: requestBody,
       });
+
+      // Invalidate tribes query to refresh the list
+      queryClient.invalidateQueries({ queryKey: ['tribes'] });
 
       toast({
         title: "Tribe Created!",

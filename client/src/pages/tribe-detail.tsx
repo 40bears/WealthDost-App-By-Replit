@@ -1,25 +1,31 @@
 import { useState } from "react";
 import { useParams } from "@tanstack/react-router";
 import { useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, TrendingUp, BarChart3, ArrowLeft } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Users, TrendingUp, BarChart3, Edit2, X, Check } from "lucide-react";
 import { apiClient } from "@/lib/api";
 import type { Tribe } from "@/types";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
+import type { TribeRule } from "@/api/tribes/_id@number/rules/index";
 
 const TribeDetail = () => {
   const { id } = useParams({ from: '/_auth/tribe/$id' });
   const navigate = useNavigate();
+  const { user: currentUser } = useAuth();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("discussion");
+  const [isEditingRules, setIsEditingRules] = useState(false);
+  const [editedRules, setEditedRules] = useState<string[]>([]);
+  const [originalRules, setOriginalRules] = useState<TribeRule[]>([]);
 
-  const fixMinioUrl = (url: string | undefined): string | undefined => {
-    if (!url) return undefined;
-    return url.replace('http://minio:', 'http://localhost:');
-  };
   const { data: tribeData, isLoading, error } = useQuery({
     queryKey: ['tribe', id],
     queryFn: async () => {
@@ -28,6 +34,105 @@ const TribeDetail = () => {
     },
     enabled: !!id,
   });
+
+  const updateRulesMutation = useMutation({
+    mutationFn: async (rules: string[]) => {
+      const operations = [];
+
+      // Update existing rules and create new ones
+      for (let i = 0; i < rules.length; i++) {
+        const ruleContent = rules[i].trim();
+        if (!ruleContent) continue;
+
+        const originalRule = originalRules[i];
+
+        if (originalRule) {
+          // Update existing rule if content changed
+          if (originalRule.content !== ruleContent) {
+            operations.push(
+              apiClient.tribes._id(Number(id)).rules._ruleId(originalRule.id).$patch({
+                body: { content: ruleContent }
+              })
+            );
+          }
+        } else {
+          // Create new rule
+          operations.push(
+            apiClient.tribes._id(Number(id)).rules.$post({
+              body: { content: ruleContent }
+            })
+          );
+        }
+      }
+
+      // Delete removed rules
+      for (let i = rules.length; i < originalRules.length; i++) {
+        operations.push(
+          apiClient.tribes._id(Number(id)).rules._ruleId(originalRules[i].id).$delete()
+        );
+      }
+
+      // Execute all operations
+      await Promise.all(operations);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tribe', id] });
+      toast({
+        title: "Rules updated successfully",
+        description: "Your tribe rules have been updated.",
+      });
+      setIsEditingRules(false);
+      setEditedRules([]);
+      setOriginalRules([]);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error updating rules",
+        description: error.message || "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const fixMinioUrl = (url: string | undefined): string | undefined => {
+    if (!url) return undefined;
+    return url.replace('http://minio:', 'http://localhost:');
+  };
+
+  const parseFeatures = (features: string[]): Record<string, boolean> => {
+    if (!features || features.length === 0) return {};
+    try {
+      // The API returns a malformed JSON split into array elements
+      // Example: ["{\"discussionPosts\":true", "\"stockTips\":true", ...]
+      let joinedString = features.join(',');
+
+      // Ensure it's properly wrapped
+      if (!joinedString.startsWith('{')) {
+        joinedString = '{' + joinedString;
+      }
+      if (!joinedString.endsWith('}')) {
+        joinedString = joinedString + '}';
+      }
+
+      // Remove escaped quotes - replace \" with "
+      joinedString = joinedString.replace(/\\"/g, '"');
+
+      return JSON.parse(joinedString);
+    } catch (error) {
+      console.error('Error parsing features:', error);
+      return {};
+    }
+  };
+
+  const getFeatureLabel = (key: string): string => {
+    const labels: Record<string, string> = {
+      discussionPosts: "Discussion Posts",
+      stockTips: "Stock Tips",
+      liveEvents: "Live Events",
+      premiumPolls: "Premium Polls"
+    };
+    return labels[key] || key;
+  };
 
   if (isLoading) {
     return (
@@ -56,6 +161,18 @@ const TribeDetail = () => {
   const creatorName = tribeData.user ? `${tribeData.user.firstName} ${tribeData.user.lastName}`.trim() : "Expert User";
   const creatorUsername = tribeData.user?.username || `user${tribeData.userId}`;
   const coverImageUrl = fixMinioUrl(tribeData.coverImage?.publicUrl);
+  const isOwner = currentUser?.id === tribeData.userId;
+
+  const parsedFeatures = parseFeatures(tribeData.features || []);
+  const activeFeatures = Object.entries(parsedFeatures)
+    .filter(([_, value]) => value === true)
+    .map(([key]) => getFeatureLabel(key));
+
+  // Parse rules from API - sort by displayOrder
+  const apiRulesData = (tribeData.rules || [])
+    .sort((a: any, b: any) => a.displayOrder - b.displayOrder);
+
+  const apiRules = apiRulesData.map((rule: any) => rule.content);
 
   const tribe = {
     id: tribeData.id,
@@ -73,12 +190,7 @@ const TribeDetail = () => {
     weeklyFeeds: 0,
     badges: [],
     coverImage: coverImageUrl || "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=400&fit=crop",
-    rules: [
-      "Keep discussions relevant to the tribe's topic",
-      "No spam or promotional content",
-      "Respect all members and their opinions",
-      "Share quality research and insights"
-    ],
+    rules: apiRules,
     stats: {
       totalMembers: 0,
       tipsHits: 0,
@@ -94,6 +206,46 @@ const TribeDetail = () => {
       .join('')
       .toUpperCase()
       .slice(0, 2);
+  };
+
+  const handleEditRules = () => {
+    setEditedRules([...tribe.rules]);
+    setOriginalRules(apiRulesData as unknown as TribeRule[]);
+    setIsEditingRules(true);
+  };
+
+  const handleSaveRules = () => {
+    const filteredRules = editedRules.filter(rule => rule.trim() !== "");
+    if (filteredRules.length === 0) {
+      toast({
+        title: "No rules to save",
+        description: "Please add at least one rule.",
+        variant: "destructive",
+      });
+      return;
+    }
+    updateRulesMutation.mutate(filteredRules);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditingRules(false);
+    setEditedRules([]);
+    setOriginalRules([]);
+  };
+
+  const handleRuleChange = (index: number, value: string) => {
+    const newRules = [...editedRules];
+    newRules[index] = value;
+    setEditedRules(newRules);
+  };
+
+  const handleAddRule = () => {
+    setEditedRules([...editedRules, ""]);
+  };
+
+  const handleRemoveRule = (index: number) => {
+    const newRules = editedRules.filter((_, i) => i !== index);
+    setEditedRules(newRules);
   };
 
   return (
@@ -131,6 +283,35 @@ const TribeDetail = () => {
 
       <div className="px-4 py-4 pb-24">
         {activeTab === "discussion" && (
+          <div className="flex flex-col items-center justify-center py-16 px-4">
+            <div className="text-center max-w-sm">
+              <div className="mb-4">
+                <svg
+                  className="mx-auto h-16 w-16 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                No discussions yet
+              </h3>
+              <p className="text-sm text-gray-500">
+                Join this tribe to start engaging with other members and share your insights.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "about" && (
           <div className="space-y-4">
             <Card className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
               <div className="relative">
@@ -213,11 +394,11 @@ const TribeDetail = () => {
                   </div>
                 </div>
 
-                {tribeData.features && tribeData.features.length > 0 && (
+                {activeFeatures.length > 0 && (
                   <div className="mb-4">
                     <h4 className="text-sm font-semibold text-gray-900 mb-2">Features:</h4>
                     <div className="flex flex-wrap gap-2">
-                      {tribeData.features.map((feature, index) => (
+                      {activeFeatures.map((feature, index) => (
                         <Badge
                           key={index}
                           variant="outline"
@@ -244,66 +425,97 @@ const TribeDetail = () => {
                   </div>
                 )}
 
-                <Button
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium transition-all duration-200"
-                  onClick={() => {}}
-                >
-                  {tribe.isPremium ? `Subscribe for ₹${tribe.premiumPrice}/month` : "Join Tribe"}
-                </Button>
+                {!isOwner && (
+                  <Button
+                    className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium transition-all duration-200"
+                    onClick={() => {}}
+                  >
+                    Leave Tribe
+                  </Button>
+                )}
               </div>
             </Card>
 
             <Card className="bg-white border border-gray-200 rounded-2xl p-5">
-              <h3 className="font-bold text-base text-gray-900 mb-4">Tribe Rules</h3>
-              <ol className="space-y-3">
-                {tribe.rules.map((rule, index) => (
-                  <li key={index} className="text-sm text-gray-700 flex gap-2">
-                    <span className="text-purple-600 font-medium">{index + 1}.</span>
-                    <span>{rule}</span>
-                  </li>
-                ))}
-              </ol>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-bold text-base text-gray-900">Tribe Rules</h3>
+                {isOwner && !isEditingRules && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleEditRules}
+                    className="flex items-center gap-1"
+                  >
+                    <Edit2 className="h-3 w-3" />
+                    Edit
+                  </Button>
+                )}
+                {isEditingRules && (
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleCancelEdit}
+                      className="flex items-center gap-1"
+                    >
+                      <X className="h-3 w-3" />
+                      Cancel
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={handleSaveRules}
+                      className="flex items-center gap-1 bg-purple-600 hover:bg-purple-700"
+                    >
+                      <Check className="h-3 w-3" />
+                      Save
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {isEditingRules ? (
+                <div className="space-y-3">
+                  {editedRules.map((rule, index) => (
+                    <div key={index} className="flex gap-2 items-start">
+                      <span className="text-purple-600 font-medium text-sm mt-2">{index + 1}.</span>
+                      <Input
+                        value={rule}
+                        onChange={(e) => handleRuleChange(index, e.target.value)}
+                        className="flex-1"
+                        placeholder="Enter rule"
+                      />
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleRemoveRule(index)}
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAddRule}
+                    className="w-full mt-2"
+                  >
+                    + Add Rule
+                  </Button>
+                </div>
+              ) : (
+                <ol className="space-y-3">
+                  {tribe.rules.map((rule, index) => (
+                    <li key={index} className="text-sm text-gray-700 flex gap-2">
+                      <span className="text-purple-600 font-medium">{index + 1}.</span>
+                      <span>{rule}</span>
+                    </li>
+                  ))}
+                </ol>
+              )}
             </Card>
 
             {/* Tribe Stats */}
-            <Card className="bg-white border border-gray-200 rounded-2xl p-5">
-              <h3 className="font-bold text-base text-gray-900 mb-4">Tribe Stats</h3>
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Total Members</p>
-                  <p className="text-base font-bold text-gray-900">{tribe.stats.totalMembers}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Tips Hits</p>
-                  <p className="text-base font-bold text-gray-900">{tribe.stats.tipsHits}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Category</p>
-                  <p className="text-base font-bold text-gray-900">{tribe.stats.category}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Weekly Engagement</p>
-                  <p className="text-base font-bold text-gray-900">{tribe.stats.weeklyEngagement}</p>
-                </div>
-              </div>
-            </Card>
-          </div>
-        )}
-
-        {activeTab === "about" && (
-          <div className="space-y-4">
-            <Card className="bg-white border border-gray-200 rounded-2xl p-5">
-              <h3 className="font-bold text-base text-gray-900 mb-4">Tribe Rules</h3>
-              <ol className="space-y-3">
-                {tribe.rules.map((rule, index) => (
-                  <li key={index} className="text-sm text-gray-700 flex gap-2">
-                    <span className="text-purple-600 font-medium">{index + 1}.</span>
-                    <span>{rule}</span>
-                  </li>
-                ))}
-              </ol>
-            </Card>
-
             <Card className="bg-white border border-gray-200 rounded-2xl p-5">
               <h3 className="font-bold text-base text-gray-900 mb-4">Tribe Stats</h3>
               <div className="grid grid-cols-2 gap-6">
