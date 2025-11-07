@@ -1,4 +1,4 @@
-import Home from '@/pages/home'
+import CreateAccount from '@/pages/create-account'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
@@ -6,5 +6,5 @@ export const Route = createFileRoute('/')({
 })
 
 function RouteComponent() {
-  return <Home />
+  return <CreateAccount />
 }

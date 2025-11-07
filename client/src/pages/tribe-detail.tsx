@@ -1,348 +1,332 @@
 import { useState } from "react";
-import { useParams, Link } from "wouter";
+import { useParams } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Users, TrendingUp, BarChart3, ArrowLeft } from "lucide-react";
+import { apiClient } from "@/lib/api";
+import type { Tribe } from "@/types";
 
 const TribeDetail = () => {
-  const { id } = useParams();
-  const [isJoined, setIsJoined] = useState(false);
-  
-  const handlePinPost = (postId: number) => {
-    console.log(`Pinning post ${postId}`);
-    // Handle pin functionality here
+  const { id } = useParams({ from: '/_auth/tribe/$id' });
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("discussion");
+
+  const fixMinioUrl = (url: string | undefined): string | undefined => {
+    if (!url) return undefined;
+    return url.replace('http://minio:', 'http://localhost:');
   };
-  
-  const handleReportPost = (postId: number) => {
-    console.log(`Reporting post ${postId}`);
-    // Handle report functionality here
-  };
-  
-  // Mock data - would be fetched from API based on tribe ID
+  const { data: tribeData, isLoading, error } = useQuery({
+    queryKey: ['tribe', id],
+    queryFn: async () => {
+      const response = await apiClient.tribes._id(Number(id)).$get();
+      return response;
+    },
+    enabled: !!id,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading tribe...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !tribeData) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">Error loading tribe</p>
+          <Button onClick={() => navigate({ to: '/investment-rooms' })}>
+            Back to Tribes
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const creatorName = tribeData.user ? `${tribeData.user.firstName} ${tribeData.user.lastName}`.trim() : "Expert User";
+  const creatorUsername = tribeData.user?.username || `user${tribeData.userId}`;
+  const coverImageUrl = fixMinioUrl(tribeData.coverImage?.publicUrl);
+
   const tribe = {
-    id: Number(id),
-    name: "Value Investing Masters",
-    description: "Deep dive into fundamental analysis and long-term value investing strategies. Learn from experienced investors and share your insights.",
-    creator: "Rajesh Kumar",
-    creatorAvatar: "RK",
-    creatorUsername: "rajeshkumar",
-    category: "Value Investing",
-    memberCount: 1250,
-    isPremium: true,
-    premiumPrice: "299",
-    isSponsored: false,
-    tipsHits: 1250,
-    weeklyEngagement: 89,
-    badges: ["Expert Verified", "High Activity"],
-    createdDate: "March 2024",
-    coverImage: null, // Would be a URL in real implementation
+    id: tribeData.id,
+    name: tribeData.name,
+    createdDate: new Date(tribeData.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+    description: tribeData.description || "No description available",
+    creator: creatorName || "Expert User",
+    creatorAvatar: "",
+    creatorUsername: creatorUsername,
+    category: tribeData.category || "General",
+    memberCount: 0,
+    isPremium: tribeData.isPremium,
+    premiumPrice: tribeData.price || "0",
+    tipsHits: 0,
+    weeklyFeeds: 0,
+    badges: [],
+    coverImage: coverImageUrl || "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=400&fit=crop",
     rules: [
-      "Keep discussions relevant to value investing",
+      "Keep discussions relevant to the tribe's topic",
       "No spam or promotional content",
       "Respect all members and their opinions",
       "Share quality research and insights"
-    ]
+    ],
+    stats: {
+      totalMembers: 0,
+      tipsHits: 0,
+      category: tribeData.category || "General",
+      weeklyEngagement: "N/A"
+    }
   };
 
-  // Only creator posts since only the creator will be posting
-  const posts = [
-    {
-      id: 1,
-      author: tribe.creator,
-      authorAvatar: tribe.creatorAvatar,
-      authorUsername: tribe.creatorUsername,
-      timestamp: "2h",
-      content: "Just analyzed Tata Steel's latest quarterly results. The debt-to-equity ratio is improving significantly. What are your thoughts on their expansion plans?",
-      likes: 24,
-      comments: 8,
-      isPinned: true
-    },
-    {
-      id: 2,
-      author: tribe.creator,
-      authorAvatar: tribe.creatorAvatar,
-      authorUsername: tribe.creatorUsername,
-      timestamp: "5h",
-      content: "Warren Buffett's latest letter mentions the importance of patience in value investing. How do you maintain discipline during market volatility?",
-      likes: 18,
-      comments: 12,
-      isPinned: false
-    },
-    {
-      id: 3,
-      author: tribe.creator,
-      authorAvatar: tribe.creatorAvatar,
-      authorUsername: tribe.creatorUsername,
-      timestamp: "1d",
-      content: "Found an interesting undervalued stock in the pharmaceutical sector. ROE consistently above 15% for the past 5 years. DM me for details (Premium members only).",
-      likes: 31,
-      comments: 15,
-      isPinned: false
-    }
-  ];
-
-
-  const handleJoinSubscribe = () => {
-    if (tribe.isPremium && !isJoined) {
-      // Handle premium subscription logic
-      console.log(`Subscribing to ${tribe.name} for ₹${tribe.premiumPrice}/month`);
-    }
-    setIsJoined(!isJoined);
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-green-50/30 to-gray-100">
-      {/* Header */}
-      <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b-2 border-gray-200/50 shadow-lg z-20">
-        <div className="max-w-md mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-3">
-            <Link href="/investment-rooms">
-              <Button variant="ghost" size="sm" className="p-1 text-gray-600 border-2 border-transparent hover:border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 transition-all duration-300 hover:scale-105 active:scale-95 rounded-xl">
-                <span className="material-icons text-lg">arrow_back</span>
-              </Button>
-            </Link>
-            <div className="text-center flex-1">
-              <h1 className="text-lg font-semibold truncate">{tribe.name}</h1>
-              <p className="text-xs text-gray-500">{tribe.memberCount.toLocaleString()} members</p>
-            </div>
-            <Button variant="ghost" size="sm" className="p-1 text-gray-600 border-2 border-transparent hover:border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 transition-all duration-300 hover:scale-105 active:scale-95 rounded-xl">
-              <span className="material-icons text-lg">more_vert</span>
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Tribe Banner */}
-      <div className="max-w-md mx-auto px-4 py-4">
-        <div className="bg-white/70 backdrop-blur-md border-2 border-gray-200 hover:border-gray-300 shadow-lg rounded-2xl relative overflow-hidden">
-          {/* Cover Image Area */}
-          <div className="h-32 bg-gradient-to-r from-purple-400 to-purple-600 relative">
-            {tribe.isSponsored && (
-              <div className="absolute top-3 right-3">
-                <Badge className="text-xs bg-blue-100/70 backdrop-blur-sm text-blue-700 border-2 border-blue-200">
-                  Sponsored
-                </Badge>
-              </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="sticky top-0 bg-white border-b border-gray-200 z-10">
+        <div className="flex">
+          <button
+            onClick={() => setActiveTab("discussion")}
+            className={`flex-1 py-4 text-sm font-medium transition-colors relative ${
+              activeTab === "discussion"
+                ? "text-gray-900"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            Discussion
+            {activeTab === "discussion" && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900" />
             )}
-          </div>
-          
-          {/* Tribe Info */}
-          <div className="p-4 -mt-8 relative">
-            <div className="flex items-end space-x-3 mb-3">
-              <Avatar className="h-16 w-16 border-4 border-white shadow-lg">
-                <AvatarFallback className="bg-purple-100 text-purple-600 text-lg font-bold">
-                  {tribe.name.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <h2 className="text-xl font-bold">{tribe.name}</h2>
-                <p className="text-sm text-gray-600">Created in {tribe.createdDate}</p>
-              </div>
-              {tribe.isPremium && (
-                <div className="text-right">
-                  <div className="text-lg font-bold text-purple-600">₹{tribe.premiumPrice}</div>
-                  <div className="text-xs text-gray-500">/month</div>
-                </div>
-              )}
-            </div>
-            
-            <p className="text-sm text-gray-700 mb-3">{tribe.description}</p>
-            
-            {/* Creator Info */}
-            <div className="flex items-center space-x-2 mb-3">
-              <Avatar className="h-6 w-6 border-2 border-purple-200">
-                <AvatarFallback className="bg-purple-100 text-purple-600 text-xs">
-                  {tribe.creatorAvatar}
-                </AvatarFallback>
-              </Avatar>
-              <span className="text-sm text-gray-600">Created by {tribe.creator}</span>
-              <Badge variant="secondary" className="text-xs">
-                {tribe.category}
-              </Badge>
-            </div>
-            
-            {/* Stats */}
-            <div className="flex items-center space-x-4 text-sm text-gray-500 mb-4">
-              <span className="flex items-center">
-                <span className="material-icons text-sm mr-1">group</span>
-                {tribe.memberCount.toLocaleString()} members
-              </span>
-              <span className="flex items-center">
-                <span className="material-icons text-sm mr-1">trending_up</span>
-                {tribe.tipsHits} hits
-              </span>
-              <span className="flex items-center">
-                <span className="material-icons text-sm mr-1">bar_chart</span>
-                {tribe.weeklyEngagement}% weekly
-              </span>
-            </div>
-            
-            {/* Badges */}
-            <div className="flex flex-wrap gap-1 mb-4">
-              {tribe.badges.map((badge, index) => (
-                <Badge key={index} variant="secondary" className="text-xs border-2 hover:border-gray-300">
-                  {badge}
-                </Badge>
-              ))}
-            </div>
-            
-            {/* Join/Subscribe Button */}
-            <Button 
-              onClick={handleJoinSubscribe}
-              className={`w-full text-sm border-2 transition-all duration-300 hover:scale-105 active:scale-95 ${
-                tribe.isPremium && !isJoined 
-                  ? 'bg-purple-600/90 backdrop-blur-sm text-white border-purple-400 hover:border-purple-300 hover:shadow-lg hover:shadow-purple-500/30' 
-                  : isJoined 
-                    ? 'bg-green-600/90 backdrop-blur-sm text-white border-green-400 hover:border-green-300 hover:shadow-lg hover:shadow-green-500/30'
-                    : 'bg-purple-100/70 backdrop-blur-sm text-purple-700 border-purple-200 hover:border-purple-300 hover:bg-purple-200/70'
-              }`}
-              data-testid={tribe.isPremium ? "button-subscribe" : "button-join"}
-            >
-              {isJoined 
-                ? "Joined ✓" 
-                : tribe.isPremium 
-                  ? `Subscribe for ₹${tribe.premiumPrice}/mo` 
-                  : "Join Tribe"
-              }
-            </Button>
-          </div>
+          </button>
+          <button
+            onClick={() => setActiveTab("about")}
+            className={`flex-1 py-4 text-sm font-medium transition-colors relative ${
+              activeTab === "about"
+                ? "text-gray-900"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            About
+            {activeTab === "about" && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900" />
+            )}
+          </button>
         </div>
       </div>
 
-      {/* Content Tabs */}
-      <div className="max-w-md mx-auto px-4 pb-24">
-        <Tabs defaultValue="posts" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-white/70 backdrop-blur-md border-2 border-gray-200">
-            <TabsTrigger value="posts" className="text-sm">Posts</TabsTrigger>
-            <TabsTrigger value="about" className="text-sm">About</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="posts" className="space-y-4 mt-4">
-            {posts.map((post) => (
-              <div key={post.id} className="bg-white/70 backdrop-blur-md border-2 border-gray-200 hover:border-gray-300 shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl relative">
-                {/* Context Menu - Top Right */}
-                <div className="absolute top-3 right-3 z-10">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="p-1 h-auto w-auto hover:bg-gray-100 rounded-full"
-                        data-testid={`button-context-menu-${post.id}`}
-                      >
-                        <span className="material-icons text-sm text-gray-500">more_vert</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48">
-                      <DropdownMenuItem 
-                        onClick={() => handlePinPost(post.id)}
-                        className="flex items-center space-x-2"
-                        data-testid={`menu-pin-${post.id}`}
-                      >
-                        <span className="material-icons text-sm">push_pin</span>
-                        <span>{post.isPinned ? 'Unpin Post' : 'Pin Post'}</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        onClick={() => handleReportPost(post.id)}
-                        className="flex items-center space-x-2 text-red-600"
-                        data-testid={`menu-report-${post.id}`}
-                      >
-                        <span className="material-icons text-sm">flag</span>
-                        <span>Report Post</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-                
-                {/* Pinned Badge */}
-                {post.isPinned && (
-                  <div className="absolute top-3 left-3">
-                    <Badge className="text-xs bg-yellow-100/70 text-yellow-700 border-2 border-yellow-200">
-                      <span className="material-icons text-xs mr-1">push_pin</span>
-                      Pinned
-                    </Badge>
+      <div className="px-4 py-4 pb-24">
+        {activeTab === "discussion" && (
+          <div className="space-y-4">
+            <Card className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+              <div className="relative">
+                {tribe.coverImage && (
+                  <div className="w-full h-40 overflow-hidden">
+                    <img
+                      src={tribe.coverImage}
+                      alt={tribe.name}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 )}
-                
-                <div className="p-4">
-                  <div className="flex items-start space-x-3 mb-3">
-                    <Avatar className="h-10 w-10 border-2 border-purple-200">
-                      <AvatarFallback className="bg-purple-100 text-purple-600 text-sm">
-                        {post.authorAvatar}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-1 mb-2">
-                        <h4 className="font-semibold text-sm">{post.author}</h4>
-                        <span className="text-gray-500 text-sm">@{post.authorUsername}</span>
-                        <span className="text-gray-400 text-sm">·</span>
-                        <span className="text-gray-500 text-sm">{post.timestamp}</span>
+
+                <div className="absolute -bottom-12 left-5">
+                  <Avatar className="h-16 w-16 flex-shrink-0 border-4 border-white shadow-md">
+                    {tribe.creatorAvatar ? (
+                      <AvatarImage src={tribe.creatorAvatar} alt={tribe.creator} />
+                    ) : null}
+                    <AvatarFallback className="bg-purple-100 text-purple-600 font-semibold text-lg">
+                      {getInitials(tribe.creator)}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+              </div>
+
+              <div className="p-5 pt-2">
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="w-16 flex-shrink-0"></div>
+                  <div className="flex-1 min-w-0 -mt-1">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1">
+                        <h3 className="font-bold text-lg text-gray-900 leading-tight mb-0.5">
+                          {tribe.name}
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                          Created in {tribe.createdDate}
+                        </p>
                       </div>
-                      <p className="text-sm text-gray-900 leading-relaxed">{post.content}</p>
+
+                      <div className="text-right flex-shrink-0">
+                        <div className="text-xl font-bold text-purple-600">
+                          ₹{tribe.isPremium ? tribe.premiumPrice : "0"}
+                        </div>
+                        <div className="text-xs text-gray-500">/month</div>
+                      </div>
                     </div>
                   </div>
-                  
-                  <div className="flex items-center space-x-4 text-sm text-gray-500">
-                    <Button variant="ghost" size="sm" className="p-1 h-auto hover:bg-red-50 hover:text-red-600">
-                      <span className="material-icons text-sm mr-1">favorite_border</span>
-                      {post.likes}
-                    </Button>
-                    <Button variant="ghost" size="sm" className="p-1 h-auto hover:bg-blue-50 hover:text-blue-600">
-                      <span className="material-icons text-sm mr-1">chat_bubble_outline</span>
-                      {post.comments}
-                    </Button>
-                    <Button variant="ghost" size="sm" className="p-1 h-auto hover:bg-green-50 hover:text-green-600">
-                      <span className="material-icons text-sm">share</span>
-                    </Button>
+                </div>
+
+                <p className="text-sm text-gray-700 leading-relaxed mb-4 whitespace-pre-line">
+                  {tribe.description}
+                </p>
+
+                <div className="flex items-center gap-2 mb-4">
+                  <Avatar className="h-6 w-6 flex-shrink-0">
+                    {tribe.creatorAvatar ? (
+                      <AvatarImage src={tribe.creatorAvatar} alt={tribe.creator} />
+                    ) : null}
+                    <AvatarFallback className="bg-purple-100 text-purple-600 font-semibold text-xs">
+                      {getInitials(tribe.creator)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm text-gray-600">
+                    Created by {tribe.creator} (@{tribe.creatorUsername})
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-6 mb-4 text-sm text-gray-600">
+                  <div className="flex items-center gap-1.5">
+                    <Users className="h-4 w-4" />
+                    <span>{tribe.memberCount} members</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <TrendingUp className="h-4 w-4" />
+                    <span>{tribe.tipsHits} hits</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <BarChart3 className="h-4 w-4" />
+                    <span>{tribe.weeklyFeeds} feeds weekly</span>
                   </div>
                 </div>
+
+                {tribeData.features && tribeData.features.length > 0 && (
+                  <div className="mb-4">
+                    <h4 className="text-sm font-semibold text-gray-900 mb-2">Features:</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {tribeData.features.map((feature, index) => (
+                        <Badge
+                          key={index}
+                          variant="outline"
+                          className="text-xs px-3 py-1 border-purple-300 bg-purple-50 text-purple-700 font-medium"
+                        >
+                          {feature}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {tribe.badges.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {tribe.badges.map((badge, index) => (
+                      <Badge
+                        key={index}
+                        variant="outline"
+                        className="text-xs px-3 py-1 border-gray-300 bg-white font-medium"
+                      >
+                        {badge}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+
+                <Button
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium transition-all duration-200"
+                  onClick={() => {}}
+                >
+                  {tribe.isPremium ? `Subscribe for ₹${tribe.premiumPrice}/month` : "Join Tribe"}
+                </Button>
               </div>
-            ))}
-          </TabsContent>
-          
-          
-          <TabsContent value="about" className="space-y-4 mt-4">
-            <div className="bg-white/70 backdrop-blur-md border-2 border-gray-200 shadow-lg rounded-2xl">
-              <div className="p-4">
-                <h3 className="font-semibold text-sm mb-3">Tribe Rules</h3>
-                <ul className="space-y-2">
-                  {tribe.rules.map((rule, index) => (
-                    <li key={index} className="text-sm text-gray-700 flex items-start">
-                      <span className="text-purple-600 mr-2">{index + 1}.</span>
-                      {rule}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-            
-            <div className="bg-white/70 backdrop-blur-md border-2 border-gray-200 shadow-lg rounded-2xl">
-              <div className="p-4">
-                <h3 className="font-semibold text-sm mb-3">Tribe Stats</h3>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <p className="text-gray-500">Total Members</p>
-                    <p className="font-semibold">{tribe.memberCount.toLocaleString()}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-500">Tips Hits</p>
-                    <p className="font-semibold">{tribe.tipsHits}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-500">Category</p>
-                    <p className="font-semibold">{tribe.category}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-500">Weekly Engagement</p>
-                    <p className="font-semibold">{tribe.weeklyEngagement}%</p>
-                  </div>
+            </Card>
+
+            <Card className="bg-white border border-gray-200 rounded-2xl p-5">
+              <h3 className="font-bold text-base text-gray-900 mb-4">Tribe Rules</h3>
+              <ol className="space-y-3">
+                {tribe.rules.map((rule, index) => (
+                  <li key={index} className="text-sm text-gray-700 flex gap-2">
+                    <span className="text-purple-600 font-medium">{index + 1}.</span>
+                    <span>{rule}</span>
+                  </li>
+                ))}
+              </ol>
+            </Card>
+
+            {/* Tribe Stats */}
+            <Card className="bg-white border border-gray-200 rounded-2xl p-5">
+              <h3 className="font-bold text-base text-gray-900 mb-4">Tribe Stats</h3>
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Total Members</p>
+                  <p className="text-base font-bold text-gray-900">{tribe.stats.totalMembers}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Tips Hits</p>
+                  <p className="text-base font-bold text-gray-900">{tribe.stats.tipsHits}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Category</p>
+                  <p className="text-base font-bold text-gray-900">{tribe.stats.category}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Weekly Engagement</p>
+                  <p className="text-base font-bold text-gray-900">{tribe.stats.weeklyEngagement}</p>
                 </div>
               </div>
-            </div>
-          </TabsContent>
-        </Tabs>
+            </Card>
+          </div>
+        )}
+
+        {activeTab === "about" && (
+          <div className="space-y-4">
+            <Card className="bg-white border border-gray-200 rounded-2xl p-5">
+              <h3 className="font-bold text-base text-gray-900 mb-4">Tribe Rules</h3>
+              <ol className="space-y-3">
+                {tribe.rules.map((rule, index) => (
+                  <li key={index} className="text-sm text-gray-700 flex gap-2">
+                    <span className="text-purple-600 font-medium">{index + 1}.</span>
+                    <span>{rule}</span>
+                  </li>
+                ))}
+              </ol>
+            </Card>
+
+            <Card className="bg-white border border-gray-200 rounded-2xl p-5">
+              <h3 className="font-bold text-base text-gray-900 mb-4">Tribe Stats</h3>
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Total Members</p>
+                  <p className="text-base font-bold text-gray-900">{tribe.stats.totalMembers}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Tips Hits</p>
+                  <p className="text-base font-bold text-gray-900">{tribe.stats.tipsHits}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Category</p>
+                  <p className="text-base font-bold text-gray-900">{tribe.stats.category}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Weekly Engagement</p>
+                  <p className="text-base font-bold text-gray-900">{tribe.stats.weeklyEngagement}</p>
+                </div>
+              </div>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -11,5 +11,10 @@ export interface VerifyChallengeRequest {
 export type Methods = DefineMethods<{
     post: {
         reqBody: VerifyChallengeRequest;
+        resBody: {
+            flow: 'login' | 'register';
+            accessToken?: string;
+            refreshToken?: string;
+        };
     }
 }>

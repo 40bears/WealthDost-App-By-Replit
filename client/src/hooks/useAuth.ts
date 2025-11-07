@@ -1,27 +1,18 @@
-import { useState, useEffect } from "react";
+import { User } from "@/types";
+import { useEffect, useState } from "react";
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  isLoggedIn: boolean;
-}
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in from localStorage
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       try {
         const userData = JSON.parse(storedUser);
-        if (userData.isLoggedIn) {
-          setUser(userData);
-        }
+        setUser(userData);
       } catch (error) {
-        console.error('Error parsing stored user data:', error);
         localStorage.removeItem('user');
       }
     }
@@ -38,12 +29,26 @@ export const useAuth = () => {
     localStorage.removeItem('user');
   };
 
-  const isAuthenticated = !!user?.isLoggedIn;
+  const isAuthenticated = !!user?.id;
+
+  const getRole = (): 'investor' | 'expert' | null => {
+    if (!user?.roles || user.roles.length === 0) return null;
+    const role = user.roles[0];
+    if (role === 'investor' || role === 'expert') return role;
+    return null;
+  };
+
+  const role = getRole();
+  const isInvestor = role === 'investor';
+  const isExpert = role === 'expert';
 
   return {
     user,
     isLoading,
     isAuthenticated,
+    role,
+    isInvestor,
+    isExpert,
     login,
     logout
   };

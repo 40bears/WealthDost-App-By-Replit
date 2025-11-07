@@ -1,4 +1,6 @@
+import { getProfile } from "@/sdk/auth/profile";
 import { finalizeRegistration, initRegistration, verifyRegistration } from "@/sdk/auth/register";
+import type { VerifyOtpResponse } from "@/types";
 import { useCallback, useState } from "react";
 import { z } from "zod";
 
@@ -35,7 +37,7 @@ const OtpSchema = z
     message: "Please enter a valid 6-digit OTP",
   });
 
-export async function verifyOtp(otp: string, pendingId: string): Promise<void> {
+export async function verifyOtp(otp: string, pendingId: string): Promise<VerifyOtpResponse> {
   try {
     const parsedOtp = OtpSchema.parse(otp);
 
@@ -43,7 +45,18 @@ export async function verifyOtp(otp: string, pendingId: string): Promise<void> {
       throw new Error("Missing verification context. Please resend OTP.");
     }
 
-    await verifyRegistration({ driver: "totp", pendingId, code: parsedOtp });
+    const response = await verifyRegistration({ driver: "totp", pendingId, code: parsedOtp });
+    // If login flow, fetch user profile
+    if (response.flow === 'login' && response.accessToken) {
+      const userObj = await getProfile(response.accessToken);
+      // Attach profile data to response
+      return {
+        ...response,
+        user: userObj,
+      };
+    }
+
+    return response;
   } catch (err: any) {
     if (err?.issues?.length) {
       throw new Error(err.issues[0].message);
@@ -104,10 +117,10 @@ export interface FinalizeProfileInput {
   confirm_password: string;
   additional?: Record<string, any>;
 }
-export async function finalizeAccountWithProfile(pendingId: string, input: FinalizeProfileInput): Promise<void> {
+export async function finalizeAccountWithProfile(pendingId: string, input: FinalizeProfileInput): Promise<any> {
   if (!pendingId) throw new Error("Missing registration context. Please verify OTP again.");
   const username = input.username || (input.email ? input.email.split('@')[0] : 'user');
-  await finalizeRegistration({
+  const user = await finalizeRegistration({
     driver: "totp",
     pendingId,
     email: input.email,
@@ -118,6 +131,9 @@ export async function finalizeAccountWithProfile(pendingId: string, input: Final
     confirm_password: input.confirm_password,
     additional: input.additional || {},
   });
+
+  // The finalize endpoint returns the user object directly
+  return { user };
 }
 
 export function useCreateAccount() {
@@ -164,11 +180,12 @@ export function useCreateAccount() {
     }
   }, [mobileNumber]);
 
-  const verifyOtpAction = useCallback(async () => {
+  const verifyOtpAction = useCallback(async (): Promise<VerifyOtpResponse> => {
     setIsLoading(true);
     try {
-      await verifyOtp(otp, pendingId);
+      const response = await verifyOtp(otp, pendingId);
       setIsOtpVerified(true);
+      return response;
     } finally {
       setIsLoading(false);
     }
@@ -177,7 +194,8 @@ export function useCreateAccount() {
   const finalizeProfileAction = useCallback(async (input: FinalizeProfileInput) => {
     setIsLoading(true);
     try {
-      await finalizeAccountWithProfile(pendingId, input);
+      const response = await finalizeAccountWithProfile(pendingId, input);
+      return response;
     } finally {
       setIsLoading(false);
     }

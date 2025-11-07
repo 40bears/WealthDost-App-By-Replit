@@ -8,13 +8,16 @@ import { FlowRoutes } from "@/components/flow/FlowRoutes";
 import { ExpertOnboarding } from "@/components/onboarding/ExpertOnboarding";
 import { InvestorOnboarding } from "@/components/onboarding/InvestorOnboarding";
 import { type Role as ChosenRole } from "@/components/onboarding/RoleSelection";
+import { useAuth } from "@/hooks/useAuth";
 import { useCreateAccount } from "@/sdk/auth/create-account";
 import { UI } from "@/ui";
-import { useState } from "react";
-import { useLocation } from "wouter";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 
 export default function CreateAccount() {
-  const [, navigate] = useLocation();
+  const navigate = useNavigate();
+  const search = useSearch({ from: '/' });
+  const auth = useAuth();
   const {
     mobileNumber,
     otp,
@@ -30,6 +33,13 @@ export default function CreateAccount() {
     finalizeProfile,
   } = useCreateAccount();
   const toast = UI.toast;
+
+  useEffect(() => {
+    if (auth.isAuthenticated && !auth.isLoading) {
+      const redirectUrl = (search as any)?.redirect || '/dashboard';
+      navigate({ to: redirectUrl });
+    }
+  }, [auth.isAuthenticated, auth.isLoading, search, navigate]);
 
   const flow = useFlowMachine({
     initial: isOtpVerified ? "role" : isOtpSent ? "otp" : "phone",
@@ -79,7 +89,21 @@ export default function CreateAccount() {
   const handleVerifyOtp = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     try {
-      await verifyOtpAction();
+      const response = await verifyOtpAction();
+      if (response?.flow === 'login' && response.user) {
+        if (response.accessToken) {
+          localStorage.setItem('accessToken', response.accessToken);
+        }
+        if (response.refreshToken) {
+          localStorage.setItem('refreshToken', response.refreshToken);
+        }
+        const userWithLoginFlag = { ...response.user, isLoggedIn: true };
+        await auth.login(userWithLoginFlag);
+        setTimeout(() => {
+          navigate({ to: '/dashboard' });
+        }, 100);
+        return;
+      }
       toast.success("Phone Verified", "Choose your role to continue");
       flow.send("OTP_VERIFIED");
     } catch (err: any) {
@@ -87,7 +111,6 @@ export default function CreateAccount() {
     }
   };
 
-  // Explicit handlers to replace inline callbacks
   const handleChangeNumber = () => {
     setIsOtpSent(false);
     flow.send("BACK");
@@ -113,12 +136,13 @@ export default function CreateAccount() {
     try {
       const [first_name = "", ...rest] = (data.fullName || "").split(" ");
       const last_name = rest.join(" ");
-      await finalizeProfile({
+      const response = await finalizeProfile({
         username: data.username,
+        email: data.email,
         first_name,
         last_name,
-        password: data.password || undefined,
-        confirm_password: data.confirm_password || undefined,
+        password: data.password,
+        confirm_password: data.confirmPassword,
         additional: {
           role: 'investor',
           investor: data,
@@ -126,8 +150,16 @@ export default function CreateAccount() {
           pendingId,
         },
       });
+
+      if (response?.user) {
+        const userWithLoginFlag = { ...response.user, isLoggedIn: true };
+        await auth.login(userWithLoginFlag);
+      }
+
       UI.toast.success('Welcome!', 'Your account is ready.');
-      navigate('/dashboard');
+      setTimeout(() => {
+        navigate({ to: '/dashboard' });
+      }, 100);
     } catch (err: any) {
       UI.toast.error('Could not create account', err?.message || 'Please try again.');
     }
@@ -137,12 +169,13 @@ export default function CreateAccount() {
     try {
       const [first_name = "", ...rest] = (data.fullName || "").split(" ");
       const last_name = rest.join(" ");
-      await finalizeProfile({
+      const response = await finalizeProfile({
         username: data.username,
+        email: data.email,
         first_name,
         last_name,
-        password: data.password || undefined,
-        confirm_password: data.confirm_password || undefined,
+        password: data.password,
+        confirm_password: data.confirmPassword,
         additional: {
           role: 'expert',
           expert: data,
@@ -150,8 +183,16 @@ export default function CreateAccount() {
           pendingId,
         },
       });
+
+      if (response?.user) {
+        const userWithLoginFlag = { ...response.user, isLoggedIn: true };
+        await auth.login(userWithLoginFlag);
+      }
+
       UI.toast.success('Welcome!', 'Your account is ready.');
-      navigate('/dashboard');
+      setTimeout(() => {
+        navigate({ to: '/dashboard' });
+      }, 100);
     } catch (err: any) {
       UI.toast.error('Could not create account', err?.message || 'Please try again.');
     }

@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import React from "react";
 import { Link } from "wouter";
 
@@ -7,7 +6,7 @@ export function SignupLayout({ children }: { children: React.ReactElement | Reac
     const childrenArr = React.Children.toArray(children)
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex flex-col justify-center p-4 relative overflow-hidden">
+        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 px-4 relative overflow-hidden">
 
             {/* Animated background elements */}
             <div className="absolute inset-0 overflow-hidden">
@@ -18,50 +17,37 @@ export function SignupLayout({ children }: { children: React.ReactElement | Reac
 
             <div className="w-full max-w-md mx-auto flex-1 flex flex-col justify-center relative z-10">
                 {/* Header */}
-                <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold text-white mb-3 drop-shadow-lg">Create Account</h1>
-                    <p className="text-white/90 text-lg">Enter your mobile number to get started</p>
-                    <div className="mt-6">
-                        <p className="text-white/80 text-sm">
-                            Already have an account?{" "}
-                            <Link href="/login" className="text-white font-semibold relative inline-block group">
-                                <span className="relative z-10">Sign In</span>
-                                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-400 to-blue-400 transition-all duration-300 group-hover:w-full"></span>
-                            </Link>
-                        </p>
+                <div className="flex justify-center mb-12">
+                    <div className="header p-2 inline-block w-3/4 h-32 flex flex-col-reverse">
+                        <img src="/logo.png" alt="WealthDost Logo" className="h-16 mx-auto mb-2" />
                     </div>
                 </div>
-                <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-8 relative overflow-hidden">
+
+                <div className="mt-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-8 relative overflow-hidden">
                     {/* Glass shine effect */}
                     <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-50 rounded-2xl"></div>
                     <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent"></div>
 
                     <div className="relative z-10">
                         {childrenArr}
-                        <div className="mt-8 text-center">
-                            <p className="text-xs text-white/70">
-                                By continuing, you agree to our{" "}
-                                <Link href="/terms" className="text-white/90 hover:text-white relative inline-block group transition-colors duration-300">
-                                    <span className="relative z-10">Terms of Service</span>
-                                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-400 to-blue-400 transition-all duration-300 group-hover:w-full"></span>
-                                </Link>{" "}
-                                and{" "}
-                                <Link href="/privacy" className="text-white/90 hover:text-white relative inline-block group transition-colors duration-300">
-                                    <span className="relative z-10">Privacy Policy</span>
-                                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-400 to-blue-400 transition-all duration-300 group-hover:w-full"></span>
-                                </Link>
-                            </p>
-                        </div>
+                        
                     </div>
                 </div>
 
-                {/* Back to Home */}
-                <div className="text-center mt-8">
-                    <Link href="/">
-                        <Button variant="ghost" className="text-white/90 hover:text-white hover:bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-6 py-2 transition-all duration-300 transform hover:scale-105">
-                            ← Back to Home
-                        </Button>
-                    </Link>
+                {/* Links */}
+                <div className="mt-8 text-center">
+                    <p className="text-xs text-white/70">
+                        By continuing, you agree to our{" "}
+                        <Link href="/terms" className="text-white/90 hover:text-white relative inline-block group transition-colors duration-300">
+                            <span className="relative z-10">Terms of Service</span>
+                            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-400 to-blue-400 transition-all duration-300 group-hover:w-full"></span>
+                        </Link>{" "}
+                        and{" "}
+                        <Link href="/privacy" className="text-white/90 hover:text-white relative inline-block group transition-colors duration-300">
+                            <span className="relative z-10">Privacy Policy</span>
+                            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-400 to-blue-400 transition-all duration-300 group-hover:w-full"></span>
+                        </Link>
+                    </p>
                 </div>
             </div>
         </div>
