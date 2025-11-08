@@ -26,9 +26,6 @@ RUN  npm run api:build && NODE_ENV=production npm run build
 # Production stage using Caddy
 FROM caddy:2-alpine AS production-stage
 
-# Copy built client files
-COPY --from=builder /app/dist/public /usr/share/nginx/html
-
 # Copy Caddyfile
 COPY deploy/Caddyfile /etc/caddy/Caddyfile
 
