@@ -81,6 +81,14 @@ const Header = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuItem
+                onClick={() => navigate({ to: "/feedback" })}
+                className="cursor-pointer"
+              >
+                <span className="material-icons text-sm mr-2">feedback</span>
+                Feedback
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
                 onClick={handleSignOut}
                 className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
               >
