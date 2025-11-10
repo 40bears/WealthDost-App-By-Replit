@@ -11,7 +11,22 @@ import { useAuth } from '@/hooks/useAuth'
 
 export const Route = createFileRoute('/_auth')({
   beforeLoad: ({ context, location }) => {
-    if (!context.auth.isAuthenticated) {
+    // Check both context auth and localStorage as fallback
+    const storedUser = localStorage.getItem('user')
+    let isAuthenticated = context.auth.isAuthenticated
+
+    // If context says not authenticated, double-check localStorage
+    if (!isAuthenticated && storedUser) {
+      try {
+        const userData = JSON.parse(storedUser)
+        isAuthenticated = !!userData?.isLoggedIn
+      } catch {
+        // Invalid localStorage data
+        isAuthenticated = false
+      }
+    }
+
+    if (!isAuthenticated) {
       throw redirect({
         to: '/',
         search: {

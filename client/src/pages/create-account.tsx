@@ -72,13 +72,13 @@ export default function CreateAccount() {
       toast.success("OTP Sent", "We've sent a 6-digit OTP to your mobile number");
       flow.send("OTP_SENT");
     } catch (err: any) {
-      if (err.response.status === 409) {
-        if (err.response.data.data.pendingId) {
+      if (err?.response?.status === 409) {
+        if (err.response.data?.data?.pendingId) {
           flow.send("OTP_SENT");
           return
         }
 
-        toast.error(err.response.data.message);
+        toast.error(err.response.data?.message || "User already exists");
 
         return
       }
