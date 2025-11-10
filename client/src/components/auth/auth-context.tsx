@@ -1,5 +1,5 @@
 import { User } from "@/types";
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState, useRef } from "react";
 
 export interface AuthContext {
   isAuthenticated: boolean
@@ -35,11 +35,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = useCallback(async () => {
     setUser(null)
     localStorage.removeItem('user')
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('refreshToken')
   }, [])
 
   const login = useCallback(async (userData: User) => {
-    setUser(userData)
+    // Store in localStorage first
     localStorage.setItem('user', JSON.stringify(userData))
+
+    // Update state
+    setUser(userData)
+
+    // Wait for multiple animation frames to ensure state propagates to all consumers
+    await new Promise(resolve => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setTimeout(resolve, 50)
+        })
+      })
+    })
   }, [])
 
   return (

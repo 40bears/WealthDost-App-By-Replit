@@ -108,43 +108,47 @@ export function TipCard({
         </div>
       </div>
 
-      {/* Reasoning */}
-      <div className="relative bg-[#BFDBFE]/30 rounded-lg p-3 pt-5 mb-5">
-        <span className="absolute -top-2.5 left-3 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-medium">
-          REASONING
-        </span>
-        <p className="text-sm text-gray-700 leading-relaxed mb-2">{reasoning}</p>
-        
-        {chartImage && (
-          <button
-            onClick={toggleChart}
-            className="w-full text-center flex items-center justify-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
-          >
-            {showChart ? (
-              <>
-                <ChevronUp className="h-4 w-4" />
-                Hide Chart
-              </>
-            ) : (
-              <>
-                <ChevronDown className="h-4 w-4" />
-                Show Chart
-              </>
-            )}
-          </button>
-        )}
+      {/* Reasoning - Only show if reasoning or chartImage exists */}
+      {(reasoning || chartImage) && (
+        <div className="relative bg-[#BFDBFE]/30 rounded-lg p-3 pt-5 mb-5">
+          <span className="absolute -top-2.5 left-3 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+            REASONING
+          </span>
+          {reasoning && (
+            <p className="text-sm text-gray-700 leading-relaxed mb-2">{reasoning}</p>
+          )}
 
-        {/* Chart Image */}
-        {showChart && chartImage && (
-          <div className="mt-3 rounded-lg overflow-hidden">
-            <img
-              src={chartImage}
-              alt="Stock chart"
-              className="w-full h-auto"
-            />
-          </div>
-        )}
-      </div>
+          {chartImage && (
+            <button
+              onClick={toggleChart}
+              className="w-full text-center flex items-center justify-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
+            >
+              {showChart ? (
+                <>
+                  <ChevronUp className="h-4 w-4" />
+                  Hide Chart
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="h-4 w-4" />
+                  Show Chart
+                </>
+              )}
+            </button>
+          )}
+
+          {/* Chart Image */}
+          {showChart && chartImage && (
+            <div className="mt-3 rounded-lg overflow-hidden">
+              <img
+                src={chartImage}
+                alt="Stock chart"
+                className="w-full h-auto"
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Author Footer */}
       <div className="flex items-center justify-between pt-4 border-t border-gray-100 mb-3">

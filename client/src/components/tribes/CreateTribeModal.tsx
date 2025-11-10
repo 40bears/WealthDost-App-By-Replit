@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useQueryClient } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
@@ -68,6 +69,7 @@ export default function CreateTribeModal({ isOpen, onClose, onTribeCreated }: Cr
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const [uploadedFileId, setUploadedFileId] = useState<number | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const queryClient = useQueryClient()
   const { toast } = useToast()
 
   const {
@@ -180,6 +182,9 @@ export default function CreateTribeModal({ isOpen, onClose, onTribeCreated }: Cr
         body: requestBody,
       });
 
+      // Invalidate tribes query to refresh the list
+      queryClient.invalidateQueries({ queryKey: ['tribes'] });
+
       toast({
         title: "Tribe Created!",
         description: "Your tribe has been created successfully!"
@@ -215,21 +220,20 @@ export default function CreateTribeModal({ isOpen, onClose, onTribeCreated }: Cr
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-gray-100 w-full max-w-md rounded-3xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
-        <div className="p-5 flex items-center justify-between bg-gray-100">
-          <h3 className="text-xl font-bold text-gray-900">Create New Tribe</h3>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 rounded-full hover:bg-gray-200"
+      <div className="bg-white w-full max-w-md rounded-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+        <div className="p-5 flex items-center justify-between border-b border-gray-200 shrink-0">
+          <h3 className="text-lg font-bold text-gray-900">Create New Tribe</h3>
+          <button
+            type="button"
             onClick={handleClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
           >
-            <span className="text-2xl leading-none">&times;</span>
-          </Button>
+            <X className="h-5 w-5" />
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col">
-          <div className="px-5 pb-5 overflow-y-auto flex-1">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
+          <div className="px-5 py-4 overflow-y-auto flex-1 bg-white">
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-semibold text-gray-900 mb-2 block">
@@ -415,12 +419,12 @@ export default function CreateTribeModal({ isOpen, onClose, onTribeCreated }: Cr
             </div>
           </div>
 
-          <div className="p-5 pt-0 pb-6">
+          <div className="px-5 py-4 border-t border-gray-200 bg-white shrink-0">
             <div className="flex gap-3">
               <Button
                 type="button"
                 variant="outline"
-                className="flex-1 py-6 text-base font-medium bg-white border-2 border-gray-300 hover:bg-gray-50 rounded-xl"
+                className="flex-1 py-2.5 text-base font-medium border-gray-300 hover:bg-gray-50 rounded-lg"
                 onClick={handleClose}
                 disabled={isSubmitting}
               >
@@ -428,7 +432,7 @@ export default function CreateTribeModal({ isOpen, onClose, onTribeCreated }: Cr
               </Button>
               <Button
                 type="submit"
-                className="flex-1 py-6 text-base font-medium bg-purple-600 hover:bg-purple-700 text-white rounded-xl"
+                className="flex-1 py-2.5 text-base font-medium bg-purple-600 hover:bg-purple-700 text-white rounded-lg"
                 disabled={isSubmitting || isUploadingImage}
               >
                 {isSubmitting ? "Creating..." : "Create Tribe"}

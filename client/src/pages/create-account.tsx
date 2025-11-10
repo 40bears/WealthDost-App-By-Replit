@@ -72,13 +72,13 @@ export default function CreateAccount() {
       toast.success("OTP Sent", "We've sent a 6-digit OTP to your mobile number");
       flow.send("OTP_SENT");
     } catch (err: any) {
-      if (err.response.status === 409) {
-        if (err.response.data.data.pendingId) {
+      if (err?.response?.status === 409) {
+        if (err.response.data?.data?.pendingId) {
           flow.send("OTP_SENT");
           return
         }
 
-        toast.error(err.response.data.message);
+        toast.error(err.response.data?.message || "User already exists");
 
         return
       }
@@ -87,10 +87,12 @@ export default function CreateAccount() {
   };
 
   const handleVerifyOtp = async (e: React.SyntheticEvent) => {
+    console.log("Verifying OTP...");
     e.preventDefault();
     try {
       const response = await verifyOtpAction();
       if (response?.flow === 'login' && response.user) {
+        console.log(response);
         if (response.accessToken) {
           localStorage.setItem('accessToken', response.accessToken);
         }
@@ -99,9 +101,7 @@ export default function CreateAccount() {
         }
         const userWithLoginFlag = { ...response.user, isLoggedIn: true };
         await auth.login(userWithLoginFlag);
-        setTimeout(() => {
-          navigate({ to: '/dashboard' });
-        }, 100);
+        navigate({ to: '/dashboard' });
         return;
       }
       toast.success("Phone Verified", "Choose your role to continue");
@@ -157,9 +157,7 @@ export default function CreateAccount() {
       }
 
       UI.toast.success('Welcome!', 'Your account is ready.');
-      setTimeout(() => {
-        navigate({ to: '/dashboard' });
-      }, 100);
+      navigate({ to: '/dashboard' });
     } catch (err: any) {
       UI.toast.error('Could not create account', err?.message || 'Please try again.');
     }
@@ -190,9 +188,7 @@ export default function CreateAccount() {
       }
 
       UI.toast.success('Welcome!', 'Your account is ready.');
-      setTimeout(() => {
-        navigate({ to: '/dashboard' });
-      }, 100);
+      navigate({ to: '/dashboard' });
     } catch (err: any) {
       UI.toast.error('Could not create account', err?.message || 'Please try again.');
     }
