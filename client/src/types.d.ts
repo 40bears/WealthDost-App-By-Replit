@@ -119,3 +119,51 @@ export interface CreateTribeResponse {
   coverImageId?: number;
   createdAt: string;
 }
+
+// Stock Tips Types
+export interface StockTip {
+  id: number;
+  uuid: string;
+  stockName: string;
+  symbol: string;
+  entryPrice: number;
+  targetPrice: number;
+  entryDate: string;
+  exitDate?: string | null;
+  reason?: string;
+  userId: number;
+  chartImageId?: number | null;
+  user?: {
+    id: number;
+    uuid: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    username?: string;
+  };
+  chartImage?: FileResponse;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateStockTipInput {
+  stockName: string;
+  symbol: string;
+  entryPrice: number;
+  targetPrice: number;
+  entryDate: string;
+  exitDate?: string;
+  reason?: string;
+  chartImageId?: number;
+}
+
+export interface UpdateStockTipInput {
+  stockName?: string;
+  symbol?: string;
+  entryPrice?: number;
+  targetPrice?: number;
+  entryDate?: string;
+  exitDate?: string;
+  reason?: string;
+  chartImageId?: number;
+}

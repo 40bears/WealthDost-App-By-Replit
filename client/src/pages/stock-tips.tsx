@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EnhancedCreatePostModal from "@/components/dashboard/EnhancedCreatePostModal";
 import { TipCard } from "@/components/dashboard/TipCard";
+import { apiClient } from "@/lib/api";
 
 // Demo stock tips data
 const demoStockTips = [
@@ -148,6 +150,74 @@ export default function StockTips() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [filter, setFilter] = useState<'all' | 'buy' | 'sell' | 'active' | 'completed'>('all');
 
+  // Fetch stock tips using TanStack Query
+  const { data: stockTips = [], isLoading, error } = useQuery({
+    queryKey: ['stock-tips'],
+    queryFn: async () => {
+      const response = await apiClient.stock_tips.$get();
+      return response;
+    }
+  });
+
+  // Helper function to transform minio URLs for local development
+  const transformImageUrl = (url: string) => {
+    return url.replace('http://minio:', 'http://localhost:');
+  };
+
+  // Map API data to TipCard format
+  const mappedTips = stockTips.map((tip) => {
+    // Convert prices to numbers in case backend returns them as strings
+    const entryPrice = typeof tip.entryPrice === 'string' ? parseFloat(tip.entryPrice) : tip.entryPrice;
+    const targetPrice = typeof tip.targetPrice === 'string' ? parseFloat(tip.targetPrice) : tip.targetPrice;
+
+    return {
+      id: tip.id.toString(),
+      author: {
+        name: tip.user ? `${tip.user.firstName} ${tip.user.lastName}`.trim() : 'User',
+        username: tip.user?.username ? `@${tip.user.username}` : `@user${tip.userId}`,
+        initials: tip.user ? `${tip.user.firstName?.[0] || ''}${tip.user.lastName?.[0] || ''}` : 'U'
+      },
+      stock: {
+        name: tip.stockName,
+        symbol: tip.symbol,
+        change: `${((targetPrice - entryPrice) / entryPrice * 100).toFixed(1)}%`
+      },
+      entryPrice: `₹${entryPrice.toFixed(2)}`,
+      targetPrice: `₹${targetPrice.toFixed(2)}`,
+      buyDate: new Date(tip.entryDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }),
+      sellDate: tip.exitDate ? new Date(tip.exitDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }) : undefined,
+      reasoning: tip.reason || '',
+      chartImage: tip.chartImage?.publicUrl ? transformImageUrl(tip.chartImage.publicUrl) : undefined,
+      likes: 0,
+      comments: 0,
+      isFollowing: false
+    };
+  });
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#F9FAFB] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading stock tips...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#F9FAFB] flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">Error loading stock tips</p>
+          <Button onClick={() => window.location.reload()}>Retry</Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#F9FAFB]">
       {/* Header */}
@@ -187,9 +257,16 @@ export default function StockTips() {
 
       {/* Stock Tips List */}
       <div className="p-4 pb-24 space-y-4">
-        {demoStockTips.map((tip) => (
-          <TipCard key={tip.id} {...tip} />
-        ))}
+        {mappedTips.length > 0 ? (
+          mappedTips.map((tip) => (
+            <TipCard key={tip.id} {...tip} />
+          ))
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-500">No stock tips found</p>
+            <p className="text-sm text-gray-400 mt-2">Be the first to share a stock tip!</p>
+          </div>
+        )}
       </div>
 
       {/* Create Post Modal */}

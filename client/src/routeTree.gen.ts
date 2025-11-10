@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthTribesRouteImport } from './routes/_auth.tribes'
 import { Route as AuthStockTipsRouteImport } from './routes/_auth.stock-tips'
 import { Route as AuthGlobalSearchRouteImport } from './routes/_auth.global-search'
+import { Route as AuthFeedbackRouteImport } from './routes/_auth.feedback'
 import { Route as AuthExpertsListRouteImport } from './routes/_auth.experts-list'
 import { Route as AuthDashboardRouteImport } from './routes/_auth.dashboard'
 import { Route as AuthTribeIdRouteImport } from './routes/_auth.tribe.$id'
@@ -48,6 +49,11 @@ const AuthGlobalSearchRoute = AuthGlobalSearchRouteImport.update({
   path: '/global-search',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthFeedbackRoute = AuthFeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthExpertsListRoute = AuthExpertsListRouteImport.update({
   id: '/experts-list',
   path: '/experts-list',
@@ -69,6 +75,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/dashboard': typeof AuthDashboardRoute
   '/experts-list': typeof AuthExpertsListRoute
+  '/feedback': typeof AuthFeedbackRoute
   '/global-search': typeof AuthGlobalSearchRoute
   '/stock-tips': typeof AuthStockTipsRoute
   '/tribes': typeof AuthTribesRoute
@@ -79,6 +86,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/dashboard': typeof AuthDashboardRoute
   '/experts-list': typeof AuthExpertsListRoute
+  '/feedback': typeof AuthFeedbackRoute
   '/global-search': typeof AuthGlobalSearchRoute
   '/stock-tips': typeof AuthStockTipsRoute
   '/tribes': typeof AuthTribesRoute
@@ -91,6 +99,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/_auth/dashboard': typeof AuthDashboardRoute
   '/_auth/experts-list': typeof AuthExpertsListRoute
+  '/_auth/feedback': typeof AuthFeedbackRoute
   '/_auth/global-search': typeof AuthGlobalSearchRoute
   '/_auth/stock-tips': typeof AuthStockTipsRoute
   '/_auth/tribes': typeof AuthTribesRoute
@@ -103,6 +112,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/dashboard'
     | '/experts-list'
+    | '/feedback'
     | '/global-search'
     | '/stock-tips'
     | '/tribes'
@@ -113,6 +123,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/dashboard'
     | '/experts-list'
+    | '/feedback'
     | '/global-search'
     | '/stock-tips'
     | '/tribes'
@@ -124,6 +135,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/_auth/dashboard'
     | '/_auth/experts-list'
+    | '/_auth/feedback'
     | '/_auth/global-search'
     | '/_auth/stock-tips'
     | '/_auth/tribes'
@@ -180,6 +192,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthGlobalSearchRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/feedback': {
+      id: '/_auth/feedback'
+      path: '/feedback'
+      fullPath: '/feedback'
+      preLoaderRoute: typeof AuthFeedbackRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/experts-list': {
       id: '/_auth/experts-list'
       path: '/experts-list'
@@ -207,6 +226,7 @@ declare module '@tanstack/react-router' {
 interface AuthRouteChildren {
   AuthDashboardRoute: typeof AuthDashboardRoute
   AuthExpertsListRoute: typeof AuthExpertsListRoute
+  AuthFeedbackRoute: typeof AuthFeedbackRoute
   AuthGlobalSearchRoute: typeof AuthGlobalSearchRoute
   AuthStockTipsRoute: typeof AuthStockTipsRoute
   AuthTribesRoute: typeof AuthTribesRoute
@@ -216,6 +236,7 @@ interface AuthRouteChildren {
 const AuthRouteChildren: AuthRouteChildren = {
   AuthDashboardRoute: AuthDashboardRoute,
   AuthExpertsListRoute: AuthExpertsListRoute,
+  AuthFeedbackRoute: AuthFeedbackRoute,
   AuthGlobalSearchRoute: AuthGlobalSearchRoute,
   AuthStockTipsRoute: AuthStockTipsRoute,
   AuthTribesRoute: AuthTribesRoute,
