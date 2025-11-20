@@ -10,19 +10,19 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
-import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthTribesRouteImport } from './routes/_auth.tribes'
+import { Route as AuthStockTipsRouteImport } from './routes/_auth.stock-tips'
+import { Route as AuthGlobalSearchRouteImport } from './routes/_auth.global-search'
+import { Route as AuthFeedbackRouteImport } from './routes/_auth.feedback'
+import { Route as AuthExpertsListRouteImport } from './routes/_auth.experts-list'
 import { Route as AuthDashboardRouteImport } from './routes/_auth.dashboard'
+import { Route as AuthTribeIdRouteImport } from './routes/_auth.tribe.$id'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -34,44 +34,117 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthTribesRoute = AuthTribesRouteImport.update({
+  id: '/tribes',
+  path: '/tribes',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthStockTipsRoute = AuthStockTipsRouteImport.update({
+  id: '/stock-tips',
+  path: '/stock-tips',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthGlobalSearchRoute = AuthGlobalSearchRouteImport.update({
+  id: '/global-search',
+  path: '/global-search',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthFeedbackRoute = AuthFeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthExpertsListRoute = AuthExpertsListRouteImport.update({
+  id: '/experts-list',
+  path: '/experts-list',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthDashboardRoute = AuthDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthTribeIdRoute = AuthTribeIdRouteImport.update({
+  id: '/tribe/$id',
+  path: '/tribe/$id',
+  getParentRoute: () => AuthRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/dashboard': typeof AuthDashboardRoute
+  '/experts-list': typeof AuthExpertsListRoute
+  '/feedback': typeof AuthFeedbackRoute
+  '/global-search': typeof AuthGlobalSearchRoute
+  '/stock-tips': typeof AuthStockTipsRoute
+  '/tribes': typeof AuthTribesRoute
+  '/tribe/$id': typeof AuthTribeIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/dashboard': typeof AuthDashboardRoute
+  '/experts-list': typeof AuthExpertsListRoute
+  '/feedback': typeof AuthFeedbackRoute
+  '/global-search': typeof AuthGlobalSearchRoute
+  '/stock-tips': typeof AuthStockTipsRoute
+  '/tribes': typeof AuthTribesRoute
+  '/tribe/$id': typeof AuthTribeIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteWithChildren
-  '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/_auth/dashboard': typeof AuthDashboardRoute
+  '/_auth/experts-list': typeof AuthExpertsListRoute
+  '/_auth/feedback': typeof AuthFeedbackRoute
+  '/_auth/global-search': typeof AuthGlobalSearchRoute
+  '/_auth/stock-tips': typeof AuthStockTipsRoute
+  '/_auth/tribes': typeof AuthTribesRoute
+  '/_auth/tribe/$id': typeof AuthTribeIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/signup' | '/dashboard'
+  fullPaths:
+    | '/'
+    | '/signup'
+    | '/dashboard'
+    | '/experts-list'
+    | '/feedback'
+    | '/global-search'
+    | '/stock-tips'
+    | '/tribes'
+    | '/tribe/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signup' | '/dashboard'
-  id: '__root__' | '/' | '/_auth' | '/login' | '/signup' | '/_auth/dashboard'
+  to:
+    | '/'
+    | '/signup'
+    | '/dashboard'
+    | '/experts-list'
+    | '/feedback'
+    | '/global-search'
+    | '/stock-tips'
+    | '/tribes'
+    | '/tribe/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/_auth'
+    | '/signup'
+    | '/_auth/dashboard'
+    | '/_auth/experts-list'
+    | '/_auth/feedback'
+    | '/_auth/global-search'
+    | '/_auth/stock-tips'
+    | '/_auth/tribes'
+    | '/_auth/tribe/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
-  LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
 }
 
@@ -82,13 +155,6 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth': {
@@ -105,6 +171,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_auth/tribes': {
+      id: '/_auth/tribes'
+      path: '/tribes'
+      fullPath: '/tribes'
+      preLoaderRoute: typeof AuthTribesRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/stock-tips': {
+      id: '/_auth/stock-tips'
+      path: '/stock-tips'
+      fullPath: '/stock-tips'
+      preLoaderRoute: typeof AuthStockTipsRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/global-search': {
+      id: '/_auth/global-search'
+      path: '/global-search'
+      fullPath: '/global-search'
+      preLoaderRoute: typeof AuthGlobalSearchRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/feedback': {
+      id: '/_auth/feedback'
+      path: '/feedback'
+      fullPath: '/feedback'
+      preLoaderRoute: typeof AuthFeedbackRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/experts-list': {
+      id: '/_auth/experts-list'
+      path: '/experts-list'
+      fullPath: '/experts-list'
+      preLoaderRoute: typeof AuthExpertsListRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/dashboard': {
       id: '/_auth/dashboard'
       path: '/dashboard'
@@ -112,15 +213,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthDashboardRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/tribe/$id': {
+      id: '/_auth/tribe/$id'
+      path: '/tribe/$id'
+      fullPath: '/tribe/$id'
+      preLoaderRoute: typeof AuthTribeIdRouteImport
+      parentRoute: typeof AuthRoute
+    }
   }
 }
 
 interface AuthRouteChildren {
   AuthDashboardRoute: typeof AuthDashboardRoute
+  AuthExpertsListRoute: typeof AuthExpertsListRoute
+  AuthFeedbackRoute: typeof AuthFeedbackRoute
+  AuthGlobalSearchRoute: typeof AuthGlobalSearchRoute
+  AuthStockTipsRoute: typeof AuthStockTipsRoute
+  AuthTribesRoute: typeof AuthTribesRoute
+  AuthTribeIdRoute: typeof AuthTribeIdRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthDashboardRoute: AuthDashboardRoute,
+  AuthExpertsListRoute: AuthExpertsListRoute,
+  AuthFeedbackRoute: AuthFeedbackRoute,
+  AuthGlobalSearchRoute: AuthGlobalSearchRoute,
+  AuthStockTipsRoute: AuthStockTipsRoute,
+  AuthTribesRoute: AuthTribesRoute,
+  AuthTribeIdRoute: AuthTribeIdRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
@@ -128,7 +248,6 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
-  LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport

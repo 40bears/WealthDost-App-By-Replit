@@ -1,50 +1,63 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react"
+import { User } from "@/types";
+import { createContext, useCallback, useContext, useEffect, useState, useRef } from "react";
 
 export interface AuthContext {
   isAuthenticated: boolean
-  login: (username: string) => Promise<void>
+  login: (userData: User) => Promise<void>
   logout: () => Promise<void>
-  user: string | null
-}
-
-
-const key = 'tanstack.auth.user'
-
-function getStoredUser() {
-  return localStorage.getItem(key)
-}
-
-function setStoredUser(user: string | null) {
-  if (user) {
-    localStorage.setItem(key, user)
-  } else {
-    localStorage.removeItem(key)
-  }
+  user: User | null
+  isLoading: boolean
 }
 
 const AuthContext = createContext<AuthContext | null>(null)
 
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<string | null>(getStoredUser())
+  const [user, setUser] = useState<User | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const isAuthenticated = !!user
 
-  const logout = useCallback(async () => {
-    setStoredUser(null)
-    setUser(null)
-  }, [])
-
-  const login = useCallback(async (username: string) => {
-    setStoredUser(username)
-    setUser(username)
-  }, [])
-
   useEffect(() => {
-    setUser(getStoredUser())
+    const storedUser = localStorage.getItem('user')
+    if (storedUser) {
+      try {
+        const userData = JSON.parse(storedUser)
+        if (userData.isLoggedIn) {
+          setUser(userData)
+        }
+      } catch (error) {
+        console.error('Error parsing stored user data:', error)
+        localStorage.removeItem('user')
+      }
+    }
+    setIsLoading(false)
+  }, [])
+
+  const logout = useCallback(async () => {
+    setUser(null)
+    localStorage.removeItem('user')
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('refreshToken')
+  }, [])
+
+  const login = useCallback(async (userData: User) => {
+    // Store in localStorage first
+    localStorage.setItem('user', JSON.stringify(userData))
+
+    // Update state
+    setUser(userData)
+
+    // Wait for multiple animation frames to ensure state propagates to all consumers
+    await new Promise(resolve => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setTimeout(resolve, 50)
+        })
+      })
+    })
   }, [])
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   )

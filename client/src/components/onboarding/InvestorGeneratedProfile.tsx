@@ -1,8 +1,9 @@
-import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
 type FormData = {
   fullName: string;
+  email: string;
   username: string;
   profileBio: string;
   interests: string[];
@@ -43,6 +44,7 @@ export function InvestorGeneratedProfile({ formData, onBack, onComplete }: {
             <div>
               <h3 className="font-semibold text-xl">{formData.fullName || 'Sarah Johnson'}</h3>
               <p className="text-primary-100">@{formData.username || 'TechInvestor'}</p>
+              <p className="text-primary-200 text-sm">{formData.email || 'user@example.com'}</p>
             </div>
           </div>
         </div>

@@ -27,6 +27,7 @@ export const InvestorOnboarding = ({ onBack, onComplete }: InvestorOnboardingPro
   });
   const [formData, setFormData] = useState({
     fullName: "",
+    email: "",
     username: "",
     profileBio: "",
     password: "",
@@ -34,6 +35,9 @@ export const InvestorOnboarding = ({ onBack, onComplete }: InvestorOnboardingPro
     detailedBio: "",
     experienceLevel: "",
     interests: [] as string[],
+    industrySector: "",
+    searchableTags: [] as string[],
+    followingExperts: [] as string[],
     riskLevel: "",
     returnTarget: "",
     riskPersona: "",
@@ -56,7 +60,32 @@ export const InvestorOnboarding = ({ onBack, onComplete }: InvestorOnboardingPro
     }));
   };
 
-  // Step 3: Risk profile
+  // Step 3: Industry sector
+  const handleIndustrySectorChange = (value: string) => {
+    setFormData(prev => ({ ...prev, industrySector: value }));
+  };
+
+  // Step 4: Searchable tags
+  const handleSearchableTagsChange = (value: string, checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      searchableTags: checked 
+        ? [...prev.searchableTags, value]
+        : prev.searchableTags.filter(tag => tag !== value)
+    }));
+  };
+
+  // Step 6: Recommended experts
+  const handleExpertFollowChange = (expertId: string, checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      followingExperts: checked 
+        ? [...prev.followingExperts, expertId]
+        : prev.followingExperts.filter(id => id !== expertId)
+    }));
+  };
+
+  // Step 5: Risk profile
   const handleRiskProfileChange = (value: string) => {
     let riskPersona = "";
     let returnTarget = "";
