@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EnhancedCreatePostModal from "@/components/dashboard/EnhancedCreatePostModal";
 import { TipCard } from "@/components/dashboard/TipCard";
-import { apiClient } from "@/lib/api";
+import { useStockTips } from "@/hooks/graphql";
 
 // Demo stock tips data
 const demoStockTips = [
@@ -150,14 +149,9 @@ export default function StockTips() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [filter, setFilter] = useState<'all' | 'buy' | 'sell' | 'active' | 'completed'>('all');
 
-  // Fetch stock tips using TanStack Query
-  const { data: stockTips = [], isLoading, error } = useQuery({
-    queryKey: ['stock-tips'],
-    queryFn: async () => {
-      const response = await apiClient.stock_tips.$get();
-      return response;
-    }
-  });
+  // Fetch stock tips using GraphQL
+  const { data, loading: isLoading, error } = useStockTips();
+  const stockTips = data?.stockTips || [];
 
   // Helper function to transform minio URLs for local development
   const transformImageUrl = (url: string) => {
