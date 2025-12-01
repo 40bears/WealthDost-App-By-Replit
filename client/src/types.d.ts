@@ -12,6 +12,7 @@ export interface User {
   roles?: string[];
   isActive: boolean;
   isLoggedIn?: boolean;
+  kycStatus?: boolean;
 }
 
 export interface UserProfile {
@@ -125,6 +126,7 @@ export interface CreateTribeResponse {
 export interface StockTip {
   id: number;
   uuid: string;
+  type: 'Stocks' | 'Futures' | 'Options' | 'Commodities';
   stockName: string;
   symbol: string;
   entryPrice: number;
@@ -148,6 +150,7 @@ export interface StockTip {
 }
 
 export interface CreateStockTipInput {
+ type: 'Stocks' | 'Futures' | 'Options' | 'Commodities';
   stockName: string;
   symbol: string;
   entryPrice: number;

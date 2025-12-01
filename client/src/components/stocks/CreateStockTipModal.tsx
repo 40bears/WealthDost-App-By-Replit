@@ -1,23 +1,32 @@
-import { useState, useRef } from "react";
-import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { apiClient, axiosInstance } from "@/lib/api";
-import type { FileResponse, CreateStockTipInput, Tribe } from "@/types";
-import { TrendingUp, Upload, X, Send, Image as ImageIcon, ChevronDown, Globe, Lock, Users } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
   DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { CREATE_STOCK_TIP } from "@/graphql/stock-tips/mutations";
+import { GET_STOCK_TIPS, GET_MY_STOCK_TIPS } from "@/graphql/stock-tips/queries";
+import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { apiClient, axiosInstance } from "@/lib/api";
+import type { FileResponse, Tribe } from "@/types";
+import { useMutation } from "@apollo/client/react";
+import { useQuery as useTanStackQuery } from "@tanstack/react-query";
+import { ChevronDown, Globe, Lock, Send, TrendingUp, Upload, Users, X } from "lucide-react";
+import { useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 interface StockTipFormData {
-  stockName: string;
-  symbol: string;
+  type: 'STOCKS' | 'FUTURES' | 'OPTIONS' | 'COMMODITIES';
   entryPrice: string;
   targetPrice: string;
   entryDate: string;
@@ -50,11 +59,10 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
   const [selectedTribe, setSelectedTribe] = useState<Tribe | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-  const queryClient = useQueryClient();
   const { user: currentUser } = useAuth();
 
   // Fetch user's tribes
-  const { data: allTribes = [] } = useQuery({
+  const { data: allTribes = [] } = useTanStackQuery({
     queryKey: ['tribes'],
     queryFn: async () => {
       const response = await apiClient.tribes.$get();
@@ -71,12 +79,12 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
     handleSubmit,
     setValue,
     watch,
+    control,
     formState: { errors },
     reset,
   } = useForm<StockTipFormData>({
     defaultValues: {
-      stockName: "",
-      symbol: "",
+      type: "STOCKS",
       entryPrice: "",
       targetPrice: "",
       entryDate: "",
@@ -89,18 +97,48 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
 
   const reasoning = watch("reasoning");
 
-  // TanStack Query mutation for creating stock tip
-  const createStockTipMutation = useMutation({
-    mutationFn: async (data: CreateStockTipInput) => {
-      const response = await apiClient.stock_tips.$post({
-        body: data
-      });
-      return response;
-    },
-    onSuccess: () => {
-      // Invalidate stock tips query to refresh the list
-      queryClient.invalidateQueries({ queryKey: ['stock-tips'] });
+  // GraphQL mutation for creating stock tip
+  const [createStockTipMutation, { loading: isCreating }] = useMutation(CREATE_STOCK_TIP, {
+    update: (cache, { data }) => {
+      if (data?.createStockTip) {
+        // Update GET_STOCK_TIPS query
+        try {
+          const existingData = cache.readQuery({
+            query: GET_STOCK_TIPS,
+          });
 
+          if (existingData) {
+            cache.writeQuery({
+              query: GET_STOCK_TIPS,
+              data: {
+                stockTips: [data.createStockTip, ...existingData.stockTips],
+              },
+            });
+          }
+        } catch (error) {
+          // Query might not be in cache, that's okay
+        }
+
+        // Update GET_MY_STOCK_TIPS query
+        try {
+          const existingMyData = cache.readQuery({
+            query: GET_MY_STOCK_TIPS,
+          });
+
+          if (existingMyData) {
+            cache.writeQuery({
+              query: GET_MY_STOCK_TIPS,
+              data: {
+                myStockTips: [data.createStockTip, ...existingMyData.myStockTips],
+              },
+            });
+          }
+        } catch (error) {
+          // Query might not be in cache, that's okay
+        }
+      }
+    },
+    onCompleted: (data) => {
       toast({
         title: "Success!",
         description: "Your stock tip has been shared with the community.",
@@ -112,10 +150,10 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
       onTipCreated?.();
       onClose();
     },
-    onError: (error: any) => {
+    onError: (error) => {
       toast({
         title: "Error",
-        description: error?.response?.data?.message || error?.message || "Failed to share stock tip. Please try again.",
+        description: error?.message || "Failed to share stock tip. Please try again.",
         variant: "destructive"
       });
     }
@@ -187,11 +225,14 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
   };
 
   const onSubmit = async (data: StockTipFormData) => {
+    console.log('Form data:', data);
+    console.log('Selected stock:', selectedStock);
+
     // Validation
-    if (!data.stockName || !data.symbol) {
+    if (!selectedStock) {
       toast({
         title: "Validation Error",
-        description: "Stock name and symbol are required.",
+        description: "Please select a stock from the search results.",
         variant: "destructive"
       });
       return;
@@ -218,10 +259,11 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
       return;
     }
 
-    // Prepare data for API
-    const stockTipData: CreateStockTipInput = {
-      stockName: data.stockName,
-      symbol: data.symbol,
+    // Prepare data for GraphQL mutation
+    const stockTipData = {
+      type: data.type,
+      stockName: selectedStock.name,
+      symbol: selectedStock.symbol,
       entryPrice: entryPrice,
       targetPrice: targetPrice,
       entryDate: data.entryDate,
@@ -230,12 +272,25 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
       chartImageId: data.chartImageId || undefined
     };
 
-    // Call mutation
-    createStockTipMutation.mutate(stockTipData);
+    // Call GraphQL mutation
+    createStockTipMutation({
+      variables: {
+        input: stockTipData
+      }
+    });
   };
 
   const handleClose = () => {
-    reset();
+    reset({
+      type: "STOCKS",
+      entryPrice: "",
+      targetPrice: "",
+      entryDate: "",
+      exitDate: "",
+      reasoning: "",
+      chartImageId: undefined,
+      visibility: "public"
+    });
     setImagePreview(null);
     setUploadedFileId(null);
     setSelectedStock(null);
@@ -288,8 +343,6 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
 
   const handleStockSelect = (stock: Stock) => {
     setSelectedStock(stock);
-    setValue("stockName", stock.name);
-    setValue("symbol", stock.symbol);
     setSearchQuery("");
     setShowStockResults(false);
   };
@@ -316,6 +369,34 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
         <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col">
           <div className="px-5 py-4 overflow-y-auto flex-1">
             <div className="space-y-4">
+              {/* Type Selection */}
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-2 block">
+                  Type
+                </label>
+                <Controller
+                  name="type"
+                  control={control}
+                  rules={{ required: "Type is required" }}
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <SelectTrigger className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            <SelectValue placeholder="Select investment type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="STOCKS">Stocks</SelectItem>
+                            <SelectItem value="FUTURES">Futures</SelectItem>
+                            <SelectItem value="OPTIONS">Options</SelectItem>
+                            <SelectItem value="COMMODITIES">Commodities</SelectItem>
+                          </SelectContent>
+                        </Select>
+                  )}
+                />
+                {errors.type && (
+                  <p className="text-red-500 text-xs mt-1">{errors.type.message}</p>
+                )}
+              </div>
+
               {/* Stock Search */}
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-2 block">
@@ -572,10 +653,10 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
               <Button
                 type="submit"
                 className="px-8 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium flex items-center gap-2 shadow-sm"
-                disabled={createStockTipMutation.isPending}
+                disabled={isCreating}
               >
                 <Send className="h-4 w-4" />
-                {createStockTipMutation.isPending ? "Posting..." : "Post"}
+                {isCreating ? "Posting..." : "Post"}
               </Button>
             </div>
           </div>

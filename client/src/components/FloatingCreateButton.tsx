@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import EnhancedCreatePostModal from "@/components/dashboard/EnhancedCreatePostModal";
 import AuthPrompt from "@/components/auth/AuthPrompt";
+import KycPrompt from "@/components/auth/KycPrompt";
 import { useAuth } from "@/hooks/useAuth";
 
 interface FloatingCreateButtonProps {
@@ -14,14 +15,27 @@ const FloatingCreateButton = ({ className = "" }: FloatingCreateButtonProps) => 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const [showKycPrompt, setShowKycPrompt] = useState(false);
+  const [selectedType, setSelectedType] = useState<'post' | 'tip'>('post');
+  const { isAuthenticated, user } = useAuth();
 
   const handleOptionSelect = (type: 'post' | 'tip') => {
     setShowOptions(false);
+    setSelectedType(type);
+
     if (!isAuthenticated) {
       setShowAuthPrompt(true);
       return;
     }
+
+    // Check KYC status for stock tips - must be explicitly true to allow
+    console.log('KYC status check:', { type, kycStatus: user?.kycStatus, user });
+    if (type === 'tip' && user?.kycStatus !== true) {
+      console.log('Showing KYC prompt because kycStatus is not true');
+      setShowKycPrompt(true);
+      return;
+    }
+
     setIsModalOpen(true);
   };
 
@@ -99,6 +113,7 @@ const FloatingCreateButton = ({ className = "" }: FloatingCreateButtonProps) => 
         onPostCreated={() => {
           console.log('Post created from floating button');
         }}
+        initialTab={selectedType === 'tip' ? 'stock_tip' : 'tweet'}
       />
 
       {/* Auth Prompt */}
@@ -110,6 +125,16 @@ const FloatingCreateButton = ({ className = "" }: FloatingCreateButtonProps) => 
           setIsModalOpen(true);
         }}
         message="Sign in to create posts and share your insights with the community."
+      />
+
+      {/* KYC Prompt */}
+      <KycPrompt
+        isOpen={showKycPrompt}
+        onClose={() => setShowKycPrompt(false)}
+        onGetStarted={() => {
+          // TODO: Navigate to KYC registration page
+          console.log('Navigate to KYC registration');
+        }}
       />
     </>
   );

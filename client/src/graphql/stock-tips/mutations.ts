@@ -5,6 +5,7 @@ export const CREATE_STOCK_TIP = gql`
     createStockTip(input: $input) {
       id
       uuid
+      type
       stockName
       symbol
       entryPrice
@@ -12,7 +13,6 @@ export const CREATE_STOCK_TIP = gql`
       entryDate
       exitDate
       reason
-      status
       chartImage {
         id
         url

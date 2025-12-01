@@ -5,6 +5,7 @@ export const GET_STOCK_TIPS = gql`
     stockTips {
       id
       uuid
+      type
       stockName
       symbol
       entryPrice
@@ -35,6 +36,7 @@ export const GET_STOCK_TIP = gql`
     stockTip(id: $id) {
       id
       uuid
+      type
       stockName
       symbol
       entryPrice
@@ -65,6 +67,7 @@ export const GET_MY_STOCK_TIPS = gql`
     myStockTips {
       id
       uuid
+      type
       stockName
       symbol
       entryPrice

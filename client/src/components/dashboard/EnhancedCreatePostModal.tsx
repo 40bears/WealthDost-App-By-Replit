@@ -33,10 +33,11 @@ interface EnhancedCreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
   onPostCreated?: () => void;
+  initialTab?: "tweet" | "stock_tip";
 }
 
-const EnhancedCreatePostModal = ({ isOpen, onClose, onPostCreated }: EnhancedCreatePostModalProps) => {
-  const [activeTab, setActiveTab] = useState<"tweet" | "stock_tip">("tweet");
+const EnhancedCreatePostModal = ({ isOpen, onClose, onPostCreated, initialTab = "tweet" }: EnhancedCreatePostModalProps) => {
+  const [activeTab, setActiveTab] = useState<"tweet" | "stock_tip">(initialTab);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
