@@ -18,11 +18,12 @@ import { GET_STOCK_TIPS, GET_MY_STOCK_TIPS } from "@/graphql/stock-tips/queries"
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiClient, axiosInstance } from "@/lib/api";
+import type { StockSearchResult, StockSearchResponse } from "@/api/market/stocks/search";
 import type { FileResponse, Tribe } from "@/types";
 import { useMutation } from "@apollo/client/react";
 import { useQuery as useTanStackQuery } from "@tanstack/react-query";
 import { ChevronDown, Globe, Lock, Send, TrendingUp, Upload, Users, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 interface StockTipFormData {
@@ -53,6 +54,7 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [uploadedFileId, setUploadedFileId] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
   const [showStockResults, setShowStockResults] = useState(false);
   const [selectedVisibility, setSelectedVisibility] = useState<string>("public");
@@ -73,6 +75,32 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
 
   // Filter tribes created by the current user
   const userTribes = allTribes.filter(tribe => tribe.userId === currentUser?.id);
+
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Search stocks API
+  const { data: searchResponse, isLoading: isSearching } = useTanStackQuery({
+    queryKey: ['stock-search', debouncedSearchQuery],
+    queryFn: async () => {
+      if (debouncedSearchQuery.length < 2) return null;
+      const response = await apiClient.market.stocks.search.$get({
+        query: { q: debouncedSearchQuery }
+      });
+      return response;
+    },
+    enabled: isOpen && debouncedSearchQuery.length >= 2,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  // Extract stocks array from response
+  const searchResults = searchResponse?.stocks || [];
 
   const {
     register,
@@ -327,19 +355,8 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
     return <Globe className="h-5 w-5 text-gray-600" />;
   };
 
-  // Mock stock data - replace with actual API call later
-  const mockStocks: Stock[] = [
-    { name: "Tata Power", symbol: "TTPL", currentPrice: 393.53 },
-    { name: "Tata Motors", symbol: "TATAMOTORS", currentPrice: 775.40 },
-    { name: "Tata Steel", symbol: "TATASTEEL", currentPrice: 140.25 },
-  ];
-
-  const filteredStocks = searchQuery
-    ? mockStocks.filter(stock =>
-        stock.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        stock.symbol.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : [];
+  // Use API search results
+  const filteredStocks = searchResults;
 
   const handleStockSelect = (stock: Stock) => {
     setSelectedStock(stock);
@@ -417,34 +434,38 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
                   />
 
                   {/* Stock Search Results */}
-                  {showStockResults && filteredStocks.length > 0 && (
+                  {showStockResults && searchQuery.length >= 2 && (
                     <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                      {filteredStocks.map((stock) => (
-                        <button
-                          key={stock.symbol}
-                          type="button"
-                          onClick={() => handleStockSelect(stock)}
-                          className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                              <span className="text-blue-600 font-bold text-xs">
-                                {stock.symbol.slice(0, 2)}
-                              </span>
+                      {isSearching ? (
+                        <div className="px-4 py-3 text-sm text-gray-500 text-center">
+                          Searching...
+                        </div>
+                      ) : filteredStocks.length > 0 ? (
+                        filteredStocks.map((stock) => (
+                          <button
+                            key={stock.symbol}
+                            type="button"
+                            onClick={() => handleStockSelect(stock)}
+                            className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <span className="text-blue-600 font-bold text-xs">
+                                  {stock.symbol.slice(0, 2)}
+                                </span>
+                              </div>
+                              <div className="text-left">
+                                <p className="font-semibold text-sm text-gray-900">{stock.name}</p>
+                                <p className="text-xs text-gray-500">{stock.symbol} • {stock.exchange}</p>
+                              </div>
                             </div>
-                            <div className="text-left">
-                              <p className="font-semibold text-sm text-gray-900">{stock.name}</p>
-                              <p className="text-xs text-gray-500">{stock.symbol}</p>
-                            </div>
-                          </div>
-                          {stock.currentPrice && (
-                            <div className="text-right">
-                              <p className="text-xs text-gray-500">Current Price</p>
-                              <p className="font-semibold text-sm text-gray-900">{stock.currentPrice}</p>
-                            </div>
-                          )}
-                        </button>
-                      ))}
+                          </button>
+                        ))
+                      ) : (
+                        <div className="px-4 py-3 text-sm text-gray-500 text-center">
+                          No stocks found
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -458,15 +479,9 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
                       </div>
                       <div>
                         <p className="font-semibold text-sm text-gray-900">{selectedStock.name}</p>
-                        <p className="text-xs text-gray-500">{selectedStock.symbol}</p>
+                        <p className="text-xs text-gray-500">{selectedStock.symbol} • {selectedStock.exchange}</p>
                       </div>
                     </div>
-                    {selectedStock.currentPrice && (
-                      <div className="text-right">
-                        <p className="text-xs text-gray-500">Current Price</p>
-                        <p className="font-semibold text-sm text-gray-900">{selectedStock.currentPrice}</p>
-                      </div>
-                    )}
                   </div>
                 )}
               </div>
