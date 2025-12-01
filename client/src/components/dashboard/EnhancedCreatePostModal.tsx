@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { MessageSquare, TrendingUp, Image, X } from "lucide-react";
+import { useCreatePost, useCreateStockTip } from "@/hooks/graphql";
 
 // Simple form data types for demo
 interface TweetPostFormData {
@@ -40,6 +41,9 @@ const EnhancedCreatePostModal = ({ isOpen, onClose, onPostCreated }: EnhancedCre
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const { toast } = useToast();
+
+  const [createPost] = useCreatePost();
+  const [createStockTip] = useCreateStockTip();
 
   const tweetForm = useForm<TweetPostFormData>({
     defaultValues: {
@@ -88,7 +92,7 @@ const EnhancedCreatePostModal = ({ isOpen, onClose, onPostCreated }: EnhancedCre
 
   const onTweetSubmit = async (data: TweetPostFormData) => {
     setIsSubmitting(true);
-    
+
     // Simple validation for demo
     if (!data.content || data.content.length > 600) {
       toast({
@@ -100,25 +104,44 @@ const EnhancedCreatePostModal = ({ isOpen, onClose, onPostCreated }: EnhancedCre
       return;
     }
 
-    // Simulate API call with image upload
-    setTimeout(() => {
+    try {
+      const result = await createPost({
+        variables: {
+          input: {
+            content: data.content,
+            // visibility field not supported yet in GraphQL schema
+            // attachments: selectedImage ? [selectedImage] : undefined, // TODO: handle file upload
+          }
+        }
+      });
+
+      console.log('Post created successfully:', result);
+
       toast({
         title: "Post Created",
-        description: selectedImage 
-          ? "Your post with image has been shared successfully!" 
+        description: selectedImage
+          ? "Your post with image has been shared successfully!"
           : "Your post has been shared successfully!"
       });
       tweetForm.reset();
       removeImage();
       onPostCreated?.();
       onClose();
+    } catch (error) {
+      console.error('Error creating post:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to create post. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
 
   const onStockTipSubmit = async (data: StockTipFormData) => {
     setIsSubmitting(true);
-    
+
     // Simple validation for demo
     if (!data.stockName || !data.symbol || !data.entryPrice || !data.exitPrice || !data.targetDate) {
       toast({
@@ -130,8 +153,22 @@ const EnhancedCreatePostModal = ({ isOpen, onClose, onPostCreated }: EnhancedCre
       return;
     }
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      await createStockTip({
+        variables: {
+          input: {
+            stockName: data.stockName,
+            symbol: data.symbol,
+            entryPrice: data.entryPrice,
+            targetPrice: data.exitPrice,
+            entryDate: data.targetDate,
+            exitDate: data.targetDate, // TODO: separate exit date
+            reason: data.reasoning,
+            // chartImageId: selectedImage ? uploadedImageId : undefined, // TODO: handle file upload
+          }
+        }
+      });
+
       toast({
         title: "Stock Tip Created",
         description: "Your stock tip has been shared with the community!"
@@ -139,8 +176,15 @@ const EnhancedCreatePostModal = ({ isOpen, onClose, onPostCreated }: EnhancedCre
       stockTipForm.reset();
       onPostCreated?.();
       onClose();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create stock tip. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
 
   const handleClose = () => {

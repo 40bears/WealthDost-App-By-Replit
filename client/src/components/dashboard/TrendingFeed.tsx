@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/select';
 import { PostCard } from './PostCard';
 import { TipCard } from './TipCard';
+import { usePosts } from '@/hooks/graphql';
 
 type FeedFilter = 'following' | 'trending' | 'latest' | 'popular';
 
@@ -19,23 +20,6 @@ interface FeedItem {
 }
 
 const mockFeedData: FeedItem[] = [
-  {
-    id: '1',
-    type: 'post',
-    data: {
-      author: {
-        name: 'Priya Mehta',
-        username: '@ca_priya',
-        initials: 'P',
-      },
-      content: 'What are your thoughts on investing in small-cap funds in the current market? Looking for some expert opinions.',
-      tags: ['#tech', '#stocks', '#renewable'],
-      likes: 24,
-      comments: 7,
-      timestamp: '2 days ago',
-      isFollowing: false,
-    },
-  },
   {
     id: '2',
     type: 'tip',
@@ -90,6 +74,31 @@ const mockFeedData: FeedItem[] = [
 
 export function TrendingFeed() {
   const [filter, setFilter] = useState<FeedFilter>('following');
+  const { data: postsData, loading } = usePosts();
+  const posts = (postsData as { posts: any[] })?.posts || [];
+
+  // Transform GraphQL posts to FeedItem format
+  const postFeedItems: FeedItem[] = posts.map((post) => ({
+    id: post.id.toString(),
+    type: 'post' as const,
+    data: {
+      author: {
+        name: `${post.user.firstName} ${post.user.lastName}`,
+        username: `@user${post.user.id}`,
+        initials: post.user.firstName[0] + (post.user.lastName?.[0] || ''),
+      },
+      content: post.content,
+      tags: [], // TODO: extract hashtags from content
+      likes: 0, // Not available yet
+      comments: 0, // Not available yet
+      timestamp: new Date(post.createdAt).toLocaleDateString(),
+      isFollowing: false,
+      image: post.image?.path,
+    },
+  }));
+
+  // Combine real posts with mock tips
+  const feedData = [...postFeedItems, ...mockFeedData];
 
   return (
     <div className="bg-transparent">
@@ -114,13 +123,19 @@ export function TrendingFeed() {
 
       {/* Feed Items */}
       <div className="space-y-4">
-        {mockFeedData.map((item) => {
-          if (item.type === 'post') {
-            return <PostCard key={item.id} {...item.data} />;
-          } else {
-            return <TipCard key={item.id} {...item.data} />;
-          }
-        })}
+        {loading ? (
+          <div className="text-center py-8 text-gray-500">Loading posts...</div>
+        ) : feedData.length > 0 ? (
+          feedData.map((item) => {
+            if (item.type === 'post') {
+              return <PostCard key={item.id} {...item.data} />;
+            } else {
+              return <TipCard key={item.id} {...item.data} />;
+            }
+          })
+        ) : (
+          <div className="text-center py-8 text-gray-500">No posts yet</div>
+        )}
       </div>
     </div>
   );

@@ -22,6 +22,7 @@ interface PostCardProps {
   comments: number;
   timestamp: string;
   isFollowing?: boolean;
+  image?: string;
 }
 
 export function PostCard({
@@ -32,6 +33,7 @@ export function PostCard({
   comments,
   timestamp,
   isFollowing = false,
+  image,
 }: PostCardProps) {
   const [following, setFollowing] = useState(isFollowing);
   const [liked, setLiked] = useState(false);
@@ -98,6 +100,17 @@ export function PostCard({
 
       {/* Content */}
       <p className="text-gray-700 text-sm mb-4 leading-relaxed">{content}</p>
+
+      {/* Image */}
+      {image && (
+        <div className="mb-4 rounded-lg overflow-hidden">
+          <img
+            src={image}
+            alt="Post content"
+            className="w-full h-auto object-cover max-h-96"
+          />
+        </div>
+      )}
 
       {/* Tags */}
       <div className="flex flex-wrap gap-2 mb-4">

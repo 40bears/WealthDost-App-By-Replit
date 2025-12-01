@@ -1,23 +1,17 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import TribeCard from "@/components/dashboard/TribeCard";
 import { useNavigate } from "@tanstack/react-router";
-import { apiClient } from "@/lib/api";
+import { useTribes } from "@/hooks/graphql/useTribes";
 import type { Tribe } from "@/types";
 
 const InvestmentRooms = () => {
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterType, setFilterType] = useState("all");
   const navigate = useNavigate();
-  const { data: tribes = [], isLoading, error } = useQuery({
-    queryKey: ['tribes'],
-    queryFn: async () => {
-      const response = await apiClient.tribes.$get();
-      return response;
-    }
-  });
+  const { data, loading: isLoading, error } = useTribes();
+  const tribes = (data as { tribes: Tribe[] })?.tribes || [];
 
   const mockRooms = [
     {
@@ -90,11 +84,11 @@ const InvestmentRooms = () => {
       creatorAvatar: "",
       creatorUsername: creatorUsername,
       category: tribe.category,
-      memberCount: tribe.member_count || 0,
+      memberCount: tribe.memberCount || 0,
       isPremium: tribe.isPremium,
       premiumPrice: tribe.price || "0",
-      tipsHits: tribe.tips_hits || 0,
-      weeklyFeeds: tribe.weekly_feeds || 0,
+      tipsHits: tribe.tipsHits || 0,
+      weeklyFeeds: tribe.weeklyFeeds || 0,
       badges: tribe.badges || [],
       coverImage: fixMinioUrl(tribe.coverImage?.publicUrl) || mockRooms.find(m => m.category === tribe.category)?.coverImage || "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=400&fit=crop"
     };

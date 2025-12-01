@@ -17,6 +17,10 @@ export const CREATE_TRIBE = gql`
         url
         fileName
       }
+      memberCount
+      tipsHits
+      weeklyFeeds
+      badges
       createdAt
     }
   }
@@ -39,6 +43,10 @@ export const UPDATE_TRIBE = gql`
         url
         fileName
       }
+      memberCount
+      tipsHits
+      weeklyFeeds
+      badges
       updatedAt
     }
   }

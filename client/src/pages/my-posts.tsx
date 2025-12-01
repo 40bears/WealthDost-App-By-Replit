@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -14,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useInteraction } from "@/lib/interactionContext";
 import { CommentModal } from "@/components/ui/comment-modal";
+import { useMyPosts } from "@/hooks/graphql";
 
 const MyPosts = () => {
   const [filter, setFilter] = useState("all");
@@ -28,11 +28,8 @@ const MyPosts = () => {
   } = useInteraction();
 
   // Fetch user's posts
-  const { data: posts, isLoading } = useQuery({
-    queryKey: ["/api/posts"],
-  });
-
-  const typedPosts = posts as any[];
+  const { data: postsData, loading: isLoading } = useMyPosts();
+  const typedPosts = (postsData as { myPosts: any[] })?.myPosts || [];
 
   const filterOptions = [
     { value: "all", label: "All Posts" },

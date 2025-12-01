@@ -23,6 +23,10 @@ export const GET_TRIBES = gql`
         lastName
         username
       }
+      memberCount
+      tipsHits
+      weeklyFeeds
+      badges
       createdAt
       updatedAt
     }
@@ -52,6 +56,10 @@ export const GET_TRIBE = gql`
         lastName
         username
       }
+      memberCount
+      tipsHits
+      weeklyFeeds
+      badges
       rules {
         id
         content
@@ -88,6 +96,10 @@ export const GET_TRIBE_BY_UUID = gql`
         lastName
         username
       }
+      memberCount
+      tipsHits
+      weeklyFeeds
+      badges
       rules {
         id
         content
