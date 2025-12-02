@@ -46,26 +46,21 @@ export const DELETE_POST = gql`
   }
 `;
 
-// TODO: These mutations need to be implemented in the backend GraphQL schema
-// export const LIKE_POST = gql`
-//   mutation LikePost($postId: Int!) {
-//     likePost(postId: $postId) {
-//       id
-//       likesCount
-//       isLiked
-//     }
-//   }
-// `;
+export const LIKE_POST = gql`
+  mutation LikePost($postId: Int!) {
+    likePost(postId: $postId) {
+      id
+      uuid
+      createdAt
+    }
+  }
+`;
 
-// export const UNLIKE_POST = gql`
-//   mutation UnlikePost($postId: Int!) {
-//     unlikePost(postId: $postId) {
-//       id
-//       likesCount
-//       isLiked
-//     }
-//   }
-// `;
+export const UNLIKE_POST = gql`
+  mutation UnlikePost($postId: Int!) {
+    unlikePost(postId: $postId)
+  }
+`;
 
 // export const CREATE_COMMENT = gql`
 //   mutation CreateComment($postId: Int!, $input: CreateCommentDto!) {

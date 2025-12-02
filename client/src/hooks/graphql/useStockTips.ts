@@ -8,6 +8,8 @@ import {
   CREATE_STOCK_TIP,
   UPDATE_STOCK_TIP,
   DELETE_STOCK_TIP,
+  LIKE_STOCK_TIP,
+  UNLIKE_STOCK_TIP,
 } from '@/graphql/stock-tips/mutations';
 
 // Query Hooks
@@ -48,6 +50,20 @@ export const useUpdateStockTip = () => {
 export const useDeleteStockTip = () => {
   return useMutation(DELETE_STOCK_TIP, {
     refetchQueries: [GET_STOCK_TIPS, GET_MY_STOCK_TIPS],
+    awaitRefetchQueries: true,
+  });
+};
+
+export const useLikeStockTip = () => {
+  return useMutation(LIKE_STOCK_TIP, {
+    refetchQueries: [GET_STOCK_TIPS, GET_MY_STOCK_TIPS, GET_STOCK_TIP],
+    awaitRefetchQueries: true,
+  });
+};
+
+export const useUnlikeStockTip = () => {
+  return useMutation(UNLIKE_STOCK_TIP, {
+    refetchQueries: [GET_STOCK_TIPS, GET_MY_STOCK_TIPS, GET_STOCK_TIP],
     awaitRefetchQueries: true,
   });
 };

@@ -9,8 +9,8 @@ import {
   CREATE_POST,
   UPDATE_POST,
   DELETE_POST,
-  // LIKE_POST,
-  // UNLIKE_POST,
+  LIKE_POST,
+  UNLIKE_POST,
   // CREATE_COMMENT,
   // UPDATE_COMMENT,
   // DELETE_COMMENT,
@@ -65,34 +65,19 @@ export const useDeletePost = () => {
   });
 };
 
-// TODO: Uncomment these hooks when the backend mutations are implemented
-// export const useLikePost = () => {
-//   return useMutation(LIKE_POST, {
-//     // Optimistic response for better UX
-//     optimisticResponse: (vars: any) => ({
-//       likePost: {
-//         __typename: 'Post',
-//         id: vars.postId,
-//         likesCount: 0, // Will be updated by actual response
-//         isLiked: true,
-//       },
-//     }),
-//   });
-// };
+export const useLikePost = () => {
+  return useMutation(LIKE_POST, {
+    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_POST],
+    awaitRefetchQueries: true,
+  });
+};
 
-// export const useUnlikePost = () => {
-//   return useMutation(UNLIKE_POST, {
-//     // Optimistic response for better UX
-//     optimisticResponse: (vars: any) => ({
-//       unlikePost: {
-//         __typename: 'Post',
-//         id: vars.postId,
-//         likesCount: 0, // Will be updated by actual response
-//         isLiked: false,
-//       },
-//     }),
-//   });
-// };
+export const useUnlikePost = () => {
+  return useMutation(UNLIKE_POST, {
+    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_POST],
+    awaitRefetchQueries: true,
+  });
+};
 
 // export const useCreateComment = () => {
 //   return useMutation(CREATE_COMMENT, {

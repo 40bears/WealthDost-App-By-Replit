@@ -51,3 +51,19 @@ export const DELETE_STOCK_TIP = gql`
     deleteStockTip(id: $id)
   }
 `;
+
+export const LIKE_STOCK_TIP = gql`
+  mutation LikeStockTip($stockTipId: Int!) {
+    likeStockTip(stockTipId: $stockTipId) {
+      id
+      uuid
+      createdAt
+    }
+  }
+`;
+
+export const UNLIKE_STOCK_TIP = gql`
+  mutation UnlikeStockTip($stockTipId: Int!) {
+    unlikeStockTip(stockTipId: $stockTipId)
+  }
+`;
