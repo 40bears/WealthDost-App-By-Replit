@@ -48,7 +48,7 @@ export function TrendingFeed() {
       content: post.content,
       tags: [], // TODO: extract hashtags from content
       likes: post.likeCount || 0,
-      comments: 0, // Not available yet
+      comments: post.commentCount || 0,
       timestamp: new Date(post.createdAt).toLocaleDateString(),
       isFollowing: false,
       image: post.image?.path,
@@ -83,7 +83,7 @@ export function TrendingFeed() {
         reasoning: tip.reason || '',
         chartImage: tip.chartImage?.publicUrl ? transformImageUrl(tip.chartImage.publicUrl) : undefined,
         likes: tip.likeCount || 0,
-        comments: 0, // Not available yet
+        comments: tip.commentCount || 0,
         isFollowing: false,
         isLikedByMe: tip.isLikedByMe || false,
       },

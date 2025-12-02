@@ -8,6 +8,7 @@ export const GET_POSTS = gql`
       content
       createdAt
       likeCount
+      commentCount
       isLikedByMe
       user {
         id
@@ -30,6 +31,7 @@ export const GET_POST = gql`
       content
       createdAt
       likeCount
+      commentCount
       isLikedByMe
       user {
         id
@@ -52,6 +54,7 @@ export const GET_MY_POSTS = gql`
       content
       createdAt
       likeCount
+      commentCount
       isLikedByMe
       user {
         id

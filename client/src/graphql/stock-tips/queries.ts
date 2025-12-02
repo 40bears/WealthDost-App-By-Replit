@@ -14,6 +14,7 @@ export const GET_STOCK_TIPS = gql`
       exitDate
       reason
       likeCount
+      commentCount
       isLikedByMe
       chartImage {
         id
@@ -47,6 +48,7 @@ export const GET_STOCK_TIP = gql`
       exitDate
       reason
       likeCount
+      commentCount
       isLikedByMe
       chartImage {
         id
@@ -80,6 +82,7 @@ export const GET_MY_STOCK_TIPS = gql`
       exitDate
       reason
       likeCount
+      commentCount
       isLikedByMe
       chartImage {
         id
