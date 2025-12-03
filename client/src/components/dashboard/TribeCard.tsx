@@ -7,7 +7,7 @@ import { useIsMemberOfTribe, useJoinTribe, useLeaveTribe } from "@/hooks/graphql
 import { useToast } from "@/hooks/use-toast";
 
 interface TribeCardProps {
-  id: number;
+  id: string;
   userId: number;
   name: string;
   createdDate: string;

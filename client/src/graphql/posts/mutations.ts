@@ -4,9 +4,14 @@ export const CREATE_POST = gql`
   mutation CreatePost($input: CreatePostDto!) {
     createPost(input: $input) {
       id
-      uuid
       content
       createdAt
+      tribeId
+      tribe {
+        id
+        name
+        description
+      }
       user {
         id
         firstName
@@ -21,10 +26,9 @@ export const CREATE_POST = gql`
 `;
 
 export const UPDATE_POST = gql`
-  mutation UpdatePost($id: Int!, $input: UpdatePostDto!) {
+  mutation UpdatePost($id: String!, $input: UpdatePostDto!) {
     updatePost(id: $id, input: $input) {
       id
-      uuid
       content
       createdAt
       user {
@@ -41,23 +45,22 @@ export const UPDATE_POST = gql`
 `;
 
 export const DELETE_POST = gql`
-  mutation DeletePost($id: Int!) {
+  mutation DeletePost($id: String!) {
     deletePost(id: $id)
   }
 `;
 
 export const LIKE_POST = gql`
-  mutation LikePost($postId: Int!) {
+  mutation LikePost($postId: String!) {
     likePost(postId: $postId) {
       id
-      uuid
       createdAt
     }
   }
 `;
 
 export const UNLIKE_POST = gql`
-  mutation UnlikePost($postId: Int!) {
+  mutation UnlikePost($postId: String!) {
     unlikePost(postId: $postId)
   }
 `;

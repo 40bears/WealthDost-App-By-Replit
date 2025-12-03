@@ -4,7 +4,6 @@ export const CREATE_TRIBE = gql`
   mutation CreateTribe($input: CreateTribeDto!) {
     createTribe(input: $input) {
       id
-      uuid
       name
       description
       category
@@ -27,10 +26,9 @@ export const CREATE_TRIBE = gql`
 `;
 
 export const UPDATE_TRIBE = gql`
-  mutation UpdateTribe($id: Int!, $input: UpdateTribeDto!) {
+  mutation UpdateTribe($id: String!, $input: UpdateTribeDto!) {
     updateTribe(id: $id, input: $input) {
       id
-      uuid
       name
       description
       category
@@ -53,13 +51,13 @@ export const UPDATE_TRIBE = gql`
 `;
 
 export const DELETE_TRIBE = gql`
-  mutation DeleteTribe($id: Int!) {
+  mutation DeleteTribe($id: String!) {
     deleteTribe(id: $id)
   }
 `;
 
 export const CREATE_TRIBE_RULE = gql`
-  mutation CreateTribeRule($tribeId: Int!, $input: CreateTribeRuleDto!) {
+  mutation CreateTribeRule($tribeId: String!, $input: CreateTribeRuleDto!) {
     createTribeRule(tribeId: $tribeId, input: $input) {
       id
       content
@@ -71,7 +69,7 @@ export const CREATE_TRIBE_RULE = gql`
 `;
 
 export const UPDATE_TRIBE_RULE = gql`
-  mutation UpdateTribeRule($tribeId: Int!, $ruleId: Int!, $input: UpdateTribeRuleDto!) {
+  mutation UpdateTribeRule($tribeId: String!, $ruleId: String!, $input: UpdateTribeRuleDto!) {
     updateTribeRule(tribeId: $tribeId, ruleId: $ruleId, input: $input) {
       id
       content
@@ -83,13 +81,13 @@ export const UPDATE_TRIBE_RULE = gql`
 `;
 
 export const DELETE_TRIBE_RULE = gql`
-  mutation DeleteTribeRule($tribeId: Int!, $ruleId: Int!) {
+  mutation DeleteTribeRule($tribeId: String!, $ruleId: String!) {
     deleteTribeRule(tribeId: $tribeId, ruleId: $ruleId)
   }
 `;
 
 export const REORDER_TRIBE_RULES = gql`
-  mutation ReorderTribeRules($tribeId: Int!, $input: ReorderTribeRulesDto!) {
+  mutation ReorderTribeRules($tribeId: String!, $input: ReorderTribeRulesDto!) {
     reorderTribeRules(tribeId: $tribeId, input: $input) {
       id
       content
@@ -100,7 +98,7 @@ export const REORDER_TRIBE_RULES = gql`
 `;
 
 export const JOIN_TRIBE = gql`
-  mutation JoinTribe($tribeId: Int!) {
+  mutation JoinTribe($tribeId: String!) {
     joinTribe(tribeId: $tribeId) {
       id
       userId
@@ -117,7 +115,7 @@ export const JOIN_TRIBE = gql`
 `;
 
 export const LEAVE_TRIBE = gql`
-  mutation LeaveTribe($tribeId: Int!) {
+  mutation LeaveTribe($tribeId: String!) {
     leaveTribe(tribeId: $tribeId)
   }
 `;

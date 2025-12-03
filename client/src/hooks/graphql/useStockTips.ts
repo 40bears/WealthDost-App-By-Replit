@@ -3,6 +3,9 @@ import {
   GET_STOCK_TIPS,
   GET_STOCK_TIP,
   GET_MY_STOCK_TIPS,
+  GET_PUBLIC_STOCK_TIPS,
+  GET_TRIBE_STOCK_TIPS,
+  GET_MY_STOCK_TIPS_FEED,
 } from '@/graphql/stock-tips/queries';
 import {
   CREATE_STOCK_TIP,
@@ -28,6 +31,26 @@ export const useStockTip = (id: number) => {
 
 export const useMyStockTips = () => {
   return useQuery(GET_MY_STOCK_TIPS, {
+    fetchPolicy: 'cache-and-network',
+  });
+};
+
+export const usePublicStockTips = () => {
+  return useQuery(GET_PUBLIC_STOCK_TIPS, {
+    fetchPolicy: 'cache-and-network',
+  });
+};
+
+export const useTribeStockTips = (tribeId: number) => {
+  return useQuery(GET_TRIBE_STOCK_TIPS, {
+    variables: { tribeId },
+    skip: !tribeId,
+    fetchPolicy: 'cache-and-network',
+  });
+};
+
+export const useMyStockTipsFeed = () => {
+  return useQuery(GET_MY_STOCK_TIPS_FEED, {
     fetchPolicy: 'cache-and-network',
   });
 };

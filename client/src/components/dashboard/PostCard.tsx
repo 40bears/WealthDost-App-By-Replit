@@ -12,7 +12,7 @@ import { useLikePost, useUnlikePost } from '@/hooks/graphql';
 import { CommentsBottomSheet } from '@/components/comments/CommentsBottomSheet';
 
 interface PostCardProps {
-  id: number;
+  id: string;
   author: {
     name: string;
     username: string;
@@ -27,6 +27,10 @@ interface PostCardProps {
   isFollowing?: boolean;
   image?: string;
   isLikedByMe?: boolean;
+  tribe?: {
+    id: string;
+    name: string;
+  };
 }
 
 export function PostCard({
@@ -40,6 +44,7 @@ export function PostCard({
   isFollowing = false,
   image,
   isLikedByMe = false,
+  tribe,
 }: PostCardProps) {
   const [following, setFollowing] = useState(isFollowing);
   const [commentsOpen, setCommentsOpen] = useState(false);
@@ -52,13 +57,12 @@ export function PostCard({
 
   const handleLike = async () => {
     try {
-      const postId = parseInt(String(id), 10);
-      console.log('PostCard - Toggling like for post:', postId, 'isLikedByMe:', isLikedByMe);
+      console.log('PostCard - Toggling like for post:', id, 'isLikedByMe:', isLikedByMe);
 
       if (isLikedByMe) {
-        await unlikePost({ variables: { postId } });
+        await unlikePost({ variables: { postId: id } });
       } else {
-        await likePost({ variables: { postId } });
+        await likePost({ variables: { postId: id } });
       }
     } catch (error) {
       console.error('PostCard - Error toggling like:', error);
@@ -83,6 +87,12 @@ export function PostCard({
               <span className="text-gray-400">•</span>
               <span className="text-gray-500 text-sm">{timestamp}</span>
             </div>
+            {tribe && (
+              <div className="flex items-center gap-1 mt-1">
+                <span className="text-xs">🔒</span>
+                <span className="text-xs text-purple-600 font-medium">{tribe.name}</span>
+              </div>
+            )}
           </div>
         </div>
         

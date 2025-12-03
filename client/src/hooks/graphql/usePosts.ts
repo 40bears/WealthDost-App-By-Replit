@@ -4,6 +4,9 @@ import {
   GET_POST,
   GET_MY_POSTS,
   GET_POST_COMMENTS,
+  GET_PUBLIC_POSTS,
+  GET_TRIBE_POSTS,
+  GET_MY_FEED,
 } from '@/graphql/posts/queries';
 import {
   CREATE_POST,
@@ -40,6 +43,26 @@ export const usePostComments = (postId: number) => {
   return useQuery(GET_POST_COMMENTS, {
     variables: { postId },
     skip: !postId,
+  });
+};
+
+export const usePublicPosts = () => {
+  return useQuery(GET_PUBLIC_POSTS, {
+    fetchPolicy: 'cache-and-network',
+  });
+};
+
+export const useTribePosts = (tribeId: number) => {
+  return useQuery(GET_TRIBE_POSTS, {
+    variables: { tribeId },
+    skip: !tribeId,
+    fetchPolicy: 'cache-and-network',
+  });
+};
+
+export const useMyFeed = () => {
+  return useQuery(GET_MY_FEED, {
+    fetchPolicy: 'cache-and-network',
   });
 };
 

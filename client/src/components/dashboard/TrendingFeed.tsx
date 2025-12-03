@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/select';
 import { PostCard } from './PostCard';
 import { TipCard } from './TipCard';
-import { usePosts, useStockTips } from '@/hooks/graphql';
+import { usePublicPosts, usePublicStockTips } from '@/hooks/graphql';
 
 type FeedFilter = 'following' | 'trending' | 'latest' | 'popular';
 
@@ -21,11 +21,11 @@ interface FeedItem {
 
 export function TrendingFeed() {
   const [filter, setFilter] = useState<FeedFilter>('following');
-  const { data: postsData, loading: loadingPosts } = usePosts();
-  const { data: stockTipsData, loading: loadingStockTips } = useStockTips();
+  const { data: postsData, loading: loadingPosts } = usePublicPosts();
+  const { data: stockTipsData, loading: loadingStockTips } = usePublicStockTips();
 
-  const posts = (postsData as { posts: any[] })?.posts || [];
-  const stockTips = (stockTipsData as { stockTips: any[] })?.stockTips || [];
+  const posts = (postsData as { publicPosts: any[] })?.publicPosts || [];
+  const stockTips = (stockTipsData as { publicStockTips: any[] })?.publicStockTips || [];
   const loading = loadingPosts || loadingStockTips;
 
   // Helper function to transform minio URLs for local development
@@ -42,7 +42,7 @@ export function TrendingFeed() {
       id: post.id,
       author: {
         name: `${post.user.firstName} ${post.user.lastName}`,
-        username: `@user${post.user.id}`,
+        username: post.user.username ? `@${post.user.username}` : `@user${post.user.id}`,
         initials: post.user.firstName[0] + (post.user.lastName?.[0] || ''),
       },
       content: post.content,
@@ -53,6 +53,7 @@ export function TrendingFeed() {
       isFollowing: false,
       image: post.image?.path,
       isLikedByMe: post.isLikedByMe || false,
+      tribe: post.tribe ? { id: post.tribe.id, name: post.tribe.name } : undefined,
     },
   }));
 
@@ -86,6 +87,7 @@ export function TrendingFeed() {
         comments: tip.commentCount || 0,
         isFollowing: false,
         isLikedByMe: tip.isLikedByMe || false,
+        tribe: tip.tribe ? { id: tip.tribe.id, name: tip.tribe.name } : undefined,
       },
     };
   });
