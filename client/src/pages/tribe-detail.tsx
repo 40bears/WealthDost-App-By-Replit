@@ -8,12 +8,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { Users, TrendingUp, BarChart3, Edit2, X, Check } from "lucide-react";
+import { Users, TrendingUp, BarChart3, Edit2, X, Check, Loader2 } from "lucide-react";
 import { apiClient } from "@/lib/api";
 import type { Tribe } from "@/types";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import type { TribeRule } from "@/api/tribes/_id@number/rules/index";
+import { useIsMemberOfTribe, useJoinTribe, useLeaveTribe } from "@/hooks/graphql";
 
 const TribeDetail = () => {
   const { id } = useParams({ from: '/_auth/tribe/$id' });
@@ -34,6 +35,14 @@ const TribeDetail = () => {
     },
     enabled: !!id,
   });
+
+  // Tribe membership hooks
+  const { data: isMemberData, loading: membershipLoading } = useIsMemberOfTribe(Number(id));
+  const [joinTribe, { loading: joining }] = useJoinTribe();
+  const [leaveTribe, { loading: leaving }] = useLeaveTribe();
+
+  const isMember = isMemberData?.isMemberOfTribe || false;
+  const isMembershipLoading = joining || leaving || membershipLoading;
 
   const updateRulesMutation = useMutation({
     mutationFn: async (rules: string[]) => {
@@ -248,6 +257,47 @@ const TribeDetail = () => {
     setEditedRules(newRules);
   };
 
+  const handleJoin = async () => {
+    try {
+      await joinTribe({ variables: { tribeId: Number(id) } });
+      toast({
+        title: "Success!",
+        description: "You've joined the tribe successfully.",
+      });
+    } catch (error: any) {
+      const errorMessage = error.message || "Failed to join tribe";
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleLeave = async () => {
+    try {
+      await leaveTribe({ variables: { tribeId: Number(id) } });
+      toast({
+        title: "Left tribe",
+        description: "You've left the tribe successfully.",
+      });
+    } catch (error: any) {
+      if (error.message?.includes("owner")) {
+        toast({
+          title: "Cannot leave",
+          description: "As the owner, you can't leave. Delete the tribe instead.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to leave tribe",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="sticky top-0 bg-white border-b border-gray-200 z-10">
@@ -427,10 +477,28 @@ const TribeDetail = () => {
 
                 {!isOwner && (
                   <Button
-                    className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium transition-all duration-200"
-                    onClick={() => {}}
+                    onClick={isMember ? handleLeave : handleJoin}
+                    disabled={isMembershipLoading}
+                    className={`w-full font-medium transition-all duration-200 ${
+                      isMember
+                        ? "bg-gray-200 hover:bg-gray-300 text-gray-700"
+                        : "bg-purple-600 hover:bg-purple-700 text-white"
+                    }`}
                   >
-                    Leave Tribe
+                    {isMembershipLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {isMember
+                      ? "Leave Tribe"
+                      : tribe.isPremium
+                      ? "Subscribe Now"
+                      : "Join for Free"}
+                  </Button>
+                )}
+                {isOwner && (
+                  <Button
+                    disabled
+                    className="w-full bg-purple-100 text-purple-600 font-medium cursor-default"
+                  >
+                    Your Tribe
                   </Button>
                 )}
               </div>

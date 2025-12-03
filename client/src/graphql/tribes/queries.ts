@@ -124,3 +124,56 @@ export const GET_TRIBE_RULES = gql`
     }
   }
 `;
+
+export const IS_MEMBER_OF_TRIBE = gql`
+  query IsMemberOfTribe($tribeId: Int!) {
+    isMemberOfTribe(tribeId: $tribeId)
+  }
+`;
+
+export const GET_TRIBE_MEMBERS = gql`
+  query GetTribeMembers($tribeId: Int!) {
+    tribeMembers(tribeId: $tribeId) {
+      id
+      joinedAt
+      user {
+        id
+        username
+        firstName
+        lastName
+        email
+      }
+    }
+  }
+`;
+
+export const GET_MY_TRIBES = gql`
+  query GetMyTribes {
+    myTribes {
+      id
+      uuid
+      name
+      description
+      category
+      coverImage {
+        id
+        url
+        fileName
+      }
+      isPremium
+      price
+      user {
+        id
+        username
+      }
+      memberCount
+      createdAt
+    }
+  }
+`;
+
+export const GET_TRIBE_MEMBER_COUNT = gql`
+  query GetTribeMemberCount($tribeId: Int!) {
+    tribeMemberCount(tribeId: $tribeId)
+  }
+`;
