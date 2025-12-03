@@ -98,3 +98,26 @@ export const REORDER_TRIBE_RULES = gql`
     }
   }
 `;
+
+export const JOIN_TRIBE = gql`
+  mutation JoinTribe($tribeId: Int!) {
+    joinTribe(tribeId: $tribeId) {
+      id
+      userId
+      tribeId
+      joinedAt
+      user {
+        id
+        username
+        firstName
+        lastName
+      }
+    }
+  }
+`;
+
+export const LEAVE_TRIBE = gql`
+  mutation LeaveTribe($tribeId: Int!) {
+    leaveTribe(tribeId: $tribeId)
+  }
+`;

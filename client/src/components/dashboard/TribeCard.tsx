@@ -2,9 +2,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Users, TrendingUp, BarChart3 } from "lucide-react";
+import { Users, TrendingUp, BarChart3, Loader2 } from "lucide-react";
+import { useIsMemberOfTribe, useJoinTribe, useLeaveTribe } from "@/hooks/graphql";
+import { useToast } from "@/hooks/use-toast";
 
 interface TribeCardProps {
+  id: number;
+  userId: number;
   name: string;
   createdDate: string;
   description: string;
@@ -18,11 +22,13 @@ interface TribeCardProps {
   isPremium: boolean;
   premiumPrice?: string;
   coverImage?: string;
-  onJoinClick?: () => void;
   onCardClick?: () => void;
+  currentUserId?: number;
 }
 
 export default function TribeCard({
+  id,
+  userId,
   name,
   createdDate,
   description,
@@ -36,9 +42,18 @@ export default function TribeCard({
   isPremium,
   premiumPrice,
   coverImage,
-  onJoinClick,
-  onCardClick
+  onCardClick,
+  currentUserId
 }: TribeCardProps) {
+  const { toast } = useToast();
+  const { data: isMemberData, loading: membershipLoading } = useIsMemberOfTribe(id);
+  const [joinTribe, { loading: joining }] = useJoinTribe();
+  const [leaveTribe, { loading: leaving }] = useLeaveTribe();
+
+  const isMember = isMemberData?.isMemberOfTribe || false;
+  const isOwner = currentUserId === userId;
+  const isLoading = joining || leaving || membershipLoading;
+
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -53,6 +68,49 @@ export default function TribeCard({
       return `${(num / 1000).toFixed(1).replace(/\.0$/, '')}k`;
     }
     return num.toString();
+  };
+
+  const handleJoin = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      await joinTribe({ variables: { tribeId: id } });
+      toast({
+        title: "Success!",
+        description: "You've joined the tribe successfully.",
+      });
+    } catch (error: any) {
+      const errorMessage = error.message || "Failed to join tribe";
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleLeave = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      await leaveTribe({ variables: { tribeId: id } });
+      toast({
+        title: "Left tribe",
+        description: "You've left the tribe successfully.",
+      });
+    } catch (error: any) {
+      if (error.message?.includes("owner")) {
+        toast({
+          title: "Cannot leave",
+          description: "As the owner, you can't leave. Delete the tribe instead.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to leave tribe",
+          variant: "destructive",
+        });
+      }
+    }
   };
 
   return (
@@ -169,16 +227,33 @@ export default function TribeCard({
           ))}
         </div>
 
-        {/* Join Button */}
-        <Button
-          onClick={(e) => {
-            e.stopPropagation();
-            onJoinClick?.();
-          }}
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium transition-all duration-200"
-        >
-          {isPremium ? "Subscribe Now" : "Join for Free"}
-        </Button>
+        {/* Join/Leave Button */}
+        {!isOwner && (
+          <Button
+            onClick={isMember ? handleLeave : handleJoin}
+            disabled={isLoading}
+            className={`w-full font-medium transition-all duration-200 ${
+              isMember
+                ? "bg-gray-200 hover:bg-gray-300 text-gray-700"
+                : "bg-purple-600 hover:bg-purple-700 text-white"
+            }`}
+          >
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isMember
+              ? "Leave Tribe"
+              : isPremium
+              ? "Subscribe Now"
+              : "Join for Free"}
+          </Button>
+        )}
+        {isOwner && (
+          <Button
+            disabled
+            className="w-full bg-purple-100 text-purple-600 font-medium cursor-default"
+          >
+            Your Tribe
+          </Button>
+        )}
       </div>
     </Card>
   );
