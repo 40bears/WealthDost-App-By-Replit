@@ -69,35 +69,35 @@ export const useMyFeed = () => {
 // Mutation Hooks
 export const useCreatePost = () => {
   return useMutation(CREATE_POST, {
-    refetchQueries: [GET_POSTS, GET_MY_POSTS],
+    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_PUBLIC_POSTS, GET_MY_FEED],
     awaitRefetchQueries: true,
   });
 };
 
 export const useUpdatePost = () => {
   return useMutation(UPDATE_POST, {
-    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_POST],
+    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_PUBLIC_POSTS, GET_MY_FEED, GET_POST],
     awaitRefetchQueries: true,
   });
 };
 
 export const useDeletePost = () => {
   return useMutation(DELETE_POST, {
-    refetchQueries: [GET_POSTS, GET_MY_POSTS],
+    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_PUBLIC_POSTS, GET_MY_FEED],
     awaitRefetchQueries: true,
   });
 };
 
 export const useLikePost = () => {
   return useMutation(LIKE_POST, {
-    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_POST],
+    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_PUBLIC_POSTS, GET_MY_FEED, GET_POST],
     awaitRefetchQueries: true,
   });
 };
 
 export const useUnlikePost = () => {
   return useMutation(UNLIKE_POST, {
-    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_POST],
+    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_PUBLIC_POSTS, GET_MY_FEED, GET_POST],
     awaitRefetchQueries: true,
   });
 };
