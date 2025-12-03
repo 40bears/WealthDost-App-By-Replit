@@ -1,5 +1,5 @@
 const appConfig =  {
-    apiUrl: import.meta.env.VITE_API_URL || 'http://127.0.0.1:3000'
+    apiUrl: import.meta.env.VITE_API_URL || 'https://api.wealthdost.com',
 }
 
 export default appConfig
