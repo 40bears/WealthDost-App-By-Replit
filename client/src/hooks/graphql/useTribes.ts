@@ -4,6 +4,10 @@ import {
   GET_TRIBE,
   GET_TRIBE_BY_UUID,
   GET_TRIBE_RULES,
+  IS_MEMBER_OF_TRIBE,
+  GET_TRIBE_MEMBERS,
+  GET_MY_TRIBES,
+  GET_TRIBE_MEMBER_COUNT,
 } from '@/graphql/tribes/queries';
 import {
   CREATE_TRIBE,
@@ -13,6 +17,8 @@ import {
   UPDATE_TRIBE_RULE,
   DELETE_TRIBE_RULE,
   REORDER_TRIBE_RULES,
+  JOIN_TRIBE,
+  LEAVE_TRIBE,
 } from '@/graphql/tribes/mutations';
 
 // Query Hooks
@@ -40,6 +46,36 @@ export const useTribeRules = (tribeId: number) => {
   return useQuery(GET_TRIBE_RULES, {
     variables: { tribeId },
     skip: !tribeId,
+  });
+};
+
+export const useIsMemberOfTribe = (tribeId: number) => {
+  return useQuery(IS_MEMBER_OF_TRIBE, {
+    variables: { tribeId },
+    skip: !tribeId,
+    fetchPolicy: 'cache-and-network',
+  });
+};
+
+export const useTribeMembers = (tribeId: number) => {
+  return useQuery(GET_TRIBE_MEMBERS, {
+    variables: { tribeId },
+    skip: !tribeId,
+    fetchPolicy: 'cache-and-network',
+  });
+};
+
+export const useMyTribes = () => {
+  return useQuery(GET_MY_TRIBES, {
+    fetchPolicy: 'cache-and-network',
+  });
+};
+
+export const useTribeMemberCount = (tribeId: number) => {
+  return useQuery(GET_TRIBE_MEMBER_COUNT, {
+    variables: { tribeId },
+    skip: !tribeId,
+    fetchPolicy: 'cache-and-network',
   });
 };
 
@@ -89,6 +125,20 @@ export const useDeleteTribeRule = () => {
 export const useReorderTribeRules = () => {
   return useMutation(REORDER_TRIBE_RULES, {
     refetchQueries: [GET_TRIBE_RULES, GET_TRIBE],
+    awaitRefetchQueries: true,
+  });
+};
+
+export const useJoinTribe = () => {
+  return useMutation(JOIN_TRIBE, {
+    refetchQueries: [IS_MEMBER_OF_TRIBE, GET_TRIBE_MEMBER_COUNT, GET_TRIBE_MEMBERS, GET_MY_TRIBES, GET_TRIBES],
+    awaitRefetchQueries: true,
+  });
+};
+
+export const useLeaveTribe = () => {
+  return useMutation(LEAVE_TRIBE, {
+    refetchQueries: [IS_MEMBER_OF_TRIBE, GET_TRIBE_MEMBER_COUNT, GET_TRIBE_MEMBERS, GET_MY_TRIBES, GET_TRIBES],
     awaitRefetchQueries: true,
   });
 };
