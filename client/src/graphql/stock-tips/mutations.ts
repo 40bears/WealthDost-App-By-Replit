@@ -5,6 +5,7 @@ export const CREATE_STOCK_TIP = gql`
     createStockTip(input: $input) {
       id
       uuid
+      type
       stockName
       symbol
       entryPrice
@@ -12,7 +13,6 @@ export const CREATE_STOCK_TIP = gql`
       entryDate
       exitDate
       reason
-      status
       chartImage {
         id
         url
@@ -49,5 +49,21 @@ export const UPDATE_STOCK_TIP = gql`
 export const DELETE_STOCK_TIP = gql`
   mutation DeleteStockTip($id: Int!) {
     deleteStockTip(id: $id)
+  }
+`;
+
+export const LIKE_STOCK_TIP = gql`
+  mutation LikeStockTip($stockTipId: Int!) {
+    likeStockTip(stockTipId: $stockTipId) {
+      id
+      uuid
+      createdAt
+    }
+  }
+`;
+
+export const UNLIKE_STOCK_TIP = gql`
+  mutation UnlikeStockTip($stockTipId: Int!) {
+    unlikeStockTip(stockTipId: $stockTipId)
   }
 `;

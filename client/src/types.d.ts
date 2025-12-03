@@ -12,6 +12,7 @@ export interface User {
   roles?: string[];
   isActive: boolean;
   isLoggedIn?: boolean;
+  kycStatus?: boolean;
 }
 
 export interface UserProfile {
@@ -47,20 +48,21 @@ export interface VerifyRegistrationResponse {
 
 export interface Tribe {
   id: number;
+  uuid?: string;
   name: string;
   description: string;
   category: string;
   features?: string[];
-  userId: number;
+  userId?: number;
   user?: {
     id: number;
-    email: string;
-    phone: string;
+    email?: string;
+    phone?: string;
     username: string;
     firstName: string;
     lastName: string;
-    isActive: boolean;
-    roles: string[];
+    isActive?: boolean;
+    roles?: string[];
   };
   price?: string;
   isPremium: boolean;
@@ -70,10 +72,10 @@ export interface Tribe {
   deletedAt?: string | null;
   coverImageId?: number;
   coverImage?: FileResponse;
-  // Optional fields that might not be in DB yet
-  member_count?: number;
-  tips_hits?: number;
-  weekly_feeds?: number;
+  // Optional fields
+  memberCount?: number;
+  tipsHits?: number;
+  weeklyFeeds?: number;
   badges?: string[];
   rules?: string[];
 }
@@ -124,6 +126,7 @@ export interface CreateTribeResponse {
 export interface StockTip {
   id: number;
   uuid: string;
+  type: 'Stocks' | 'Futures' | 'Options' | 'Commodities';
   stockName: string;
   symbol: string;
   entryPrice: number;
@@ -147,6 +150,7 @@ export interface StockTip {
 }
 
 export interface CreateStockTipInput {
+ type: 'Stocks' | 'Futures' | 'Options' | 'Commodities';
   stockName: string;
   symbol: string;
   entryPrice: number;

@@ -2,3 +2,4 @@
 export * from './useTribes';
 export * from './useStockTips';
 export * from './usePosts';
+export * from './useComments';

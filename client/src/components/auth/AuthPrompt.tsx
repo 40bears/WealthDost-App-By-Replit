@@ -67,19 +67,25 @@ const AuthPrompt = ({ isOpen, onClose, onSuccess, message }: AuthPromptProps) =>
 
     // Simulate API call
     setTimeout(() => {
-      // Mock successful login
+      // Mock successful login with kycStatus
       localStorage.setItem('user', JSON.stringify({
-        id: '1',
-        name: 'Demo User',
+        id: 2,
         email: data.email,
+        username: 'testuser',
+        roles: ['investor'],
+        isActive: true,
+        kycStatus: false, // Set to false to test KYC prompt
         isLoggedIn: true
       }));
+
+      // Mock access token
+      localStorage.setItem('accessToken', 'mock-token');
 
       toast({
         title: "Welcome back!",
         description: "You have successfully signed in."
       });
-      
+
       signInForm.reset();
       onSuccess();
       onClose();
@@ -113,19 +119,25 @@ const AuthPrompt = ({ isOpen, onClose, onSuccess, message }: AuthPromptProps) =>
 
     // Simulate API call
     setTimeout(() => {
-      // Mock successful registration
+      // Mock successful registration with kycStatus
       localStorage.setItem('user', JSON.stringify({
-        id: '1',
-        name: data.name,
+        id: 2,
         email: data.email,
+        username: data.name.toLowerCase().replace(/\s+/g, ''),
+        roles: ['investor'],
+        isActive: true,
+        kycStatus: false, // Set to false to test KYC prompt
         isLoggedIn: true
       }));
+
+      // Mock access token
+      localStorage.setItem('accessToken', 'mock-token');
 
       toast({
         title: "Account Created!",
         description: "Welcome to WealthDost! Your account has been created successfully."
       });
-      
+
       signUpForm.reset();
       onSuccess();
       onClose();

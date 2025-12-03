@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { useInteraction } from "@/lib/interactionContext";
 import { Heart, MessageCircle, Share, UserPlus, UserCheck } from "lucide-react";
 import { CommentModal } from "@/components/ui/comment-modal";
+import { useLikePost, useUnlikePost } from "@/hooks/graphql";
 
 interface ContentFeedProps {
   posts?: Post[];
@@ -19,16 +20,17 @@ interface ContentFeedProps {
 }
 
 const ContentFeed = ({ posts, isLoading = false }: ContentFeedProps) => {
-  const { 
-    toggleLike, 
-    toggleFollow, 
-    sharePost, 
-    addComment, 
-    isLiked, 
-    isFollowing, 
-    getShareCount, 
-    getCommentCount 
+  const {
+    toggleFollow,
+    sharePost,
+    addComment,
+    isFollowing,
+    getShareCount,
+    getCommentCount
   } = useInteraction();
+
+  const [likePost] = useLikePost();
+  const [unlikePost] = useUnlikePost();
 
   if (isLoading) {
     return (
@@ -47,14 +49,37 @@ const ContentFeed = ({ posts, isLoading = false }: ContentFeedProps) => {
     );
   }
 
+  const handleToggleLike = async (postId: number, isLikedByMe: boolean) => {
+    try {
+      // Ensure postId is a number
+      const id = parseInt(String(postId), 10);
+      console.log('Toggling like for post:', id, 'isLikedByMe:', isLikedByMe);
+      console.log('Variables being sent:', { postId: id });
+
+      if (isLikedByMe) {
+        console.log('Calling unlikePost mutation');
+        const result = await unlikePost({ variables: { postId: id } });
+        console.log('Unlike result:', result);
+      } else {
+        console.log('Calling likePost mutation');
+        const result = await likePost({ variables: { postId: id } });
+        console.log('Like result:', result);
+      }
+    } catch (error) {
+      console.error('Error toggling like:', error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
+    }
+  };
+
   return (
     <div className="mx-4 my-4 space-y-4 pb-16">
       {posts.map((post: any) => {
-        const liked = isLiked(post.id);
         const following = isFollowing(post.userId);
         const shareCount = getShareCount(post.id);
         const commentCount = getCommentCount(post.id);
-        
+        const isLikedByMe = post.isLikedByMe || false;
+        const likeCount = post.likeCount || 0;
+
         return (
           <div key={post.id} className="bg-white/70 backdrop-blur-md border-2 border-gray-200 shadow-lg rounded-2xl transition-all duration-300 active:scale-[0.98]">
             <div className="p-4">
@@ -119,12 +144,12 @@ const ContentFeed = ({ posts, isLoading = false }: ContentFeedProps) => {
                   variant="ghost"
                   size="sm"
                   className={`flex items-center space-x-1 text-xs border-2 border-transparent rounded-xl transition-all duration-300 active:scale-95 hover:bg-red-50/70 hover:backdrop-blur-sm ${
-                    liked ? 'text-red-600 bg-red-50/70 backdrop-blur-sm border-red-200' : 'text-gray-500'
+                    isLikedByMe ? 'text-red-600 bg-red-50/70 backdrop-blur-sm border-red-200' : 'text-gray-500'
                   }`}
-                  onClick={() => toggleLike(post.id)}
+                  onClick={() => handleToggleLike(post.id, isLikedByMe)}
                 >
-                  <Heart size={14} className={`transition-all duration-300 ${liked ? 'fill-current' : ''}`} />
-                  <span className="font-medium">{(post.likes || 0) + (liked ? 1 : 0)}</span>
+                  <Heart size={14} className={`transition-all duration-300 ${isLikedByMe ? 'fill-current' : ''}`} />
+                  <span className="font-medium">{likeCount}</span>
                 </Button>
                 
                 <CommentModal postId={post.id} onAddComment={addComment}>

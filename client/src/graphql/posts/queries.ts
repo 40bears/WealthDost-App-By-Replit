@@ -1,33 +1,24 @@
 import { gql } from '@apollo/client';
 
 export const GET_POSTS = gql`
-  query GetPosts($filters: PostFiltersDto) {
-    posts(filters: $filters) {
+  query GetPosts {
+    posts {
       id
       uuid
       content
-      visibility
-      tribe {
-        id
-        name
-      }
-      attachments {
-        id
-        url
-        fileName
-        mimeType
-      }
+      createdAt
+      likeCount
+      commentCount
+      isLikedByMe
       user {
         id
         firstName
         lastName
-        username
       }
-      likesCount
-      commentsCount
-      isLiked
-      createdAt
-      updatedAt
+      image {
+        id
+        path
+      }
     }
   }
 `;
@@ -38,39 +29,19 @@ export const GET_POST = gql`
       id
       uuid
       content
-      visibility
-      tribe {
-        id
-        name
-      }
-      attachments {
-        id
-        url
-        fileName
-        mimeType
-      }
+      createdAt
+      likeCount
+      commentCount
+      isLikedByMe
       user {
         id
         firstName
         lastName
-        username
       }
-      comments {
+      image {
         id
-        content
-        user {
-          id
-          firstName
-          lastName
-          username
-        }
-        createdAt
+        path
       }
-      likesCount
-      commentsCount
-      isLiked
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -81,22 +52,19 @@ export const GET_MY_POSTS = gql`
       id
       uuid
       content
-      visibility
-      tribe {
-        id
-        name
-      }
-      attachments {
-        id
-        url
-        fileName
-        mimeType
-      }
-      likesCount
-      commentsCount
-      isLiked
       createdAt
-      updatedAt
+      likeCount
+      commentCount
+      isLikedByMe
+      user {
+        id
+        firstName
+        lastName
+      }
+      image {
+        id
+        path
+      }
     }
   }
 `;
@@ -110,10 +78,8 @@ export const GET_POST_COMMENTS = gql`
         id
         firstName
         lastName
-        username
       }
       createdAt
-      updatedAt
     }
   }
 `;

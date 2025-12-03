@@ -165,7 +165,7 @@ export default function StockTips() {
     const targetPrice = typeof tip.targetPrice === 'string' ? parseFloat(tip.targetPrice) : tip.targetPrice;
 
     return {
-      id: tip.id.toString(),
+      id: tip.id,
       author: {
         name: tip.user ? `${tip.user.firstName} ${tip.user.lastName}`.trim() : 'User',
         username: tip.user?.username ? `@${tip.user.username}` : `@user${tip.userId}`,
@@ -182,9 +182,10 @@ export default function StockTips() {
       sellDate: tip.exitDate ? new Date(tip.exitDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }) : undefined,
       reasoning: tip.reason || '',
       chartImage: tip.chartImage?.publicUrl ? transformImageUrl(tip.chartImage.publicUrl) : undefined,
-      likes: 0,
+      likes: tip.likeCount || 0,
       comments: 0,
-      isFollowing: false
+      isFollowing: false,
+      isLikedByMe: tip.isLikedByMe || false
     };
   });
 
@@ -253,7 +254,7 @@ export default function StockTips() {
       <div className="p-4 pb-24 space-y-4">
         {mappedTips.length > 0 ? (
           mappedTips.map((tip) => (
-            <TipCard key={tip.id} {...tip} />
+            <TipCard key={tip.id.toString()} {...tip} />
           ))
         ) : (
           <div className="text-center py-12">

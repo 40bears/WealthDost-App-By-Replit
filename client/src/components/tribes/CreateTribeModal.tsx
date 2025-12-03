@@ -6,9 +6,10 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
-import { apiClient, axiosInstance } from '@/lib/api'
-import type { CreateTribeInput, FileResponse } from '@/types'
+import { axiosInstance } from '@/lib/api'
+import type { FileResponse } from '@/types'
 import { Upload, X } from 'lucide-react'
+import { useCreateTribe } from '@/hooks/graphql'
 
 const createTribeSchema = z.object({
   name: z.string()
@@ -64,13 +65,14 @@ const TRIBE_CATEGORIES = [
 ];
 
 export default function CreateTribeModal({ isOpen, onClose, onTribeCreated }: CreateTribeModalProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const [uploadedFileId, setUploadedFileId] = useState<number | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const queryClient = useQueryClient()
   const { toast } = useToast()
+
+  const [createTribe, { loading: isSubmitting }] = useCreateTribe()
 
   const {
     register,
@@ -165,22 +167,31 @@ export default function CreateTribeModal({ isOpen, onClose, onTribeCreated }: Cr
   };
 
   const onSubmit = async (data: CreateTribeFormData) => {
-    setIsSubmitting(true);
-
     try {
-      const requestBody: CreateTribeInput = {
-        name: data.name,
-        description: data.description,
-        category: data.category,
-        isPremium: data.isPremium,
-        price: data.isPremium ? data.price : undefined,
-        coverImageId: data.coverImageId,
-        features: data.features
-      };
+      console.log("Creating tribe:", data);
 
-      const response = await apiClient.tribes.$post({
-        body: requestBody,
+      // Convert features object to array of enabled feature names
+      const enabledFeatures: string[] = [];
+      if (data.features?.discussionPosts) enabledFeatures.push('discussionPosts');
+      if (data.features?.stockTips) enabledFeatures.push('stockTips');
+      if (data.features?.liveEvents) enabledFeatures.push('liveEvents');
+      if (data.features?.premiumPolls) enabledFeatures.push('premiumPolls');
+
+      const result = await createTribe({
+        variables: {
+          input: {
+            name: data.name,
+            description: data.description,
+            category: data.category,
+            isPremium: data.isPremium,
+            price: data.isPremium ? data.price : undefined,
+            coverImageId: data.coverImageId,
+            features: enabledFeatures
+          }
+        }
       });
+
+      console.log('Tribe created successfully:', result);
 
       // Invalidate tribes query to refresh the list
       queryClient.invalidateQueries({ queryKey: ['tribes'] });
@@ -196,13 +207,12 @@ export default function CreateTribeModal({ isOpen, onClose, onTribeCreated }: Cr
       onTribeCreated?.();
       onClose();
     } catch (error: any) {
+      console.error('Error creating tribe:', error);
       toast({
         title: "Error",
-        description: error?.response?.data?.message || error?.message || "Failed to create tribe. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to create tribe. Please try again.",
         variant: "destructive"
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
