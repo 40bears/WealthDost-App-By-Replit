@@ -8,8 +8,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useLikePost, useUnlikePost } from '@/hooks/graphql';
+import { CommentsBottomSheet } from '@/components/comments/CommentsBottomSheet';
 
 interface PostCardProps {
+  id: number;
   author: {
     name: string;
     username: string;
@@ -22,9 +25,12 @@ interface PostCardProps {
   comments: number;
   timestamp: string;
   isFollowing?: boolean;
+  image?: string;
+  isLikedByMe?: boolean;
 }
 
 export function PostCard({
+  id,
   author,
   content,
   tags,
@@ -32,22 +38,31 @@ export function PostCard({
   comments,
   timestamp,
   isFollowing = false,
+  image,
+  isLikedByMe = false,
 }: PostCardProps) {
   const [following, setFollowing] = useState(isFollowing);
-  const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(likes);
+  const [commentsOpen, setCommentsOpen] = useState(false);
+  const [likePost] = useLikePost();
+  const [unlikePost] = useUnlikePost();
 
   const handleFollow = () => {
     setFollowing(!following);
   };
 
-  const handleLike = () => {
-    if (liked) {
-      setLikeCount(likeCount - 1);
-    } else {
-      setLikeCount(likeCount + 1);
+  const handleLike = async () => {
+    try {
+      const postId = parseInt(String(id), 10);
+      console.log('PostCard - Toggling like for post:', postId, 'isLikedByMe:', isLikedByMe);
+
+      if (isLikedByMe) {
+        await unlikePost({ variables: { postId } });
+      } else {
+        await likePost({ variables: { postId } });
+      }
+    } catch (error) {
+      console.error('PostCard - Error toggling like:', error);
     }
-    setLiked(!liked);
   };
 
   return (
@@ -99,6 +114,17 @@ export function PostCard({
       {/* Content */}
       <p className="text-gray-700 text-sm mb-4 leading-relaxed">{content}</p>
 
+      {/* Image */}
+      {image && (
+        <div className="mb-4 rounded-lg overflow-hidden">
+          <img
+            src={image}
+            alt="Post content"
+            className="w-full h-auto object-cover max-h-96"
+          />
+        </div>
+      )}
+
       {/* Tags */}
       <div className="flex flex-wrap gap-2 mb-4">
         {tags.map((tag) => (
@@ -117,10 +143,13 @@ export function PostCard({
           onClick={handleLike}
           className="flex items-center gap-1 hover:text-red-500 transition-colors"
         >
-          <Heart className={`h-4 w-4 ${liked ? 'fill-red-500 text-red-500' : ''}`} />
-          <span className="text-sm">{likeCount}</span>
+          <Heart className={`h-4 w-4 ${isLikedByMe ? 'fill-red-500 text-red-500' : ''}`} />
+          <span className="text-sm">{likes}</span>
         </button>
-        <button className="flex items-center gap-1 hover:text-blue-500 transition-colors">
+        <button
+          onClick={() => setCommentsOpen(true)}
+          className="flex items-center gap-1 hover:text-blue-500 transition-colors"
+        >
           <MessageCircle className="h-4 w-4" />
           <span className="text-sm">{comments}</span>
         </button>
@@ -129,6 +158,14 @@ export function PostCard({
           <span className="text-sm">Share</span>
         </button>
       </div>
+
+      {/* Comments Bottom Sheet */}
+      <CommentsBottomSheet
+        open={commentsOpen}
+        onOpenChange={setCommentsOpen}
+        entityId={id}
+        entityType="POST"
+      />
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import { useAuth } from '@/hooks/useAuth';
 import { routeTree } from '@/routeTree.gen';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
+import { ApolloProvider } from '@apollo/client/react';
+import { apolloClient } from '@/lib/apolloClient';
 import { AuthProvider } from './auth/auth-context';
 
 const router = createRouter({
@@ -20,9 +22,11 @@ function RouterWrapper() {
 
 function AppRoot() {
     return (
-        <AuthProvider>
-            <RouterWrapper />
-        </AuthProvider>
+        <ApolloProvider client={apolloClient}>
+            <AuthProvider>
+                <RouterWrapper />
+            </AuthProvider>
+        </ApolloProvider>
     );
 }
 

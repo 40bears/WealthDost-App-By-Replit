@@ -196,6 +196,7 @@ export default function GlobalSearch() {
               {postsToShow.map((post) => (
                 <PostCard
                   key={post.id}
+                  id={post.id}
                   author={post.author}
                   content={post.content}
                   tags={post.tags}

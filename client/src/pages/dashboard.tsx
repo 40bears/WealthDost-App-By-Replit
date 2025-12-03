@@ -3,6 +3,7 @@ import StockPerformance from "@/components/dashboard/StockPerformance";
 import { TrendingFeed } from "@/components/dashboard/TrendingFeed";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
+import { usePosts } from "@/hooks/graphql";
 import { useEffect } from "react";
 
 const Dashboard = () => {
@@ -14,9 +15,8 @@ const Dashboard = () => {
   });
 
   // Fetch feed posts
-  const { data: posts, isLoading: isLoadingPosts } = useQuery({
-    queryKey: ["/api/posts"],
-  });
+  const { data: postsData, loading: isLoadingPosts } = usePosts();
+  const posts = (postsData as { posts: any[] })?.posts || [];
 
   return (
     <div className="flex flex-col bg-[#F9FAFB] min-h-screen overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] relative max-w-md mx-auto">

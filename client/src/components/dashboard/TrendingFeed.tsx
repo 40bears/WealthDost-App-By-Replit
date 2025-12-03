@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/select';
 import { PostCard } from './PostCard';
 import { TipCard } from './TipCard';
+import { usePosts, useStockTips } from '@/hooks/graphql';
 
 type FeedFilter = 'following' | 'trending' | 'latest' | 'popular';
 
@@ -18,78 +19,79 @@ interface FeedItem {
   data: any;
 }
 
-const mockFeedData: FeedItem[] = [
-  {
-    id: '1',
-    type: 'post',
-    data: {
-      author: {
-        name: 'Priya Mehta',
-        username: '@ca_priya',
-        initials: 'P',
-      },
-      content: 'What are your thoughts on investing in small-cap funds in the current market? Looking for some expert opinions.',
-      tags: ['#tech', '#stocks', '#renewable'],
-      likes: 24,
-      comments: 7,
-      timestamp: '2 days ago',
-      isFollowing: false,
-    },
-  },
-  {
-    id: '2',
-    type: 'tip',
-    data: {
-      author: {
-        name: 'CA Ankit Sharma',
-        username: '@ca_ankit',
-        initials: 'CA',
-      },
-      stock: {
-        name: 'Apple Inc.',
-        symbol: 'AAPL',
-        change: '+10.0%',
-      },
-      entryPrice: '₹150',
-      targetPrice: '₹165',
-      buyDate: '12/09',
-      sellDate: '12/10',
-      reasoning: 'Strong Q1 earnings expected, iPhone 16 sales momentum, and AI integration driving growth.',
-      chartImage: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=400&fit=crop',
-      likes: 24,
-      comments: 8,
-      isFollowing: false,
-    },
-  },
-  {
-    id: '3',
-    type: 'tip',
-    data: {
-      author: {
-        name: 'CA Ankit Sharma',
-        username: '@ca_ankit',
-        initials: 'CA',
-      },
-      stock: {
-        name: 'Apple Inc.',
-        symbol: 'AAPL',
-        change: '+10.0%',
-      },
-      entryPrice: '₹150',
-      targetPrice: '₹165',
-      buyDate: '12/09',
-      sellDate: '12/10',
-      reasoning: 'Strong Q1 earnings expected, iPhone 16 sales momentum, and AI integration driving growth.',
-      chartImage: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&h=400&fit=crop',
-      likes: 24,
-      comments: 8,
-      isFollowing: true,
-    },
-  },
-];
-
 export function TrendingFeed() {
   const [filter, setFilter] = useState<FeedFilter>('following');
+  const { data: postsData, loading: loadingPosts } = usePosts();
+  const { data: stockTipsData, loading: loadingStockTips } = useStockTips();
+
+  const posts = (postsData as { posts: any[] })?.posts || [];
+  const stockTips = (stockTipsData as { stockTips: any[] })?.stockTips || [];
+  const loading = loadingPosts || loadingStockTips;
+
+  // Helper function to transform minio URLs for local development
+  const transformImageUrl = (url: string) => {
+    if (!url) return undefined;
+    return url.replace('http://minio:', 'http://localhost:');
+  };
+
+  // Transform GraphQL posts to FeedItem format
+  const postFeedItems: FeedItem[] = posts.map((post) => ({
+    id: post.id.toString(),
+    type: 'post' as const,
+    data: {
+      id: post.id,
+      author: {
+        name: `${post.user.firstName} ${post.user.lastName}`,
+        username: `@user${post.user.id}`,
+        initials: post.user.firstName[0] + (post.user.lastName?.[0] || ''),
+      },
+      content: post.content,
+      tags: [], // TODO: extract hashtags from content
+      likes: post.likeCount || 0,
+      comments: post.commentCount || 0,
+      timestamp: new Date(post.createdAt).toLocaleDateString(),
+      isFollowing: false,
+      image: post.image?.path,
+      isLikedByMe: post.isLikedByMe || false,
+    },
+  }));
+
+  // Transform GraphQL stock tips to FeedItem format
+  const stockTipFeedItems: FeedItem[] = stockTips.map((tip) => {
+    const entryPrice = typeof tip.entryPrice === 'string' ? parseFloat(tip.entryPrice) : tip.entryPrice;
+    const targetPrice = typeof tip.targetPrice === 'string' ? parseFloat(tip.targetPrice) : tip.targetPrice;
+
+    return {
+      id: tip.id.toString(),
+      type: 'tip' as const,
+      data: {
+        id: tip.id,
+        author: {
+          name: tip.user ? `${tip.user.firstName} ${tip.user.lastName}`.trim() : 'User',
+          username: tip.user?.username ? `@${tip.user.username}` : `@user${tip.userId}`,
+          initials: tip.user ? `${tip.user.firstName?.[0] || ''}${tip.user.lastName?.[0] || ''}` : 'U',
+        },
+        stock: {
+          name: tip.stockName,
+          symbol: tip.symbol,
+          change: `${((targetPrice - entryPrice) / entryPrice * 100).toFixed(1)}%`,
+        },
+        entryPrice: `₹${entryPrice.toFixed(2)}`,
+        targetPrice: `₹${targetPrice.toFixed(2)}`,
+        buyDate: new Date(tip.entryDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }),
+        sellDate: tip.exitDate ? new Date(tip.exitDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }) : 'N/A',
+        reasoning: tip.reason || '',
+        chartImage: tip.chartImage?.publicUrl ? transformImageUrl(tip.chartImage.publicUrl) : undefined,
+        likes: tip.likeCount || 0,
+        comments: tip.commentCount || 0,
+        isFollowing: false,
+        isLikedByMe: tip.isLikedByMe || false,
+      },
+    };
+  });
+
+  // Combine real posts and stock tips
+  const feedData = [...postFeedItems, ...stockTipFeedItems];
 
   return (
     <div className="bg-transparent">
@@ -114,13 +116,19 @@ export function TrendingFeed() {
 
       {/* Feed Items */}
       <div className="space-y-4">
-        {mockFeedData.map((item) => {
-          if (item.type === 'post') {
-            return <PostCard key={item.id} {...item.data} />;
-          } else {
-            return <TipCard key={item.id} {...item.data} />;
-          }
-        })}
+        {loading ? (
+          <div className="text-center py-8 text-gray-500">Loading feed...</div>
+        ) : feedData.length > 0 ? (
+          feedData.map((item) => {
+            if (item.type === 'post') {
+              return <PostCard key={item.id} {...item.data} />;
+            } else {
+              return <TipCard key={item.id} {...item.data} />;
+            }
+          })
+        ) : (
+          <div className="text-center py-8 text-gray-500">No posts or stock tips yet</div>
+        )}
       </div>
     </div>
   );

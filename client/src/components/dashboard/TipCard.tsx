@@ -8,8 +8,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useLikeStockTip, useUnlikeStockTip } from '@/hooks/graphql';
+import { CommentsBottomSheet } from '@/components/comments/CommentsBottomSheet';
 
 interface TipCardProps {
+  id: number;
   author: {
     name: string;
     username: string;
@@ -31,9 +34,11 @@ interface TipCardProps {
   likes: number;
   comments: number;
   isFollowing?: boolean;
+  isLikedByMe?: boolean;
 }
 
 export function TipCard({
+  id,
   author,
   stock,
   entryPrice,
@@ -45,23 +50,31 @@ export function TipCard({
   likes,
   comments,
   isFollowing = false,
+  isLikedByMe = false,
 }: TipCardProps) {
   const [following, setFollowing] = useState(isFollowing);
-  const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(likes);
   const [showChart, setShowChart] = useState(false);
+  const [commentsOpen, setCommentsOpen] = useState(false);
+  const [likeStockTip] = useLikeStockTip();
+  const [unlikeStockTip] = useUnlikeStockTip();
 
   const handleFollow = () => {
     setFollowing(!following);
   };
 
-  const handleLike = () => {
-    if (liked) {
-      setLikeCount(likeCount - 1);
-    } else {
-      setLikeCount(likeCount + 1);
+  const handleLike = async () => {
+    try {
+      const stockTipId = parseInt(String(id), 10);
+      console.log('TipCard - Toggling like for stock tip:', stockTipId, 'isLikedByMe:', isLikedByMe);
+
+      if (isLikedByMe) {
+        await unlikeStockTip({ variables: { stockTipId } });
+      } else {
+        await likeStockTip({ variables: { stockTipId } });
+      }
+    } catch (error) {
+      console.error('TipCard - Error toggling like:', error);
     }
-    setLiked(!liked);
   };
 
   const toggleChart = () => {
@@ -198,10 +211,13 @@ export function TipCard({
           onClick={handleLike}
           className="flex items-center gap-1 hover:text-red-500 transition-colors"
         >
-          <Heart className={`h-4 w-4 ${liked ? 'fill-red-500 text-red-500' : ''}`} />
-          <span className="text-sm">{likeCount}</span>
+          <Heart className={`h-4 w-4 ${isLikedByMe ? 'fill-red-500 text-red-500' : ''}`} />
+          <span className="text-sm">{likes}</span>
         </button>
-        <button className="flex items-center gap-1 hover:text-blue-500 transition-colors">
+        <button
+          onClick={() => setCommentsOpen(true)}
+          className="flex items-center gap-1 hover:text-blue-500 transition-colors"
+        >
           <MessageCircle className="h-4 w-4" />
           <span className="text-sm">{comments}</span>
         </button>
@@ -209,6 +225,14 @@ export function TipCard({
           <Share2 className="h-4 w-4" />
         </button>
       </div>
+
+      {/* Comments Bottom Sheet */}
+      <CommentsBottomSheet
+        open={commentsOpen}
+        onOpenChange={setCommentsOpen}
+        entityId={id}
+        entityType="STOCK_TIP"
+      />
     </div>
   );
 }

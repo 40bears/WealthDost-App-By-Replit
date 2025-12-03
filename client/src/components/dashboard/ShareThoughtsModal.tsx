@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
@@ -15,6 +15,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
+import { useCreatePost } from "@/hooks/graphql";
 
 interface ShareThoughtsFormData {
   content: string;
@@ -55,41 +56,43 @@ const ShareThoughtsModal = ({ isOpen, onClose, onPostCreated }: ShareThoughtsMod
 
   const userTribes = allTribes.filter(tribe => tribe.userId === currentUser?.id);
 
-  const createPostMutation = useMutation({
-    mutationFn: async (data: ShareThoughtsFormData) => {
-      // TODO: Implement actual post creation API call
+  const [createPost, { loading: isCreating }] = useCreatePost();
+
+  const onSubmit = async (data: ShareThoughtsFormData) => {
+    try {
       console.log("Creating post:", data);
-      // Example: const response = await apiClient.posts.$post({ body: data });
-      // return response;
-      return Promise.resolve({ success: true });
-    },
-    onSuccess: () => {
+
+      const result = await createPost({
+        variables: {
+          input: {
+            content: data.content,
+            // TODO: Add tribeId when tribes are supported in GraphQL schema
+            // tribeId: selectedVisibility.startsWith("tribe-") && selectedTribe ? selectedTribe.id : undefined,
+          }
+        }
+      });
+
+      console.log('Post created successfully:', result);
+
       toast({
         title: "Success",
         description: "Your thoughts have been shared!",
       });
+
       queryClient.invalidateQueries({ queryKey: ["posts"] });
       reset();
       setSelectedVisibility("public");
       setSelectedTribe(null);
       onPostCreated?.();
       onClose();
-    },
-    onError: (error: any) => {
+    } catch (error) {
+      console.error('Error creating post:', error);
       toast({
         title: "Error",
-        description: error.response?.data?.message || "Failed to share your thoughts",
+        description: error instanceof Error ? error.message : "Failed to share your thoughts",
         variant: "destructive",
       });
-    },
-  });
-
-  const onSubmit = (data: ShareThoughtsFormData) => {
-    // Add tribe ID if a tribe is selected
-    if (selectedVisibility.startsWith("tribe-") && selectedTribe) {
-      data.tribeId = selectedTribe.id;
     }
-    createPostMutation.mutate(data);
   };
 
   const handleVisibilitySelect = (value: string, tribe?: Tribe) => {
@@ -206,11 +209,11 @@ const ShareThoughtsModal = ({ isOpen, onClose, onPostCreated }: ShareThoughtsMod
               {/* Post Button */}
               <Button
                 type="submit"
-                disabled={createPostMutation.isPending}
+                disabled={isCreating}
                 className="bg-purple-600 hover:bg-purple-700 text-white gap-2 px-6"
               >
                 <Send className="h-4 w-4" />
-                Post
+                {isCreating ? "Posting..." : "Post"}
               </Button>
             </div>
           </div>
