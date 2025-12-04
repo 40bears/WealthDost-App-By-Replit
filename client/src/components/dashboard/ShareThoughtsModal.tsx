@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { apiClient } from "@/lib/api";
 import type { Tribe } from "@/types";
 import { X, Send, Image as ImageIcon, ChevronDown, Globe, Users } from "lucide-react";
 import {
@@ -15,7 +14,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
-import { useCreatePost } from "@/hooks/graphql";
+import { useCreatePost, useMyTribes } from "@/hooks/graphql";
 
 interface ShareThoughtsFormData {
   content: string;
@@ -44,33 +43,39 @@ const ShareThoughtsModal = ({ isOpen, onClose, onPostCreated }: ShareThoughtsMod
     },
   });
 
-  // Fetch user's tribes
-  const { data: allTribes = [] } = useQuery({
-    queryKey: ['tribes'],
-    queryFn: async () => {
-      const response = await apiClient.tribes.$get();
-      return response;
-    },
-    enabled: isOpen
-  });
-
-  const userTribes = allTribes.filter(tribe => tribe.userId === currentUser?.id);
+  // Fetch user's tribes using GraphQL
+  const { data: myTribesData } = useMyTribes();
+  const userTribes = (myTribesData as { myTribes: Tribe[] })?.myTribes || [];
 
   const [createPost, { loading: isCreating }] = useCreatePost();
 
   const onSubmit = async (data: ShareThoughtsFormData) => {
     try {
-      console.log("Creating post:", data);
+      console.log("=== SHARE THOUGHTS MODAL DEBUG ===");
+      console.log("Form data:", data);
+      console.log("selectedVisibility:", selectedVisibility);
+      console.log("selectedTribe:", selectedTribe);
 
-      const result = await createPost({
+      const tribeId = selectedVisibility.startsWith("tribe-") && selectedTribe ? selectedTribe.id : null;
+      console.log("Computed tribeId:", tribeId);
+      console.log("tribeId !== null:", tribeId !== null);
+
+      const inputData = {
+        content: data.content,
+        ...(tribeId !== null && { tribeId }),
+      };
+      console.log("Input data being sent:", inputData);
+      console.log("Input data keys:", Object.keys(inputData));
+      console.log("Input data stringified:", JSON.stringify(inputData, null, 2));
+
+      const mutationVariables = {
         variables: {
-          input: {
-            content: data.content,
-            // TODO: Add tribeId when tribes are supported in GraphQL schema
-            // tribeId: selectedVisibility.startsWith("tribe-") && selectedTribe ? selectedTribe.id : undefined,
-          }
+          input: inputData
         }
-      });
+      };
+      console.log("Full mutation variables:", JSON.stringify(mutationVariables, null, 2));
+
+      const result = await createPost(mutationVariables);
 
       console.log('Post created successfully:', result);
 

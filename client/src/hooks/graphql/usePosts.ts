@@ -4,6 +4,9 @@ import {
   GET_POST,
   GET_MY_POSTS,
   GET_POST_COMMENTS,
+  GET_PUBLIC_POSTS,
+  GET_TRIBE_POSTS,
+  GET_MY_FEED,
 } from '@/graphql/posts/queries';
 import {
   CREATE_POST,
@@ -43,38 +46,58 @@ export const usePostComments = (postId: number) => {
   });
 };
 
+export const usePublicPosts = () => {
+  return useQuery(GET_PUBLIC_POSTS, {
+    fetchPolicy: 'cache-and-network',
+  });
+};
+
+export const useTribePosts = (tribeId: number) => {
+  return useQuery(GET_TRIBE_POSTS, {
+    variables: { tribeId },
+    skip: !tribeId,
+    fetchPolicy: 'cache-and-network',
+  });
+};
+
+export const useMyFeed = () => {
+  return useQuery(GET_MY_FEED, {
+    fetchPolicy: 'cache-and-network',
+  });
+};
+
 // Mutation Hooks
 export const useCreatePost = () => {
   return useMutation(CREATE_POST, {
-    refetchQueries: [GET_POSTS, GET_MY_POSTS],
+    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_PUBLIC_POSTS, GET_MY_FEED],
     awaitRefetchQueries: true,
   });
 };
 
 export const useUpdatePost = () => {
   return useMutation(UPDATE_POST, {
-    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_POST],
+    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_PUBLIC_POSTS, GET_MY_FEED, GET_POST],
     awaitRefetchQueries: true,
   });
 };
 
 export const useDeletePost = () => {
   return useMutation(DELETE_POST, {
-    refetchQueries: [GET_POSTS, GET_MY_POSTS],
+    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_PUBLIC_POSTS, GET_MY_FEED],
     awaitRefetchQueries: true,
   });
 };
 
 export const useLikePost = () => {
   return useMutation(LIKE_POST, {
-    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_POST],
+    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_PUBLIC_POSTS, GET_MY_FEED, GET_POST],
     awaitRefetchQueries: true,
   });
 };
 
 export const useUnlikePost = () => {
   return useMutation(UNLIKE_POST, {
-    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_POST],
+    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_PUBLIC_POSTS, GET_MY_FEED, GET_POST],
     awaitRefetchQueries: true,
   });
 };

@@ -4,12 +4,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import TribeCard from "@/components/dashboard/TribeCard";
 import { useNavigate } from "@tanstack/react-router";
 import { useTribes } from "@/hooks/graphql/useTribes";
+import { useAuth } from "@/hooks/useAuth";
 import type { Tribe } from "@/types";
 
 const InvestmentRooms = () => {
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterType, setFilterType] = useState("all");
   const navigate = useNavigate();
+  const { user: currentUser } = useAuth();
   const { data, loading: isLoading, error } = useTribes();
   const tribes = (data as { tribes: Tribe[] })?.tribes || [];
 
@@ -176,6 +178,8 @@ const InvestmentRooms = () => {
         {filteredRooms.map((room) => (
           <TribeCard
             key={room.id}
+            id={String(room.id)}
+            userId={tribes.find(t => t.id === room.id)?.userId || 0}
             name={room.name}
             createdDate={room.createdDate}
             description={room.description}
@@ -189,7 +193,7 @@ const InvestmentRooms = () => {
             isPremium={room.isPremium}
             premiumPrice={room.premiumPrice}
             coverImage={room.coverImage}
-            onJoinClick={() => handleJoinClick(room.id)}
+            currentUserId={currentUser?.id}
             onCardClick={() => navigate({ to: `/tribe/${room.id}` })}
           />
         ))}

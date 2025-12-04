@@ -5,8 +5,7 @@ declare module '@tanstack/react-router' {
 }
 
 export interface User {
-  id: number;
-  uuid?: string;
+  id: string;
   email: string;
   username: string;
   roles?: string[];
@@ -47,15 +46,14 @@ export interface VerifyRegistrationResponse {
 }
 
 export interface Tribe {
-  id: number;
-  uuid?: string;
+  id: string;
   name: string;
   description: string;
   category: string;
   features?: string[];
   userId?: number;
   user?: {
-    id: number;
+    id: string;
     email?: string;
     phone?: string;
     username: string;
@@ -81,8 +79,7 @@ export interface Tribe {
 }
 
 export interface FileResponse {
-  id: number;
-  uuid: string;
+  id: string;
   originalName: string;
   storedName: string;
   extension: string;
@@ -112,7 +109,7 @@ export interface CreateTribeInput {
 }
 
 export interface CreateTribeResponse {
-  id: number;
+  id: string;
   name: string;
   description: string;
   category: string;
@@ -124,8 +121,7 @@ export interface CreateTribeResponse {
 
 // Stock Tips Types
 export interface StockTip {
-  id: number;
-  uuid: string;
+  id: string;
   type: 'Stocks' | 'Futures' | 'Options' | 'Commodities';
   stockName: string;
   symbol: string;
@@ -137,8 +133,7 @@ export interface StockTip {
   userId: number;
   chartImageId?: number | null;
   user?: {
-    id: number;
-    uuid: string;
+    id: string;
     firstName: string;
     lastName: string;
     email: string;

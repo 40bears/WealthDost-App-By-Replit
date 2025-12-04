@@ -12,7 +12,7 @@ import { useLikeStockTip, useUnlikeStockTip } from '@/hooks/graphql';
 import { CommentsBottomSheet } from '@/components/comments/CommentsBottomSheet';
 
 interface TipCardProps {
-  id: number;
+  id: string;
   author: {
     name: string;
     username: string;
@@ -35,6 +35,10 @@ interface TipCardProps {
   comments: number;
   isFollowing?: boolean;
   isLikedByMe?: boolean;
+  tribe?: {
+    id: number;
+    name: string;
+  };
 }
 
 export function TipCard({
@@ -51,6 +55,7 @@ export function TipCard({
   comments,
   isFollowing = false,
   isLikedByMe = false,
+  tribe,
 }: TipCardProps) {
   const [following, setFollowing] = useState(isFollowing);
   const [showChart, setShowChart] = useState(false);
@@ -64,13 +69,12 @@ export function TipCard({
 
   const handleLike = async () => {
     try {
-      const stockTipId = parseInt(String(id), 10);
-      console.log('TipCard - Toggling like for stock tip:', stockTipId, 'isLikedByMe:', isLikedByMe);
+      console.log('TipCard - Toggling like for stock tip:', id, 'isLikedByMe:', isLikedByMe);
 
       if (isLikedByMe) {
-        await unlikeStockTip({ variables: { stockTipId } });
+        await unlikeStockTip({ variables: { stockTipId: id } });
       } else {
-        await likeStockTip({ variables: { stockTipId } });
+        await likeStockTip({ variables: { stockTipId: id } });
       }
     } catch (error) {
       console.error('TipCard - Error toggling like:', error);
@@ -177,6 +181,12 @@ export function TipCard({
               <span className="font-semibold text-sm text-gray-900">{author.name}</span>
               <span className="text-gray-500 text-xs">{author.username}</span>
             </div>
+            {tribe && (
+              <div className="flex items-center gap-1 mt-0.5">
+                <span className="text-xs">🔒</span>
+                <span className="text-xs text-purple-600 font-medium">{tribe.name}</span>
+              </div>
+            )}
           </div>
         </div>
         

@@ -4,7 +4,6 @@ export const GET_TRIBES = gql`
   query GetTribes {
     tribes {
       id
-      uuid
       name
       description
       category
@@ -15,6 +14,7 @@ export const GET_TRIBES = gql`
       coverImage {
         id
         url
+        publicUrl
         fileName
       }
       user {
@@ -23,6 +23,7 @@ export const GET_TRIBES = gql`
         lastName
         username
       }
+      userId
       memberCount
       tipsHits
       weeklyFeeds
@@ -34,10 +35,9 @@ export const GET_TRIBES = gql`
 `;
 
 export const GET_TRIBE = gql`
-  query GetTribe($id: Int!) {
+  query GetTribe($id: String!) {
     tribe(id: $id) {
       id
-      uuid
       name
       description
       category
@@ -48,6 +48,7 @@ export const GET_TRIBE = gql`
       coverImage {
         id
         url
+        publicUrl
         fileName
       }
       user {
@@ -56,6 +57,7 @@ export const GET_TRIBE = gql`
         lastName
         username
       }
+      userId
       memberCount
       tipsHits
       weeklyFeeds
@@ -74,10 +76,9 @@ export const GET_TRIBE = gql`
 `;
 
 export const GET_TRIBE_BY_UUID = gql`
-  query GetTribeByUuid($uuid: String!) {
-    tribeByUuid(uuid: $uuid) {
+  query GetTribeByUuid($id: String!) {
+    tribeByUuid(id: $id) {
       id
-      uuid
       name
       description
       category
@@ -88,6 +89,7 @@ export const GET_TRIBE_BY_UUID = gql`
       coverImage {
         id
         url
+        publicUrl
         fileName
       }
       user {
@@ -96,6 +98,7 @@ export const GET_TRIBE_BY_UUID = gql`
         lastName
         username
       }
+      userId
       memberCount
       tipsHits
       weeklyFeeds
@@ -113,7 +116,7 @@ export const GET_TRIBE_BY_UUID = gql`
 `;
 
 export const GET_TRIBE_RULES = gql`
-  query GetTribeRules($tribeId: Int!) {
+  query GetTribeRules($tribeId: String!) {
     tribeRules(tribeId: $tribeId) {
       id
       content
@@ -126,13 +129,13 @@ export const GET_TRIBE_RULES = gql`
 `;
 
 export const IS_MEMBER_OF_TRIBE = gql`
-  query IsMemberOfTribe($tribeId: Int!) {
+  query IsMemberOfTribe($tribeId: String!) {
     isMemberOfTribe(tribeId: $tribeId)
   }
 `;
 
 export const GET_TRIBE_MEMBERS = gql`
-  query GetTribeMembers($tribeId: Int!) {
+  query GetTribeMembers($tribeId: String!) {
     tribeMembers(tribeId: $tribeId) {
       id
       joinedAt
@@ -151,13 +154,13 @@ export const GET_MY_TRIBES = gql`
   query GetMyTribes {
     myTribes {
       id
-      uuid
       name
       description
       category
       coverImage {
         id
         url
+        publicUrl
         fileName
       }
       isPremium
@@ -165,6 +168,8 @@ export const GET_MY_TRIBES = gql`
       user {
         id
         username
+        firstName
+        lastName
       }
       memberCount
       createdAt
@@ -173,7 +178,7 @@ export const GET_MY_TRIBES = gql`
 `;
 
 export const GET_TRIBE_MEMBER_COUNT = gql`
-  query GetTribeMemberCount($tribeId: Int!) {
+  query GetTribeMemberCount($tribeId: String!) {
     tribeMemberCount(tribeId: $tribeId)
   }
 `;

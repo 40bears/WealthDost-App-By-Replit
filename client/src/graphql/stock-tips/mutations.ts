@@ -4,7 +4,6 @@ export const CREATE_STOCK_TIP = gql`
   mutation CreateStockTip($input: CreateStockTipDto!) {
     createStockTip(input: $input) {
       id
-      uuid
       type
       stockName
       symbol
@@ -13,6 +12,12 @@ export const CREATE_STOCK_TIP = gql`
       entryDate
       exitDate
       reason
+      tribeId
+      tribe {
+        id
+        name
+        description
+      }
       chartImage {
         id
         url
@@ -24,10 +29,9 @@ export const CREATE_STOCK_TIP = gql`
 `;
 
 export const UPDATE_STOCK_TIP = gql`
-  mutation UpdateStockTip($id: Int!, $input: UpdateStockTipDto!) {
+  mutation UpdateStockTip($id: String!, $input: UpdateStockTipDto!) {
     updateStockTip(id: $id, input: $input) {
       id
-      uuid
       stockName
       symbol
       entryPrice
@@ -47,23 +51,22 @@ export const UPDATE_STOCK_TIP = gql`
 `;
 
 export const DELETE_STOCK_TIP = gql`
-  mutation DeleteStockTip($id: Int!) {
+  mutation DeleteStockTip($id: String!) {
     deleteStockTip(id: $id)
   }
 `;
 
 export const LIKE_STOCK_TIP = gql`
-  mutation LikeStockTip($stockTipId: Int!) {
+  mutation LikeStockTip($stockTipId: String!) {
     likeStockTip(stockTipId: $stockTipId) {
       id
-      uuid
       createdAt
     }
   }
 `;
 
 export const UNLIKE_STOCK_TIP = gql`
-  mutation UnlikeStockTip($stockTipId: Int!) {
+  mutation UnlikeStockTip($stockTipId: String!) {
     unlikeStockTip(stockTipId: $stockTipId)
   }
 `;
