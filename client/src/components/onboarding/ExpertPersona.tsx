@@ -15,7 +15,7 @@ type Props = {
 export function ExpertPersona({ value, onChange, onBack, onNext, progress }: Props) {
   const [showError, setShowError] = useState(false);
   return (
-    <div className="px-4 py-6 flex flex-col w-full">
+    <div className="px-4 py-6 flex flex-col w-full min-h-screen">
       <div className="flex items-center mb-6">
         <Button variant="ghost" size="icon" onClick={onBack} className="text-gray-500">
           <span className="material-icons">arrow_back</span>
@@ -52,6 +52,13 @@ export function ExpertPersona({ value, onChange, onBack, onNext, progress }: Pro
             </Label>
           </div>
         </RadioGroup>
+      </div>
+      <div className="bg-[#F0F6FF] p-4 rounded-xl mb-4">
+        <div className="flex items-center mb-2">
+          <span className="material-icons text-blue-600 mr-2">verified</span>
+          <span className="font-semibold text-blue-800">Expert Verification</span>
+        </div>
+        <p className="text-sm text-blue-700">Your profile will be reviewed by our team. Verification badge will be awarded after checking your credentials.</p>
       </div>
       {showError && !value && (
         <p className="text-xs text-red-600 mb-4">Select an expert persona to continue</p>

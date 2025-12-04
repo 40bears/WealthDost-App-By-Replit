@@ -1,4 +1,3 @@
-import { PasswordInput } from "@/components/onboarding/PasswordInput";
 import { UsernameInput } from "@/components/onboarding/UsernameInput";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -12,11 +11,8 @@ import { z } from "zod";
 
 type FormData = {
   fullName: string;
-  email: string;
   username: string;
   profileBio: string;
-  password: string;
-  confirmPassword: string;
   education: string;
   achievements: string[];
 };
@@ -43,17 +39,10 @@ export function ExpertBasicProfile({
       z
         .object({
           fullName: z.string().min(1, "Full name is required"),
-          email: z.string().min(1, "Email is required").email("Invalid email address"),
           username: z.string().min(3, "Username must be at least 3 characters"),
           profileBio: z.string().optional().or(z.literal("")),
           education: z.string().min(1, "Please select your qualification"),
           achievements: z.array(z.string()).optional(),
-          password: z.string().min(1, "Password is required"),
-          confirmPassword: z.string().min(1, "Please confirm your password"),
-        })
-        .refine((v) => v.password === v.confirmPassword, {
-          message: "Passwords do not match",
-          path: ["confirmPassword"],
         }),
     []
   );
@@ -65,15 +54,6 @@ export function ExpertBasicProfile({
     setErrors((prev) => ({ ...prev, username: message }));
   }
 
-  function handlePasswordChange(v: string) {
-    const synthetic = { target: { name: 'password', value: v } } as any;
-    onBasicChange(synthetic);
-  }
-
-  function handleConfirmPasswordChange(v: string) {
-    const synthetic = { target: { name: 'confirmPassword', value: v } } as any;
-    onBasicChange(synthetic);
-  }
 
   function handleAchievementChecked(id: string) {
     return (checked: boolean) => onAchievementChange(id, checked);
@@ -130,13 +110,6 @@ export function ExpertBasicProfile({
             <p className="text-xs text-red-600 mt-1">{errors.fullName}</p>
           )}
         </div>
-        <div>
-          <Label htmlFor="email">Email Address</Label>
-          <Input id="email" name="email" type="email" value={formData.email} onChange={onBasicChange} className="mt-1" placeholder="your@email.com" />
-          {errors?.email && (
-            <p className="text-xs text-red-600 mt-1">{errors.email}</p>
-          )}
-        </div>
         <UsernameInput
           label="Expert Username"
           value={formData.username}
@@ -147,28 +120,6 @@ export function ExpertBasicProfile({
         <div>
           <Label htmlFor="profileBio">Professional Bio</Label>
           <Textarea id="profileBio" name="profileBio" value={formData.profileBio} onChange={onBasicChange} className="mt-1" placeholder="Equity Research | Options Trader | Macro Specialist" rows={3} />
-        </div>
-        <div>
-          <PasswordInput
-            id="password"
-            name="password"
-            label="Password"
-            placeholder="Create a strong password"
-            value={formData.password}
-            error={errors?.password}
-            onChange={handlePasswordChange}
-          />
-        </div>
-        <div>
-          <PasswordInput
-            id="confirmPassword"
-            name="confirmPassword"
-            label="Confirm Password"
-            placeholder="Re-enter password"
-            value={formData.confirmPassword}
-            error={errors?.confirmPassword}
-            onChange={handleConfirmPasswordChange}
-          />
         </div>
         <div>
           <Label htmlFor="education" className="block text-sm font-medium text-gray-700 mb-1">Educational Background</Label>
