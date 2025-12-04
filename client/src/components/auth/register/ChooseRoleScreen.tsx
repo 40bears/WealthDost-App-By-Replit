@@ -11,6 +11,13 @@ export interface ChooseRoleScreenProps {
 export function ChooseRoleScreen({ role, onSelect }: ChooseRoleScreenProps) {
   return (
     <div className="px-4 py-6 flex flex-col min-h-screen">
+      {/* Go to Dashboard Button */}
+      <div className="flex justify-end mb-4">
+        <Link href="/dashboard">
+          <Button variant="ghost" className="text-gray-500">Go to dashboard</Button>
+        </Link>
+      </div>
+
       {/* Role Selection Section */}
       <div className="bg-primary rounded-xl p-6 text-white mb-6 flex-1 flex flex-col justify-center">
         <div className="text-center mb-8">

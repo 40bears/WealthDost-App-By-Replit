@@ -23,7 +23,7 @@ export const RoleSelection = ({ role, onSelect }: RoleSelectionProps) => {
             <span className="material-icons text-white text-xl">trending_up</span>
           </div>
           <div className="flex-1">
-            <h3 className="font-semibold text-lg">I'm a Wealth Enthusiast</h3>
+            <h3 className="font-semibold text-lg">I'm a FinMate</h3>
             <p className="text-white/80 text-sm">Learn, track investments, and get expert advice</p>
           </div>
           <span className="material-icons text-white/60">arrow_forward_ios</span>
