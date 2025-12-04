@@ -104,6 +104,15 @@ export default function CreateAccount() {
         navigate({ to: '/dashboard' });
         return;
       }
+      // Store tokens for register flow as well
+      if (response?.flow === 'register') {
+        if (response.accessToken) {
+          localStorage.setItem('accessToken', response.accessToken);
+        }
+        if (response.refreshToken) {
+          localStorage.setItem('refreshToken', response.refreshToken);
+        }
+      }
       toast.success("Phone Verified", "Choose your role to continue");
       flow.send("OTP_VERIFIED");
     } catch (err: any) {
@@ -152,7 +161,15 @@ export default function CreateAccount() {
       });
 
       if (response?.user) {
-        const userWithLoginFlag = { ...response.user, isLoggedIn: true };
+        // Extract tokens and flow from user object if present and store tokens separately
+        const { accessToken, refreshToken, flow, ...userData } = response.user;
+        if (accessToken) {
+          localStorage.setItem('accessToken', accessToken);
+        }
+        if (refreshToken) {
+          localStorage.setItem('refreshToken', refreshToken);
+        }
+        const userWithLoginFlag = { ...userData, isLoggedIn: true };
         await auth.login(userWithLoginFlag);
       }
 
@@ -183,7 +200,15 @@ export default function CreateAccount() {
       });
 
       if (response?.user) {
-        const userWithLoginFlag = { ...response.user, isLoggedIn: true };
+        // Extract tokens and flow from user object if present and store tokens separately
+        const { accessToken, refreshToken, flow, ...userData } = response.user;
+        if (accessToken) {
+          localStorage.setItem('accessToken', accessToken);
+        }
+        if (refreshToken) {
+          localStorage.setItem('refreshToken', refreshToken);
+        }
+        const userWithLoginFlag = { ...userData, isLoggedIn: true };
         await auth.login(userWithLoginFlag);
       }
 
@@ -215,7 +240,25 @@ export default function CreateAccount() {
         <FlowRoute
           name="otp"
           element={
-            <SignupLayout>
+            <SignupLayout
+              showLogo={false}
+              headerText="Enter your mobile number to get started"
+              showTermsInCard={false}
+              footerContent={
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={handleChangeNumber}
+                    className="text-white/90 hover:text-white font-medium transition-colors duration-300 inline-flex items-center"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Change Number
+                  </button>
+                </div>
+              }
+            >
               <OtpVerificationScreen
                 otp={otp}
                 isLoading={isLoading}

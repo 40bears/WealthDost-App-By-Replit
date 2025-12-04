@@ -52,7 +52,7 @@ export function ExpertGeneratedProfile({ formData, onBack, onComplete }: {
   const personaEmoji = getPersonaEmoji(formData.expertPersona || "owl");
 
   return (
-    <div className="px-4 py-6 flex flex-col w-full">
+    <div className="px-4 py-6 flex flex-col w-full min-h-screen">
       <div className="flex items-center mb-6">
         <Button variant="ghost" size="icon" onClick={onBack} className="text-gray-500">
           <span className="material-icons">arrow_back</span>
@@ -113,8 +113,9 @@ export function ExpertGeneratedProfile({ formData, onBack, onComplete }: {
           </div>
         </div>
       </div>
-      <div className="mt-auto">
-        <Button onClick={onComplete} className="w-full">Enter WealthDost</Button>
+      <Button onClick={onComplete} className="w-full mb-4">Enter WealthDost</Button>
+      <div className="mt-auto pb-6 safe-area-bottom text-center">
+        <a href="mailto:support@wealthdost.in" className="text-primary text-sm">For support: support@wealthdost.in</a>
       </div>
     </div>
   );

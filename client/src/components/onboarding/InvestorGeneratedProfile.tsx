@@ -3,19 +3,38 @@ import { Button } from "@/components/ui/button";
 
 type FormData = {
   fullName: string;
-  email: string;
   username: string;
   profileBio: string;
   interests: string[];
+  industrySectors: string[];
+  topics: string[];
   experienceLevel: string;
   riskPersona: string;
 };
 
 function personaMeta(code: string) {
   switch (code) {
-    case 'owl': return { emoji: '🦉', name: 'Cautious Owl', color: 'blue' };
-    case 'shark': return { emoji: '🦈', name: 'Risk-Taking Shark', color: 'red' };
-    default: return { emoji: '🦊', name: 'Calculated Fox', color: 'yellow' };
+    case 'owl': return {
+      emoji: '🦉',
+      name: 'Cautious Owl',
+      color: 'blue',
+      title: 'The Cautious Owl',
+      description: "You're a conservative investor who prioritizes capital preservation. You prefer stable, low-risk investments and value security over high returns."
+    };
+    case 'shark': return {
+      emoji: '🦈',
+      name: 'Risk-Taking Shark',
+      color: 'red',
+      title: 'The Risk-Taking Shark',
+      description: "You're an aggressive investor who embraces volatility and seeks high returns. You're comfortable with significant risk and see market dips as opportunities."
+    };
+    default: return {
+      emoji: '🦊',
+      name: 'Calculated Fox',
+      color: 'yellow',
+      title: 'The Calculated Fox',
+      description: "You're a balanced investor who assesses risks carefully while seeking growth opportunities. You prefer to have a strategic approach to investing."
+    };
   }
 }
 
@@ -26,12 +45,15 @@ export function InvestorGeneratedProfile({ formData, onBack, onComplete }: {
 }) {
   const meta = personaMeta(formData.riskPersona || 'fox');
   return (
-    <div className="px-4 py-6 flex flex-col w-full min-h-screen">
-      <div className="flex items-center mb-6">
+    <div className="px-4 py-4 flex flex-col w-full min-h-screen">
+      <div className="flex items-center mb-4">
         <Button variant="ghost" size="icon" onClick={onBack} className="text-gray-500">
           <span className="material-icons">arrow_back</span>
         </Button>
-        <h2 className="text-lg sm:text-xl font-semibold ml-2">Your Wealth Enthusiast Profile</h2>
+        <h2 className="text-lg font-semibold ml-2">Your Wealth Seeker Profile</h2>
+      </div>
+      <div className="h-1 bg-gray-200 rounded mb-6">
+        <div className="h-1 bg-primary rounded" style={{ width: '100%' }}></div>
       </div>
       <div className="border border-gray-200 rounded-xl overflow-hidden mb-6">
         <div className="bg-primary text-white p-4">
@@ -44,7 +66,6 @@ export function InvestorGeneratedProfile({ formData, onBack, onComplete }: {
             <div>
               <h3 className="font-semibold text-xl">{formData.fullName || 'Sarah Johnson'}</h3>
               <p className="text-primary-100">@{formData.username || 'TechInvestor'}</p>
-              <p className="text-primary-200 text-sm">{formData.email || 'user@example.com'}</p>
             </div>
           </div>
         </div>
@@ -87,6 +108,21 @@ export function InvestorGeneratedProfile({ formData, onBack, onComplete }: {
           </div>
         </div>
       </div>
+
+      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+        <div className="flex items-start gap-3">
+          <div className="text-2xl">💡</div>
+          <div className="flex-1">
+            <h3 className="font-semibold text-amber-900 mb-1">
+              Your Wealth Persona: {meta.title}
+            </h3>
+            <p className="text-sm text-amber-800">
+              {meta.description}
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="mt-auto pb-6 safe-area-bottom">
         <Button onClick={onComplete} className="w-full">Enter WealthDost</Button>
       </div>
