@@ -4,7 +4,10 @@ import { FlowRoutes } from "@/components/flow/FlowRoutes";
 import { InvestorBasicProfile } from "@/components/onboarding/InvestorBasicProfile";
 import { InvestorContentPreferences } from "@/components/onboarding/InvestorContentPreferences";
 import { InvestorGeneratedProfile } from "@/components/onboarding/InvestorGeneratedProfile";
+import { InvestorIndustrySector } from "@/components/onboarding/InvestorIndustrySector";
+import { InvestorRecommendedExperts } from "@/components/onboarding/InvestorRecommendedExperts";
 import { InvestorRiskProfile } from "@/components/onboarding/InvestorRiskProfile";
+import { InvestorTopics } from "@/components/onboarding/InvestorTopics";
 import { useState } from "react";
 import { useLocation } from "wouter";
 
@@ -20,24 +23,27 @@ export const InvestorOnboarding = ({ onBack, onComplete }: InvestorOnboardingPro
     initial: 'basic',
     transitions: {
       basic: { NEXT: 'content' },
-      content: { BACK: 'basic', NEXT: 'risk' },
-      risk: { BACK: 'content', NEXT: 'generated' },
-      generated: { BACK: 'risk' },
+      content: { BACK: 'basic', NEXT: 'industry' },
+      industry: { BACK: 'content', NEXT: 'topics' },
+      topics: { BACK: 'industry', NEXT: 'risk' },
+      risk: { BACK: 'topics', NEXT: 'experts' },
+      experts: { BACK: 'risk', NEXT: 'generated' },
+      generated: { BACK: 'experts' },
     },
   });
   const [formData, setFormData] = useState({
     fullName: "",
-    email: "",
     username: "",
     profileBio: "",
-    password: "",
-    confirmPassword: "",
     detailedBio: "",
     experienceLevel: "",
     interests: [] as string[],
+    industrySectors: [] as string[],
+    topics: [] as string[],
     riskLevel: "",
     returnTarget: "",
     riskPersona: "",
+    followedExperts: [] as string[],
   });
 
 
@@ -51,17 +57,37 @@ export const InvestorOnboarding = ({ onBack, onComplete }: InvestorOnboardingPro
   const handleContentPreferenceChange = (value: string, checked: boolean) => {
     setFormData(prev => ({
       ...prev,
-      interests: checked 
+      interests: checked
         ? [...prev.interests, value]
         : prev.interests.filter(interest => interest !== value)
     }));
   };
 
-  // Step 3: Risk profile
+  // Step 3: Industry sectors
+  const handleIndustrySectorChange = (value: string, checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      industrySectors: checked
+        ? [...prev.industrySectors, value]
+        : prev.industrySectors.filter(sector => sector !== value)
+    }));
+  };
+
+  // Step 4: Topics
+  const handleTopicsChange = (value: string, checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      topics: checked
+        ? [...prev.topics, value]
+        : prev.topics.filter(topic => topic !== value)
+    }));
+  };
+
+  // Step 5: Risk profile
   const handleRiskProfileChange = (value: string) => {
     let riskPersona = "";
     let returnTarget = "";
-    
+
     if (value === "low") {
       riskPersona = "owl";
       returnTarget = "5-8%";
@@ -72,12 +98,22 @@ export const InvestorOnboarding = ({ onBack, onComplete }: InvestorOnboardingPro
       riskPersona = "shark";
       returnTarget = "20%+";
     }
-    
+
     setFormData(prev => ({
       ...prev,
       riskLevel: value,
       riskPersona,
       returnTarget,
+    }));
+  };
+
+  // Step 6: Recommended experts
+  const handleExpertsChange = (expertId: string, checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      followedExperts: checked
+        ? [...prev.followedExperts, expertId]
+        : prev.followedExperts.filter(id => id !== expertId)
     }));
   };
 
@@ -91,11 +127,14 @@ export const InvestorOnboarding = ({ onBack, onComplete }: InvestorOnboardingPro
 
   const getProgressPercentage = () => {
     switch (flow.state) {
-      case 'basic': return 40;
-      case 'content': return 60;
-      case 'risk': return 80;
+      case 'basic': return 15;
+      case 'content': return 30;
+      case 'industry': return 45;
+      case 'topics': return 60;
+      case 'risk': return 75;
+      case 'experts': return 90;
       case 'generated': return 100;
-      default: return 25;
+      default: return 15;
     }
   };
 
@@ -130,14 +169,49 @@ export const InvestorOnboarding = ({ onBack, onComplete }: InvestorOnboardingPro
             }
           />
           <FlowRoute
+            name="industry"
+            element={
+              <InvestorIndustrySector
+                selected={formData.industrySectors}
+                onChange={(v, c) => handleIndustrySectorChange(v, c)}
+                onBack={goToPreviousStep}
+                onNext={goToNextStep}
+                progress={getProgressPercentage()}
+              />
+            }
+          />
+          <FlowRoute
+            name="topics"
+            element={
+              <InvestorTopics
+                selected={formData.topics}
+                onChange={(v, c) => handleTopicsChange(v, c)}
+                onBack={goToPreviousStep}
+                onNext={goToNextStep}
+                progress={getProgressPercentage()}
+              />
+            }
+          />
+          <FlowRoute
             name="risk"
             element={
               <InvestorRiskProfile
                 value={formData.riskLevel}
                 onChange={handleRiskProfileChange}
                 onBack={goToPreviousStep}
-                onNext={handleSubmit}
+                onNext={goToNextStep}
                 progress={getProgressPercentage()}
+              />
+            }
+          />
+          <FlowRoute
+            name="experts"
+            element={
+              <InvestorRecommendedExperts
+                selected={formData.followedExperts}
+                onChange={handleExpertsChange}
+                onBack={goToPreviousStep}
+                onNext={handleSubmit}
               />
             }
           />

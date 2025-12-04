@@ -113,11 +113,9 @@ export function ExpertGeneratedProfile({ formData, onBack, onComplete }: {
           </div>
         </div>
       </div>
-      <div className="mt-auto pb-6 safe-area-bottom">
-        <Button onClick={onComplete} className="w-full mb-4">Enter WealthDost</Button>
-        <div className="text-center">
-          <a href="mailto:support@wealthdost.in" className="text-primary text-sm">For support: support@wealthdost.in</a>
-        </div>
+      <Button onClick={onComplete} className="w-full mb-4">Enter WealthDost</Button>
+      <div className="mt-auto pb-6 safe-area-bottom text-center">
+        <a href="mailto:support@wealthdost.in" className="text-primary text-sm">For support: support@wealthdost.in</a>
       </div>
     </div>
   );

@@ -6,16 +6,12 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { useMemo, useState } from "react";
 import { z } from "zod";
-import { PasswordInput } from "./PasswordInput";
 import { UsernameInput } from "./UsernameInput";
 
 type FormData = {
   fullName: string;
-  email: string;
   username: string;
   profileBio: string;
-  password: string;
-  confirmPassword: string;
   experienceLevel: string;
 };
 
@@ -39,18 +35,11 @@ export function InvestorBasicProfile({
       z
         .object({
           fullName: z.string().min(1, "Full name is required"),
-          email: z.string().min(1, "Email is required").email("Please enter a valid email address"),
           username: z.string().min(3, "Username must be at least 3 characters"),
           profileBio: z.string().optional().or(z.literal("")),
           experienceLevel: z.enum(["beginner", "intermediate", "advanced"], {
             message: "Please select your experience level",
           }),
-          password: z.string().min(6, "Password must be at least 6 characters"),
-          confirmPassword: z.string().min(1, "Please confirm your password"),
-        })
-        .refine((v) => v.password === v.confirmPassword, {
-          message: "Passwords do not match",
-          path: ["confirmPassword"],
         }),
     []
   );
@@ -74,15 +63,6 @@ export function InvestorBasicProfile({
     else setUsernameError(undefined);
   }
 
-  function handlePasswordChange(v: string) {
-    const synthetic = { target: { name: 'password', value: v } } as any;
-    onBasicChange(synthetic);
-  }
-
-  function handleConfirmPasswordChange(v: string) {
-    const synthetic = { target: { name: 'confirmPassword', value: v } } as any;
-    onBasicChange(synthetic);
-  }
 
   const handleNextClick = async () => {
     const validation = Schema.safeParse(formData as any);
@@ -113,7 +93,7 @@ export function InvestorBasicProfile({
         <Button variant="ghost" size="icon" onClick={onBack} className="text-gray-500">
           <span className="material-icons">arrow_back</span>
         </Button>
-        <h2 className="text-lg font-semibold ml-2">Wealth Enthusiast Profile</h2>
+        <h2 className="text-lg font-semibold ml-2">FinMate Profile</h2>
       </div>
 
       <Progress value={progress} className="h-1 mb-4" />
@@ -124,13 +104,6 @@ export function InvestorBasicProfile({
           <Input id="fullName" name="fullName" value={formData.fullName} onChange={onBasicChange} className="mt-1" placeholder="Your name" />
           {errors?.fullName && (
             <p className="text-xs text-red-600 mt-1">{errors.fullName}</p>
-          )}
-        </div>
-        <div>
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" name="email" type="email" value={formData.email} onChange={onBasicChange} className="mt-1" placeholder="your.email@example.com" />
-          {errors?.email && (
-            <p className="text-xs text-red-600 mt-1">{errors.email}</p>
           )}
         </div>
         <UsernameInput
@@ -144,28 +117,6 @@ export function InvestorBasicProfile({
           <Label htmlFor="profileBio">Profile Bio</Label>
           <Textarea id="profileBio" name="profileBio" value={formData.profileBio} onChange={onBasicChange} className="mt-1" placeholder="Long-term investor | Tech stocks | AI enthusiast" rows={3} />
           <p className="text-xs text-gray-500 mt-1">Optional: Add a finance-related tagline</p>
-        </div>
-        <div>
-          <PasswordInput
-            id="password"
-            name="password"
-            label="Password"
-            placeholder="Create a strong password"
-            value={formData.password}
-            error={errors?.password}
-            onChange={(v) => handlePasswordChange(v)}
-          />
-        </div>
-        <div>
-          <PasswordInput
-            id="confirmPassword"
-            name="confirmPassword"
-            label="Confirm Password"
-            placeholder="Re-enter password"
-            value={formData.confirmPassword}
-            error={errors?.confirmPassword}
-            onChange={(v) => handleConfirmPasswordChange(v)}
-          />
         </div>
         <div>
           <Label className="block text-sm font-medium text-gray-700 mb-3">Investment Experience Level</Label>
