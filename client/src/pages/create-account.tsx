@@ -104,6 +104,15 @@ export default function CreateAccount() {
         navigate({ to: '/dashboard' });
         return;
       }
+      // Store tokens for register flow as well
+      if (response?.flow === 'register') {
+        if (response.accessToken) {
+          localStorage.setItem('accessToken', response.accessToken);
+        }
+        if (response.refreshToken) {
+          localStorage.setItem('refreshToken', response.refreshToken);
+        }
+      }
       toast.success("Phone Verified", "Choose your role to continue");
       flow.send("OTP_VERIFIED");
     } catch (err: any) {
@@ -152,7 +161,15 @@ export default function CreateAccount() {
       });
 
       if (response?.user) {
-        const userWithLoginFlag = { ...response.user, isLoggedIn: true };
+        // Extract tokens and flow from user object if present and store tokens separately
+        const { accessToken, refreshToken, flow, ...userData } = response.user;
+        if (accessToken) {
+          localStorage.setItem('accessToken', accessToken);
+        }
+        if (refreshToken) {
+          localStorage.setItem('refreshToken', refreshToken);
+        }
+        const userWithLoginFlag = { ...userData, isLoggedIn: true };
         await auth.login(userWithLoginFlag);
       }
 
@@ -183,7 +200,15 @@ export default function CreateAccount() {
       });
 
       if (response?.user) {
-        const userWithLoginFlag = { ...response.user, isLoggedIn: true };
+        // Extract tokens and flow from user object if present and store tokens separately
+        const { accessToken, refreshToken, flow, ...userData } = response.user;
+        if (accessToken) {
+          localStorage.setItem('accessToken', accessToken);
+        }
+        if (refreshToken) {
+          localStorage.setItem('refreshToken', refreshToken);
+        }
+        const userWithLoginFlag = { ...userData, isLoggedIn: true };
         await auth.login(userWithLoginFlag);
       }
 
