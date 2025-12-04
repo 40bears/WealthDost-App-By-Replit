@@ -4,12 +4,17 @@ export const GET_POSTS = gql`
   query GetPosts {
     posts {
       id
-      uuid
       content
       createdAt
       likeCount
       commentCount
       isLikedByMe
+      tribeId
+      tribe {
+        id
+        name
+        description
+      }
       user {
         id
         firstName
@@ -24,15 +29,20 @@ export const GET_POSTS = gql`
 `;
 
 export const GET_POST = gql`
-  query GetPost($id: Int!) {
+  query GetPost($id: String!) {
     post(id: $id) {
       id
-      uuid
       content
       createdAt
       likeCount
       commentCount
       isLikedByMe
+      tribeId
+      tribe {
+        id
+        name
+        description
+      }
       user {
         id
         firstName
@@ -50,12 +60,17 @@ export const GET_MY_POSTS = gql`
   query GetMyPosts {
     myPosts {
       id
-      uuid
       content
       createdAt
       likeCount
       commentCount
       isLikedByMe
+      tribeId
+      tribe {
+        id
+        name
+        description
+      }
       user {
         id
         firstName
@@ -80,6 +95,90 @@ export const GET_POST_COMMENTS = gql`
         lastName
       }
       createdAt
+    }
+  }
+`;
+
+export const GET_PUBLIC_POSTS = gql`
+  query GetPublicPosts {
+    publicPosts {
+      id
+      content
+      createdAt
+      likeCount
+      commentCount
+      isLikedByMe
+      user {
+        id
+        firstName
+        lastName
+        username
+      }
+      image {
+        id
+        path
+      }
+    }
+  }
+`;
+
+export const GET_TRIBE_POSTS = gql`
+  query GetTribePosts($tribeId: String!) {
+    tribePosts(tribeId: $tribeId) {
+      id
+      content
+      createdAt
+      likeCount
+      commentCount
+      isLikedByMe
+      tribeId
+      tribe {
+        id
+        name
+        description
+        coverImage {
+          url
+        }
+      }
+      user {
+        id
+        firstName
+        lastName
+        username
+      }
+      image {
+        id
+        path
+      }
+    }
+  }
+`;
+
+export const GET_MY_FEED = gql`
+  query GetMyFeed {
+    myFeed {
+      id
+      content
+      createdAt
+      likeCount
+      commentCount
+      isLikedByMe
+      tribeId
+      tribe {
+        id
+        name
+        description
+      }
+      user {
+        id
+        firstName
+        lastName
+        username
+      }
+      image {
+        id
+        path
+      }
     }
   }
 `;

@@ -4,7 +4,6 @@ export const GET_STOCK_TIPS = gql`
   query GetStockTips {
     stockTips {
       id
-      uuid
       type
       stockName
       symbol
@@ -16,6 +15,12 @@ export const GET_STOCK_TIPS = gql`
       likeCount
       commentCount
       isLikedByMe
+      tribeId
+      tribe {
+        id
+        name
+        description
+      }
       chartImage {
         id
         publicUrl
@@ -35,10 +40,9 @@ export const GET_STOCK_TIPS = gql`
 `;
 
 export const GET_STOCK_TIP = gql`
-  query GetStockTip($id: Int!) {
+  query GetStockTip($id: String!) {
     stockTip(id: $id) {
       id
-      uuid
       type
       stockName
       symbol
@@ -50,6 +54,12 @@ export const GET_STOCK_TIP = gql`
       likeCount
       commentCount
       isLikedByMe
+      tribeId
+      tribe {
+        id
+        name
+        description
+      }
       chartImage {
         id
         publicUrl
@@ -72,7 +82,39 @@ export const GET_MY_STOCK_TIPS = gql`
   query GetMyStockTips {
     myStockTips {
       id
-      uuid
+      type
+      stockName
+      symbol
+      entryPrice
+      targetPrice
+      entryDate
+      exitDate
+      reason
+      likeCount
+      commentCount
+      isLikedByMe
+      tribeId
+      tribe {
+        id
+        name
+        description
+      }
+      chartImage {
+        id
+        publicUrl
+        originalName
+      }
+      userId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const GET_PUBLIC_STOCK_TIPS = gql`
+  query GetPublicStockTips {
+    publicStockTips {
+      id
       type
       stockName
       symbol
@@ -89,9 +131,87 @@ export const GET_MY_STOCK_TIPS = gql`
         publicUrl
         originalName
       }
-      userId
+      user {
+        id
+        firstName
+        lastName
+        username
+      }
       createdAt
-      updatedAt
+    }
+  }
+`;
+
+export const GET_TRIBE_STOCK_TIPS = gql`
+  query GetTribeStockTips($tribeId: String!) {
+    tribeStockTips(tribeId: $tribeId) {
+      id
+      type
+      stockName
+      symbol
+      entryPrice
+      targetPrice
+      entryDate
+      exitDate
+      reason
+      likeCount
+      commentCount
+      isLikedByMe
+      tribeId
+      tribe {
+        id
+        name
+        description
+      }
+      chartImage {
+        id
+        publicUrl
+        originalName
+      }
+      user {
+        id
+        firstName
+        lastName
+        username
+      }
+      createdAt
+    }
+  }
+`;
+
+export const GET_MY_STOCK_TIPS_FEED = gql`
+  query GetMyStockTipsFeed {
+    myStockTipsFeed {
+      id
+      type
+      stockName
+      symbol
+      entryPrice
+      targetPrice
+      entryDate
+      exitDate
+      reason
+      likeCount
+      commentCount
+      isLikedByMe
+      tribeId
+      tribe {
+        id
+        name
+        description
+      }
+      chartImage {
+        id
+        publicUrl
+        originalName
+      }
+      user {
+        id
+        firstName
+        lastName
+        username
+      }
+      createdAt
     }
   }
 `;

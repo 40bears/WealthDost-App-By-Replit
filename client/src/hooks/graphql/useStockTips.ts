@@ -3,6 +3,9 @@ import {
   GET_STOCK_TIPS,
   GET_STOCK_TIP,
   GET_MY_STOCK_TIPS,
+  GET_PUBLIC_STOCK_TIPS,
+  GET_TRIBE_STOCK_TIPS,
+  GET_MY_STOCK_TIPS_FEED,
 } from '@/graphql/stock-tips/queries';
 import {
   CREATE_STOCK_TIP,
@@ -32,38 +35,58 @@ export const useMyStockTips = () => {
   });
 };
 
+export const usePublicStockTips = () => {
+  return useQuery(GET_PUBLIC_STOCK_TIPS, {
+    fetchPolicy: 'cache-and-network',
+  });
+};
+
+export const useTribeStockTips = (tribeId: number) => {
+  return useQuery(GET_TRIBE_STOCK_TIPS, {
+    variables: { tribeId },
+    skip: !tribeId,
+    fetchPolicy: 'cache-and-network',
+  });
+};
+
+export const useMyStockTipsFeed = () => {
+  return useQuery(GET_MY_STOCK_TIPS_FEED, {
+    fetchPolicy: 'cache-and-network',
+  });
+};
+
 // Mutation Hooks
 export const useCreateStockTip = () => {
   return useMutation(CREATE_STOCK_TIP, {
-    refetchQueries: [GET_STOCK_TIPS, GET_MY_STOCK_TIPS],
+    refetchQueries: [GET_STOCK_TIPS, GET_MY_STOCK_TIPS, GET_PUBLIC_STOCK_TIPS, GET_MY_STOCK_TIPS_FEED],
     awaitRefetchQueries: true,
   });
 };
 
 export const useUpdateStockTip = () => {
   return useMutation(UPDATE_STOCK_TIP, {
-    refetchQueries: [GET_STOCK_TIPS, GET_MY_STOCK_TIPS, GET_STOCK_TIP],
+    refetchQueries: [GET_STOCK_TIPS, GET_MY_STOCK_TIPS, GET_PUBLIC_STOCK_TIPS, GET_MY_STOCK_TIPS_FEED, GET_STOCK_TIP],
     awaitRefetchQueries: true,
   });
 };
 
 export const useDeleteStockTip = () => {
   return useMutation(DELETE_STOCK_TIP, {
-    refetchQueries: [GET_STOCK_TIPS, GET_MY_STOCK_TIPS],
+    refetchQueries: [GET_STOCK_TIPS, GET_MY_STOCK_TIPS, GET_PUBLIC_STOCK_TIPS, GET_MY_STOCK_TIPS_FEED],
     awaitRefetchQueries: true,
   });
 };
 
 export const useLikeStockTip = () => {
   return useMutation(LIKE_STOCK_TIP, {
-    refetchQueries: [GET_STOCK_TIPS, GET_MY_STOCK_TIPS, GET_STOCK_TIP],
+    refetchQueries: [GET_STOCK_TIPS, GET_MY_STOCK_TIPS, GET_PUBLIC_STOCK_TIPS, GET_MY_STOCK_TIPS_FEED, GET_STOCK_TIP],
     awaitRefetchQueries: true,
   });
 };
 
 export const useUnlikeStockTip = () => {
   return useMutation(UNLIKE_STOCK_TIP, {
-    refetchQueries: [GET_STOCK_TIPS, GET_MY_STOCK_TIPS, GET_STOCK_TIP],
+    refetchQueries: [GET_STOCK_TIPS, GET_MY_STOCK_TIPS, GET_PUBLIC_STOCK_TIPS, GET_MY_STOCK_TIPS_FEED, GET_STOCK_TIP],
     awaitRefetchQueries: true,
   });
 };

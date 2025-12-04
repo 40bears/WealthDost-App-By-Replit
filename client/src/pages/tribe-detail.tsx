@@ -1,20 +1,21 @@
-import { useState } from "react";
-import { useParams } from "@tanstack/react-router";
-import { useNavigate } from "@tanstack/react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Users, TrendingUp, BarChart3, Edit2, X, Check, Loader2 } from "lucide-react";
-import { apiClient } from "@/lib/api";
-import type { Tribe } from "@/types";
-import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
 import type { TribeRule } from "@/api/tribes/_id@number/rules/index";
-import { useIsMemberOfTribe, useJoinTribe, useLeaveTribe } from "@/hooks/graphql";
+import { PostCard } from "@/components/dashboard/PostCard";
+import { TipCard } from "@/components/dashboard/TipCard";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { useIsMemberOfTribe, useJoinTribe, useLeaveTribe, useTribePosts, useTribeStockTips } from "@/hooks/graphql";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { apiClient } from "@/lib/api";
+import { GET_TRIBE } from "@/graphql/tribes/queries";
+import { useMutation, useQueryClient, useQuery as useTanstackQuery } from "@tanstack/react-query";
+import { useQuery } from "@apollo/client/react";
+import { useNavigate, useParams } from "@tanstack/react-router";
+import { BarChart3, Check, Edit2, Loader2, TrendingUp, Users, X } from "lucide-react";
+import { useState } from "react";
 
 const TribeDetail = () => {
   const { id } = useParams({ from: '/_auth/tribe/$id' });
@@ -27,22 +28,27 @@ const TribeDetail = () => {
   const [editedRules, setEditedRules] = useState<string[]>([]);
   const [originalRules, setOriginalRules] = useState<TribeRule[]>([]);
 
-  const { data: tribeData, isLoading, error } = useQuery({
-    queryKey: ['tribe', id],
-    queryFn: async () => {
-      const response = await apiClient.tribes._id(Number(id)).$get();
-      return response;
-    },
-    enabled: !!id,
+  const { data, loading: isLoading, error } = useQuery(GET_TRIBE, {
+    variables: { id },
+    skip: !id,
   });
 
+  const tribeData = data?.tribe;
+
   // Tribe membership hooks
-  const { data: isMemberData, loading: membershipLoading } = useIsMemberOfTribe(Number(id));
+  const { data: isMemberData, loading: membershipLoading } = useIsMemberOfTribe(id);
   const [joinTribe, { loading: joining }] = useJoinTribe();
   const [leaveTribe, { loading: leaving }] = useLeaveTribe();
 
   const isMember = isMemberData?.isMemberOfTribe || false;
   const isMembershipLoading = joining || leaving || membershipLoading;
+
+  // Fetch tribe posts and stock tips (only if user is a member or owner)
+  const { data: tribePostsData, loading: loadingPosts } = useTribePosts(id);
+  const { data: tribeStockTipsData, loading: loadingTips } = useTribeStockTips(id);
+
+  const tribePosts = (tribePostsData as { tribePosts: any[] })?.tribePosts || [];
+  const tribeStockTips = (tribeStockTipsData as { tribeStockTips: any[] })?.tribeStockTips || [];
 
   const updateRulesMutation = useMutation({
     mutationFn: async (rules: string[]) => {
@@ -178,7 +184,7 @@ const TribeDetail = () => {
     .map(([key]) => getFeatureLabel(key));
 
   // Parse rules from API - sort by displayOrder
-  const apiRulesData = (tribeData.rules || [])
+  const apiRulesData = [...(tribeData.rules || [])]
     .sort((a: any, b: any) => a.displayOrder - b.displayOrder);
 
   const apiRules = apiRulesData.map((rule: any) => rule.content);
@@ -259,7 +265,7 @@ const TribeDetail = () => {
 
   const handleJoin = async () => {
     try {
-      await joinTribe({ variables: { tribeId: Number(id) } });
+      await joinTribe({ variables: { tribeId: id } });
       toast({
         title: "Success!",
         description: "You've joined the tribe successfully.",
@@ -276,7 +282,7 @@ const TribeDetail = () => {
 
   const handleLeave = async () => {
     try {
-      await leaveTribe({ variables: { tribeId: Number(id) } });
+      await leaveTribe({ variables: { tribeId: id } });
       toast({
         title: "Left tribe",
         description: "You've left the tribe successfully.",
@@ -333,31 +339,99 @@ const TribeDetail = () => {
 
       <div className="px-4 py-4 pb-24">
         {activeTab === "discussion" && (
-          <div className="flex flex-col items-center justify-center py-16 px-4">
-            <div className="text-center max-w-sm">
-              <div className="mb-4">
-                <svg
-                  className="mx-auto h-16 w-16 text-gray-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                  />
-                </svg>
+          <div className="space-y-4">
+            {loadingPosts || loadingTips ? (
+              <div className="flex items-center justify-center py-16">
+                <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                No discussions yet
-              </h3>
-              <p className="text-sm text-gray-500">
-                Join this tribe to start engaging with other members and share your insights.
-              </p>
-            </div>
+            ) : tribePosts.length === 0 && tribeStockTips.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-16 px-4">
+                <div className="text-center max-w-sm">
+                  <div className="mb-4">
+                    <svg
+                      className="mx-auto h-16 w-16 text-gray-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    No discussions yet
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    {isMember
+                      ? "Be the first to share your insights with the tribe."
+                      : "Join this tribe to start engaging with other members and share your insights."}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Render Posts */}
+                {tribePosts.map((post: any) => (
+                  <PostCard
+                    key={post.id}
+                    id={post.id}
+                    author={{
+                      name: `${post.user.firstName} ${post.user.lastName}`,
+                      username: post.user.username || `@user${post.user.id}`,
+                      initials: post.user.firstName[0] + (post.user.lastName?.[0] || ''),
+                    }}
+                    content={post.content}
+                    tags={[]}
+                    likes={post.likeCount || 0}
+                    comments={post.commentCount || 0}
+                    timestamp={new Date(post.createdAt).toLocaleDateString()}
+                    isFollowing={false}
+                    image={post.image?.path}
+                    isLikedByMe={post.isLikedByMe || false}
+                    tribe={post.tribe ? { id: post.tribe.id, name: post.tribe.name } : undefined}
+                  />
+                ))}
+
+                {/* Render Stock Tips */}
+                {tribeStockTips.map((tip: any) => {
+                  const entryPrice = typeof tip.entryPrice === 'string' ? parseFloat(tip.entryPrice) : tip.entryPrice;
+                  const targetPrice = typeof tip.targetPrice === 'string' ? parseFloat(tip.targetPrice) : tip.targetPrice;
+
+                  return (
+                    <TipCard
+                      key={tip.id}
+                      id={tip.id}
+                      author={{
+                        name: tip.user ? `${tip.user.firstName} ${tip.user.lastName}`.trim() : 'User',
+                        username: tip.user?.username ? `@${tip.user.username}` : `@user${tip.userId}`,
+                        initials: tip.user ? `${tip.user.firstName?.[0] || ''}${tip.user.lastName?.[0] || ''}` : 'U',
+                      }}
+                      stock={{
+                        name: tip.stockName,
+                        symbol: tip.symbol,
+                        change: `${((targetPrice - entryPrice) / entryPrice * 100).toFixed(1)}%`,
+                      }}
+                      entryPrice={`₹${entryPrice.toFixed(2)}`}
+                      targetPrice={`₹${targetPrice.toFixed(2)}`}
+                      buyDate={new Date(tip.entryDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' })}
+                      sellDate={tip.exitDate ? new Date(tip.exitDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }) : 'N/A'}
+                      reasoning={tip.reason || ''}
+                      chartImage={tip.chartImage?.publicUrl?.replace('http://minio:', 'http://localhost:')}
+                      likes={tip.likeCount || 0}
+                      comments={tip.commentCount || 0}
+                      isFollowing={false}
+                      isLikedByMe={tip.isLikedByMe || false}
+                      tribe={tip.tribe ? { id: tip.tribe.id, name: tip.tribe.name } : undefined}
+                    />
+                  );
+                })}
+              </>
+            )}
           </div>
         )}
 

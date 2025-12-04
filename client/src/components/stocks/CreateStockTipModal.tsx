@@ -17,12 +17,13 @@ import { CREATE_STOCK_TIP } from "@/graphql/stock-tips/mutations";
 import { GET_STOCK_TIPS, GET_MY_STOCK_TIPS } from "@/graphql/stock-tips/queries";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { useMyTribes } from "@/hooks/graphql";
 import { apiClient, axiosInstance } from "@/lib/api";
 import type { StockSearchResult, StockSearchResponse } from "@/api/market/stocks/search";
-import type { FileResponse, Tribe } from "@/types";
+import type { FileResponse } from "@/types";
 import { useMutation } from "@apollo/client/react";
 import { useQuery as useTanStackQuery } from "@tanstack/react-query";
-import { ChevronDown, Globe, Lock, Send, TrendingUp, Upload, Users, X } from "lucide-react";
+import { ChevronDown, Globe, Send, TrendingUp, Upload, Users, X } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 
@@ -40,6 +41,7 @@ interface StockTipFormData {
 interface Stock {
   name: string;
   symbol: string;
+  exchange?: string;
   currentPrice?: number;
 }
 
@@ -57,24 +59,16 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
   const [showStockResults, setShowStockResults] = useState(false);
-  const [selectedVisibility, setSelectedVisibility] = useState<string>("public");
-  const [selectedTribe, setSelectedTribe] = useState<Tribe | null>(null);
+  const [selectedTribeId, setSelectedTribeId] = useState<string>("public");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { user: currentUser } = useAuth();
 
-  // Fetch user's tribes
-  const { data: allTribes = [] } = useTanStackQuery({
-    queryKey: ['tribes'],
-    queryFn: async () => {
-      const response = await apiClient.tribes.$get();
-      return response;
-    },
-    enabled: isOpen // Only fetch when modal is open
-  });
+  // Fetch tribes the current user is a member of using GraphQL
+  const { data: myTribesData } = useMyTribes();
 
-  // Filter tribes created by the current user
-  const userTribes = allTribes.filter(tribe => tribe.userId === currentUser?.id);
+  // Show all tribes the user is a member of (not just owned ones)
+  const memberTribes = (myTribesData as any)?.myTribes || [];
 
   // Debounce search query
   useEffect(() => {
@@ -288,7 +282,14 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
     }
 
     // Prepare data for GraphQL mutation
-    const stockTipData = {
+    const tribeId = selectedTribeId === "public" ? null : selectedTribeId;
+
+    console.log('=== CREATE STOCK TIP DEBUG ===');
+    console.log('selectedTribeId:', selectedTribeId);
+    console.log('tribeId:', tribeId);
+    console.log('tribeId !== null:', tribeId !== null);
+
+    const stockTipData: any = {
       type: data.type,
       stockName: selectedStock.name,
       symbol: selectedStock.symbol,
@@ -297,15 +298,23 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
       entryDate: data.entryDate,
       exitDate: data.exitDate || undefined,
       reason: data.reasoning || undefined,
-      chartImageId: data.chartImageId || undefined
+      chartImageId: data.chartImageId || undefined,
+      ...(tribeId !== null && { tribeId }),
     };
 
-    // Call GraphQL mutation
-    createStockTipMutation({
+    console.log('Stock tip data being sent:', stockTipData);
+    console.log('Stock tip data keys:', Object.keys(stockTipData));
+    console.log('Stock tip data stringified:', JSON.stringify(stockTipData, null, 2));
+
+    const mutationVariables = {
       variables: {
         input: stockTipData
       }
-    });
+    };
+    console.log('Full mutation variables:', JSON.stringify(mutationVariables, null, 2));
+
+    // Call GraphQL mutation
+    createStockTipMutation(mutationVariables);
   };
 
   const handleClose = () => {
@@ -324,35 +333,22 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
     setSelectedStock(null);
     setSearchQuery("");
     setShowStockResults(false);
-    setSelectedVisibility("public");
-    setSelectedTribe(null);
+    setSelectedTribeId("public");
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
     onClose();
   };
 
-  const handleVisibilitySelect = (value: string, tribe?: Tribe) => {
-    setSelectedVisibility(value);
-    if (tribe) {
-      setSelectedTribe(tribe);
-    } else {
-      setSelectedTribe(null);
-    }
-  };
-
   const getVisibilityLabel = () => {
-    if (selectedVisibility === "public") return "Public";
-    if (selectedVisibility === "private") return "Private";
-    if (selectedTribe) return selectedTribe.name;
-    return "Public";
+    if (selectedTribeId === "public") return "Public";
+    const tribe = memberTribes.find((t: any) => String(t.id) === selectedTribeId);
+    return tribe ? tribe.name : "Public";
   };
 
   const getVisibilityIcon = () => {
-    if (selectedVisibility === "public") return <Globe className="h-5 w-5 text-gray-600" />;
-    if (selectedVisibility === "private") return <Lock className="h-5 w-5 text-gray-600" />;
-    if (selectedTribe) return <Users className="h-5 w-5 text-gray-600" />;
-    return <Globe className="h-5 w-5 text-gray-600" />;
+    if (selectedTribeId === "public") return <Globe className="h-5 w-5 text-gray-600" />;
+    return <Users className="h-5 w-5 text-gray-600" />;
   };
 
   // Use API search results
@@ -638,21 +634,21 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="w-56 max-h-80 overflow-y-auto">
-                    <DropdownMenuItem onClick={() => handleVisibilitySelect("public")}>
+                    <DropdownMenuItem onClick={() => setSelectedTribeId("public")}>
                       <Globe className="h-4 w-4 mr-2" />
                       Public
                     </DropdownMenuItem>
 
-                    {userTribes.length > 0 && (
+                    {memberTribes.length > 0 && (
                       <>
                         <DropdownMenuSeparator />
                         <div className="px-2 py-1.5 text-xs font-semibold text-gray-500">
                           Your Tribes
                         </div>
-                        {userTribes.map((tribe) => (
+                        {memberTribes.map((tribe: any) => (
                           <DropdownMenuItem
                             key={tribe.id}
-                            onClick={() => handleVisibilitySelect(`tribe-${tribe.id}`, tribe)}
+                            onClick={() => setSelectedTribeId(String(tribe.id))}
                           >
                             <Users className="h-4 w-4 mr-2" />
                             <span className="truncate">{tribe.name}</span>
