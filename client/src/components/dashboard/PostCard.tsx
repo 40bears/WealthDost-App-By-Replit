@@ -114,8 +114,6 @@ export function PostCard({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={handleFollow}>Unfollow</DropdownMenuItem>
-              <DropdownMenuItem>Mute</DropdownMenuItem>
-              <DropdownMenuItem>Report</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )}

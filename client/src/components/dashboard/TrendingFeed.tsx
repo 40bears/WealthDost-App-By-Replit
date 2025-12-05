@@ -1,17 +1,9 @@
 import { useState } from 'react';
-import { ListFilter } from 'lucide-react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { PostCard } from './PostCard';
 import { TipCard } from './TipCard';
 import { usePublicPosts, usePublicStockTips } from '@/hooks/graphql';
-
-type FeedFilter = 'following' | 'trending' | 'latest' | 'popular';
 
 interface FeedItem {
   id: string;
@@ -20,7 +12,7 @@ interface FeedItem {
 }
 
 export function TrendingFeed() {
-  const [filter, setFilter] = useState<FeedFilter>('following');
+  const [showFollowing, setShowFollowing] = useState(false);
   const { data: postsData, loading: loadingPosts } = usePublicPosts();
   const { data: stockTipsData, loading: loadingStockTips } = usePublicStockTips();
 
@@ -101,18 +93,17 @@ export function TrendingFeed() {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-base font-semibold text-gray-900">Trending</h2>
         <div className="flex items-center gap-2">
-          <ListFilter className="h-4 w-4 text-gray-500" />
-          <Select value={filter} onValueChange={(value) => setFilter(value as FeedFilter)}>
-            <SelectTrigger className="w-auto h-8 border-none shadow-none [&>svg]:hidden px-0 focus:ring-0 focus:ring-offset-0 bg-transparent hover:bg-transparent">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-              <SelectItem value="following">Following</SelectItem>
-              <SelectItem value="trending">Trending</SelectItem>
-              <SelectItem value="latest">Latest</SelectItem>
-              <SelectItem value="popular">Popular</SelectItem>
-            </SelectContent>
-          </Select>
+          <Checkbox
+            id="show-following"
+            checked={showFollowing}
+            onCheckedChange={(checked) => setShowFollowing(!!checked)}
+          />
+          <Label
+            htmlFor="show-following"
+            className="text-sm text-gray-600 cursor-pointer"
+          >
+            Show following
+          </Label>
         </div>
       </div>
 
