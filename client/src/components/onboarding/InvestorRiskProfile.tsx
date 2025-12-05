@@ -7,10 +7,11 @@ type Props = {
   onChange: (value: string) => void;
   onBack: () => void;
   onNext: () => void;
+  onSkipToDashboard: () => void;
   progress: number;
 };
 
-export function InvestorRiskProfile({ value, onChange, onBack, onNext, progress }: Props) {
+export function InvestorRiskProfile({ value, onChange, onBack, onNext, onSkipToDashboard, progress }: Props) {
   return (
     <div className="px-4 py-4 flex flex-col w-full h-screen overflow-auto">
       <div className="flex items-center mb-4">
@@ -61,19 +62,22 @@ export function InvestorRiskProfile({ value, onChange, onBack, onNext, progress 
           </div>
         </RadioGroup>
       </div>
-      <div className="mt-auto flex space-x-3 pb-6 safe-area-bottom">
-        <Button variant="outline" onClick={onBack} className="flex-1">
-          <span className="material-icons mr-1 text-sm">arrow_back</span>
-          Back
-        </Button>
-        <Button
-          onClick={() => { if (!value) return; onNext(); }}
-          className="flex-1"
-          disabled={!value}
-        >
-          Next
-          <span className="material-icons ml-1 text-sm">arrow_forward</span>
-        </Button>
+      <div className="mt-auto pb-6 safe-area-bottom">
+        <Button onClick={onSkipToDashboard} className="w-full mb-3 bg-[#E2E8F0] text-gray-700 hover:bg-[#E2E8F0]/80">Skip to dashboard</Button>
+        <div className="flex space-x-3">
+          <Button variant="outline" onClick={onBack} className="flex-1">
+            <span className="material-icons mr-1 text-sm">arrow_back</span>
+            Back
+          </Button>
+          <Button
+            onClick={() => { if (!value) return; onNext(); }}
+            className="flex-1"
+            disabled={!value}
+          >
+            Next
+            <span className="material-icons ml-1 text-sm">arrow_forward</span>
+          </Button>
+        </div>
       </div>
     </div>
   );

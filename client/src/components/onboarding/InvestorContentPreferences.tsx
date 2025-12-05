@@ -3,19 +3,18 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { useState } from "react";
-import { useLocation } from "wouter";
 
 type Props = {
   selected: string[];
   onChange: (value: string, checked: boolean) => void;
   onBack: () => void;
   onNext: () => void;
+  onSkipToDashboard: () => void;
   progress: number;
 };
 
-export function InvestorContentPreferences({ selected, onChange, onBack, onNext, progress }: Props) {
+export function InvestorContentPreferences({ selected, onChange, onBack, onNext, onSkipToDashboard, progress }: Props) {
   const [showError, setShowError] = useState(false);
-  const [, navigate] = useLocation();
   const items = [
     { key: 'stocks', title: '📈 Stock Market', desc: 'Equities, indices, and market analysis' },
     { key: 'crypto', title: '🚀 Crypto & Web3', desc: 'Blockchain and digital assets' },
@@ -48,7 +47,7 @@ export function InvestorContentPreferences({ selected, onChange, onBack, onNext,
         <p className="text-xs text-red-600 mb-2">Select at least one topic</p>
       )}
       <div className="mt-auto pb-6 safe-area-bottom">
-        <Button onClick={() => navigate('/dashboard')} className="w-full mb-3 bg-[#E2E8F0] text-gray-700 hover:bg-[#E2E8F0]/80">Skip to dashboard</Button>
+        <Button onClick={onSkipToDashboard} className="w-full mb-3 bg-[#E2E8F0] text-gray-700 hover:bg-[#E2E8F0]/80">Skip to dashboard</Button>
         <div className="flex space-x-3">
           <Button variant="outline" onClick={onBack} className="flex-1">Back</Button>
           <Button onClick={() => { if (selected.length === 0) { setShowError(true); return; } onNext(); }} className="flex-1">Next</Button>

@@ -17,9 +17,10 @@ type Props = {
   onChange: (expertId: string, checked: boolean) => void;
   onBack: () => void;
   onNext: () => void;
+  onSkipToDashboard: () => void;
 };
 
-export function InvestorRecommendedExperts({ selected, onChange, onBack, onNext }: Props) {
+export function InvestorRecommendedExperts({ selected, onChange, onBack, onNext, onSkipToDashboard }: Props) {
   const experts: Expert[] = [
     {
       id: "rajesh-kumar",
@@ -135,13 +136,16 @@ export function InvestorRecommendedExperts({ selected, onChange, onBack, onNext 
         ))}
       </div>
 
-      <div className="mt-auto flex space-x-3 pb-6 safe-area-bottom">
-        <Button variant="outline" onClick={onBack} className="flex-1">
-          Back
-        </Button>
-        <Button onClick={onNext} className="flex-1">
-          Next
-        </Button>
+      <div className="mt-auto pb-6 safe-area-bottom">
+        <Button onClick={onSkipToDashboard} className="w-full mb-3 bg-[#E2E8F0] text-gray-700 hover:bg-[#E2E8F0]/80">Skip to dashboard</Button>
+        <div className="flex space-x-3">
+          <Button variant="outline" onClick={onBack} className="flex-1">
+            Back
+          </Button>
+          <Button onClick={onNext} className="flex-1">
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   );

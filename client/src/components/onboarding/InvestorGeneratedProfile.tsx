@@ -124,6 +124,7 @@ export function InvestorGeneratedProfile({ formData, onBack, onComplete }: {
       </div>
 
       <div className="mt-auto pb-6 safe-area-bottom">
+        <Button onClick={onComplete} className="w-full mb-3 bg-[#E2E8F0] text-gray-700 hover:bg-[#E2E8F0]/80">Skip to dashboard</Button>
         <Button onClick={onComplete} className="w-full">Enter WealthDost</Button>
       </div>
     </div>
