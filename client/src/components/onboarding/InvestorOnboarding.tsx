@@ -125,6 +125,14 @@ export const InvestorOnboarding = ({ onBack, onComplete }: InvestorOnboardingPro
     goToNextStep();
   };
 
+  const handleSkipToDashboard = () => {
+    if (onComplete) {
+      onComplete(formData);
+    } else {
+      navigate('/dashboard');
+    }
+  };
+
   const getProgressPercentage = () => {
     switch (flow.state) {
       case 'basic': return 15;
@@ -164,6 +172,7 @@ export const InvestorOnboarding = ({ onBack, onComplete }: InvestorOnboardingPro
                 onChange={(v, c) => handleContentPreferenceChange(v, c)}
                 onBack={goToPreviousStep}
                 onNext={goToNextStep}
+                onSkipToDashboard={handleSkipToDashboard}
                 progress={getProgressPercentage()}
               />
             }
@@ -176,6 +185,7 @@ export const InvestorOnboarding = ({ onBack, onComplete }: InvestorOnboardingPro
                 onChange={(v, c) => handleIndustrySectorChange(v, c)}
                 onBack={goToPreviousStep}
                 onNext={goToNextStep}
+                onSkipToDashboard={handleSkipToDashboard}
                 progress={getProgressPercentage()}
               />
             }
@@ -188,6 +198,7 @@ export const InvestorOnboarding = ({ onBack, onComplete }: InvestorOnboardingPro
                 onChange={(v, c) => handleTopicsChange(v, c)}
                 onBack={goToPreviousStep}
                 onNext={goToNextStep}
+                onSkipToDashboard={handleSkipToDashboard}
                 progress={getProgressPercentage()}
               />
             }
@@ -200,6 +211,7 @@ export const InvestorOnboarding = ({ onBack, onComplete }: InvestorOnboardingPro
                 onChange={handleRiskProfileChange}
                 onBack={goToPreviousStep}
                 onNext={goToNextStep}
+                onSkipToDashboard={handleSkipToDashboard}
                 progress={getProgressPercentage()}
               />
             }
@@ -212,6 +224,7 @@ export const InvestorOnboarding = ({ onBack, onComplete }: InvestorOnboardingPro
                 onChange={handleExpertsChange}
                 onBack={goToPreviousStep}
                 onNext={handleSubmit}
+                onSkipToDashboard={handleSkipToDashboard}
               />
             }
           />

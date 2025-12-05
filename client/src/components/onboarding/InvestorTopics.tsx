@@ -6,10 +6,11 @@ type Props = {
   onChange: (value: string, checked: boolean) => void;
   onBack: () => void;
   onNext: () => void;
+  onSkipToDashboard: () => void;
   progress: number;
 };
 
-export function InvestorTopics({ selected, onChange, onBack, onNext, progress }: Props) {
+export function InvestorTopics({ selected, onChange, onBack, onNext, onSkipToDashboard, progress }: Props) {
   const [showError, setShowError] = useState(false);
   const tags = [
     '#ValueInvestor', '#GrowthInvestor', '#DividendInvestor', '#SwingTrader',
@@ -58,9 +59,12 @@ export function InvestorTopics({ selected, onChange, onBack, onNext, progress }:
       {showError && selected.length === 0 && (
         <p className="text-xs text-red-600 mb-2">Select at least one topic</p>
       )}
-      <div className="mt-auto flex space-x-3 pb-6 safe-area-bottom">
-        <Button variant="outline" onClick={onBack} className="flex-1">Back</Button>
-        <Button onClick={() => { if (selected.length === 0) { setShowError(true); return; } onNext(); }} className="flex-1">Next</Button>
+      <div className="mt-auto pb-6 safe-area-bottom">
+        <Button onClick={onSkipToDashboard} className="w-full mb-3 bg-[#E2E8F0] text-gray-700 hover:bg-[#E2E8F0]/80">Skip to dashboard</Button>
+        <div className="flex space-x-3">
+          <Button variant="outline" onClick={onBack} className="flex-1">Back</Button>
+          <Button onClick={() => { if (selected.length === 0) { setShowError(true); return; } onNext(); }} className="flex-1">Next</Button>
+        </div>
       </div>
     </div>
   );
