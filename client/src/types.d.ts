@@ -12,6 +12,10 @@ export interface User {
   isActive: boolean;
   isLoggedIn?: boolean;
   kycStatus?: boolean;
+  totalPosts?: number;
+  likesReceived?: number;
+  watchlistCount?: number;
+  totalComments?: number;
 }
 
 export interface UserProfile {

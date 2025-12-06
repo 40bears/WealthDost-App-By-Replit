@@ -33,6 +33,7 @@ export function TrendingFeed() {
     data: {
       id: post.id,
       author: {
+        id: post.user.id.toString(),
         name: `${post.user.firstName} ${post.user.lastName}`,
         username: post.user.username ? `@${post.user.username}` : `@user${post.user.id}`,
         initials: post.user.firstName[0] + (post.user.lastName?.[0] || ''),
@@ -60,8 +61,9 @@ export function TrendingFeed() {
       data: {
         id: tip.id,
         author: {
+          id: tip.user?.id?.toString() || 'unknown',
           name: tip.user ? `${tip.user.firstName} ${tip.user.lastName}`.trim() : 'User',
-          username: tip.user?.username ? `@${tip.user.username}` : `@user${tip.userId}`,
+          username: tip.user?.username ? `@${tip.user.username}` : `@user${tip.user?.id || 'unknown'}`,
           initials: tip.user ? `${tip.user.firstName?.[0] || ''}${tip.user.lastName?.[0] || ''}` : 'U',
         },
         stock: {

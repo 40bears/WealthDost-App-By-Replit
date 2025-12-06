@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Heart, MessageCircle, Share2, UserPlus, MoreVertical } from 'lucide-react';
@@ -14,6 +15,7 @@ import { CommentsBottomSheet } from '@/components/comments/CommentsBottomSheet';
 interface PostCardProps {
   id: string;
   author: {
+    id: string;
     name: string;
     username: string;
     avatar?: string;
@@ -46,6 +48,7 @@ export function PostCard({
   isLikedByMe = false,
   tribe,
 }: PostCardProps) {
+  const navigate = useNavigate();
   const [following, setFollowing] = useState(isFollowing);
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [likePost] = useLikePost();
@@ -53,6 +56,10 @@ export function PostCard({
 
   const handleFollow = () => {
     setFollowing(!following);
+  };
+
+  const handleUserClick = () => {
+    navigate({ to: '/user/$userId', params: { userId: author.id } });
   };
 
   const handleLike = async () => {
@@ -74,7 +81,7 @@ export function PostCard({
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
-          <Avatar className="h-10 w-10">
+          <Avatar className="h-10 w-10 cursor-pointer" onClick={handleUserClick}>
             <AvatarImage src={author.avatar} />
             <AvatarFallback className="bg-purple-100 text-purple-600">
               {author.initials}
@@ -82,8 +89,8 @@ export function PostCard({
           </Avatar>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-gray-900">{author.name}</span>
-              <span className="text-gray-500 text-sm">{author.username}</span>
+              <span className="font-semibold text-gray-900 cursor-pointer hover:underline" onClick={handleUserClick}>{author.name}</span>
+              <span className="text-gray-500 text-sm cursor-pointer hover:underline" onClick={handleUserClick}>{author.username}</span>
               <span className="text-gray-400">•</span>
               <span className="text-gray-500 text-sm">{timestamp}</span>
             </div>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Heart, MessageCircle, Share2, UserPlus, MoreVertical, ChevronDown, ChevronUp } from 'lucide-react';
@@ -14,6 +15,7 @@ import { CommentsBottomSheet } from '@/components/comments/CommentsBottomSheet';
 interface TipCardProps {
   id: string;
   author: {
+    id: string;
     name: string;
     username: string;
     avatar?: string;
@@ -57,6 +59,7 @@ export function TipCard({
   isLikedByMe = false,
   tribe,
 }: TipCardProps) {
+  const navigate = useNavigate();
   const [following, setFollowing] = useState(isFollowing);
   const [showChart, setShowChart] = useState(false);
   const [commentsOpen, setCommentsOpen] = useState(false);
@@ -65,6 +68,10 @@ export function TipCard({
 
   const handleFollow = () => {
     setFollowing(!following);
+  };
+
+  const handleUserClick = () => {
+    navigate({ to: '/user/$userId', params: { userId: author.id } });
   };
 
   const handleLike = async () => {
@@ -170,7 +177,7 @@ export function TipCard({
       {/* Author Footer */}
       <div className="flex items-center justify-between pt-4 border-t border-gray-100 mb-3">
         <div className="flex items-center gap-3">
-          <Avatar className="h-8 w-8">
+          <Avatar className="h-8 w-8 cursor-pointer" onClick={handleUserClick}>
             <AvatarImage src={author.avatar} />
             <AvatarFallback className="bg-gray-200 text-gray-600 text-xs">
               {author.initials}
@@ -178,8 +185,8 @@ export function TipCard({
           </Avatar>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-sm text-gray-900">{author.name}</span>
-              <span className="text-gray-500 text-xs">{author.username}</span>
+              <span className="font-semibold text-sm text-gray-900 cursor-pointer hover:underline" onClick={handleUserClick}>{author.name}</span>
+              <span className="text-gray-500 text-xs cursor-pointer hover:underline" onClick={handleUserClick}>{author.username}</span>
             </div>
             {tribe && (
               <div className="flex items-center gap-1 mt-0.5">

@@ -50,7 +50,7 @@ export function InvestorGeneratedProfile({ formData, onBack, onComplete }: {
         <Button variant="ghost" size="icon" onClick={onBack} className="text-gray-500">
           <span className="material-icons">arrow_back</span>
         </Button>
-        <h2 className="text-lg font-semibold ml-2">Your Wealth Seeker Profile</h2>
+        <h2 className="text-lg font-semibold ml-2">Your FinMate Profile</h2>
       </div>
       <div className="h-1 bg-gray-200 rounded mb-6">
         <div className="h-1 bg-primary rounded" style={{ width: '100%' }}></div>
@@ -124,7 +124,6 @@ export function InvestorGeneratedProfile({ formData, onBack, onComplete }: {
       </div>
 
       <div className="mt-auto pb-6 safe-area-bottom">
-        <Button onClick={onComplete} className="w-full mb-3 bg-[#E2E8F0] text-gray-700 hover:bg-[#E2E8F0]/80">Skip to dashboard</Button>
         <Button onClick={onComplete} className="w-full">Enter WealthDost</Button>
       </div>
     </div>

@@ -14,7 +14,17 @@ type Props = {
 
 export function ExpertSpecializations({ selected, onChange, onBack, onNext, progress }: Props) {
   const [showError, setShowError] = useState(false);
+  const items = [
+    { key: 'stocks', title: '📈 Stock Market & Equity Research', desc: 'Stock analysis, valuations, and market strategies' },
+    { key: 'crypto', title: '🚀 Crypto & Web3', desc: 'Blockchain technology, DeFi, and token economics' },
+    { key: 'privateequity', title: '🏦 Private Equity & Venture Capital', desc: 'Deal sourcing, due diligence, and portfolio management' },
+    { key: 'macro', title: '🌍 Macroeconomics & Global Markets', desc: 'Economic analysis, geopolitics, and policy impacts' },
+    { key: 'wealth', title: '💰 Wealth Planning & Financial Advisory', desc: 'Comprehensive financial planning and advisory services' },
+    { key: 'realestate', title: '🏠 Real Estate & Alternative Investments', desc: 'Property markets, REITs, and non-traditional assets' },
+  ];
+
   const isDisabled = (key: string) => selected.length >= 3 && !selected.includes(key);
+
   const handleNext = () => {
     if (selected.length === 0) {
       setShowError(true);
@@ -22,6 +32,25 @@ export function ExpertSpecializations({ selected, onChange, onBack, onNext, prog
     }
     onNext();
   };
+
+  const handleSelectAll = () => {
+    // Select first 3 items if none selected
+    const toSelect = items.slice(0, 3);
+    toSelect.forEach(item => {
+      if (!selected.includes(item.key)) {
+        onChange(item.key, true);
+      }
+    });
+  };
+
+  const handleClearAll = () => {
+    items.forEach(item => {
+      if (selected.includes(item.key)) {
+        onChange(item.key, false);
+      }
+    });
+  };
+
   return (
     <div className="px-4 py-4 flex flex-col w-full h-screen overflow-auto">
       <div className="flex items-center mb-4">
@@ -31,18 +60,18 @@ export function ExpertSpecializations({ selected, onChange, onBack, onNext, prog
         <h2 className="text-lg font-semibold ml-2">Your Specialization</h2>
       </div>
       <Progress value={progress} className="h-1 mb-4" />
-      <p className="text-gray-600 mb-4 text-sm">Select your investment specializations (up to 3):</p>
+      <div className="flex items-center justify-between mb-4 gap-2">
+        <p className="text-gray-600 text-sm flex-shrink">Select specializations (up to 3):</p>
+        <div className="flex gap-2 flex-shrink-0">
+          <button type="button" onClick={handleSelectAll} className="text-xs text-primary hover:underline">Select All</button>
+          <span className="text-gray-300">|</span>
+          <button type="button" onClick={handleClearAll} className="text-xs text-primary hover:underline">Clear All</button>
+        </div>
+      </div>
       <div className="space-y-2 mb-4 flex-1">
-        {[
-          { key: 'stocks', title: '📈 Stock Market & Equity Research', desc: 'Stock analysis, valuations, and market strategies' },
-          { key: 'crypto', title: '🚀 Crypto & Web3', desc: 'Blockchain technology, DeFi, and token economics' },
-          { key: 'privateequity', title: '🏦 Private Equity & Venture Capital', desc: 'Deal sourcing, due diligence, and portfolio management' },
-          { key: 'macro', title: '🌍 Macroeconomics & Global Markets', desc: 'Economic analysis, geopolitics, and policy impacts' },
-          { key: 'wealth', title: '💰 Wealth Planning & Financial Advisory', desc: 'Comprehensive financial planning and advisory services' },
-          { key: 'realestate', title: '🏠 Real Estate & Alternative Investments', desc: 'Property markets, REITs, and non-traditional assets' },
-        ].map(item => (
-          <div key={item.key} className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
-            <Checkbox id={item.key} checked={selected.includes(item.key)} onCheckedChange={(c) => onChange(item.key, !!c)} className="mr-2" disabled={isDisabled(item.key)} />
+        {items.map(item => (
+          <div key={item.key} className="flex items-start p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <Checkbox id={item.key} checked={selected.includes(item.key)} onCheckedChange={(c) => onChange(item.key, !!c)} className="mr-2 mt-0.5" disabled={isDisabled(item.key)} />
             <Label htmlFor={item.key} className="flex-1 cursor-pointer">
               <span className="font-medium text-gray-800">{item.title}</span>
               <p className="text-sm text-gray-700">{item.desc}</p>

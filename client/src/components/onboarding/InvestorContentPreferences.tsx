@@ -22,6 +22,23 @@ export function InvestorContentPreferences({ selected, onChange, onBack, onNext,
     { key: 'macro', title: '🌍 Macroeconomics', desc: 'Global trends and policy impacts' },
     { key: 'personal', title: '💰 Personal Finance', desc: 'Budgeting, saving, and wealth planning' },
   ];
+
+  const handleSelectAll = () => {
+    items.forEach(item => {
+      if (!selected.includes(item.key)) {
+        onChange(item.key, true);
+      }
+    });
+  };
+
+  const handleClearAll = () => {
+    items.forEach(item => {
+      if (selected.includes(item.key)) {
+        onChange(item.key, false);
+      }
+    });
+  };
+
   return (
     <div className="px-4 py-4 flex flex-col w-full h-screen overflow-auto">
       <div className="flex items-center mb-4">
@@ -31,11 +48,18 @@ export function InvestorContentPreferences({ selected, onChange, onBack, onNext,
         <h2 className="text-lg font-semibold ml-2">Content Preferences</h2>
       </div>
       <Progress value={progress} className="h-1 mb-4" />
-      <p className="text-gray-600 mb-4 text-sm">Select topics you're interested in:</p>
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-gray-600 text-sm">Select topics you're interested in:</p>
+        <div className="flex gap-2">
+          <button type="button" onClick={handleSelectAll} className="text-xs text-primary hover:underline">Select All</button>
+          <span className="text-gray-300">|</span>
+          <button type="button" onClick={handleClearAll} className="text-xs text-primary hover:underline">Clear All</button>
+        </div>
+      </div>
       <div className="space-y-2 mb-4 flex-1">
         {items.map(item => (
-          <div key={item.key} className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
-            <Checkbox id={item.key} checked={selected.includes(item.key)} onCheckedChange={(c) => onChange(item.key, !!c)} className="mr-2" />
+          <div key={item.key} className="flex items-start p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <Checkbox id={item.key} checked={selected.includes(item.key)} onCheckedChange={(c) => onChange(item.key, !!c)} className="mr-2 mt-0.5" />
             <Label htmlFor={item.key} className="flex-1 cursor-pointer">
               <span className="font-medium text-gray-800">{item.title}</span>
               <p className="text-sm text-gray-700">{item.desc}</p>
