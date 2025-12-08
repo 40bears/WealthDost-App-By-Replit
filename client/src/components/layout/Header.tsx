@@ -81,6 +81,14 @@ const Header = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuItem
+                onClick={() => navigate({ to: "/my-profile" })}
+                className="cursor-pointer"
+              >
+                <span className="material-icons text-sm mr-2">person</span>
+                My Profile
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
                 onClick={() => navigate({ to: "/feedback" })}
                 className="cursor-pointer"
               >

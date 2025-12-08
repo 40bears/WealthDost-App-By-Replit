@@ -3,19 +3,18 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { useState } from "react";
-import { useLocation } from "wouter";
 
 type Props = {
   selected: string[];
   onChange: (value: string, checked: boolean) => void;
   onBack: () => void;
   onNext: () => void;
+  onSkipToDashboard: () => void;
   progress: number;
 };
 
-export function InvestorContentPreferences({ selected, onChange, onBack, onNext, progress }: Props) {
+export function InvestorContentPreferences({ selected, onChange, onBack, onNext, onSkipToDashboard, progress }: Props) {
   const [showError, setShowError] = useState(false);
-  const [, navigate] = useLocation();
   const items = [
     { key: 'stocks', title: '📈 Stock Market', desc: 'Equities, indices, and market analysis' },
     { key: 'crypto', title: '🚀 Crypto & Web3', desc: 'Blockchain and digital assets' },
@@ -23,6 +22,23 @@ export function InvestorContentPreferences({ selected, onChange, onBack, onNext,
     { key: 'macro', title: '🌍 Macroeconomics', desc: 'Global trends and policy impacts' },
     { key: 'personal', title: '💰 Personal Finance', desc: 'Budgeting, saving, and wealth planning' },
   ];
+
+  const handleSelectAll = () => {
+    items.forEach(item => {
+      if (!selected.includes(item.key)) {
+        onChange(item.key, true);
+      }
+    });
+  };
+
+  const handleClearAll = () => {
+    items.forEach(item => {
+      if (selected.includes(item.key)) {
+        onChange(item.key, false);
+      }
+    });
+  };
+
   return (
     <div className="px-4 py-4 flex flex-col w-full h-screen overflow-auto">
       <div className="flex items-center mb-4">
@@ -32,11 +48,18 @@ export function InvestorContentPreferences({ selected, onChange, onBack, onNext,
         <h2 className="text-lg font-semibold ml-2">Content Preferences</h2>
       </div>
       <Progress value={progress} className="h-1 mb-4" />
-      <p className="text-gray-600 mb-4 text-sm">Select topics you're interested in:</p>
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-gray-600 text-sm">Select topics you're interested in:</p>
+        <div className="flex gap-2">
+          <button type="button" onClick={handleSelectAll} className="text-xs text-primary hover:underline">Select All</button>
+          <span className="text-gray-300">|</span>
+          <button type="button" onClick={handleClearAll} className="text-xs text-primary hover:underline">Clear All</button>
+        </div>
+      </div>
       <div className="space-y-2 mb-4 flex-1">
         {items.map(item => (
-          <div key={item.key} className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
-            <Checkbox id={item.key} checked={selected.includes(item.key)} onCheckedChange={(c) => onChange(item.key, !!c)} className="mr-2" />
+          <div key={item.key} className="flex items-start p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <Checkbox id={item.key} checked={selected.includes(item.key)} onCheckedChange={(c) => onChange(item.key, !!c)} className="mr-2 mt-0.5" />
             <Label htmlFor={item.key} className="flex-1 cursor-pointer">
               <span className="font-medium text-gray-800">{item.title}</span>
               <p className="text-sm text-gray-700">{item.desc}</p>
@@ -48,7 +71,7 @@ export function InvestorContentPreferences({ selected, onChange, onBack, onNext,
         <p className="text-xs text-red-600 mb-2">Select at least one topic</p>
       )}
       <div className="mt-auto pb-6 safe-area-bottom">
-        <Button onClick={() => navigate('/dashboard')} className="w-full mb-3 bg-[#E2E8F0] text-gray-700 hover:bg-[#E2E8F0]/80">Skip to dashboard</Button>
+        <Button onClick={onSkipToDashboard} className="w-full mb-3 bg-[#E2E8F0] text-gray-700 hover:bg-[#E2E8F0]/80">Skip to dashboard</Button>
         <div className="flex space-x-3">
           <Button variant="outline" onClick={onBack} className="flex-1">Back</Button>
           <Button onClick={() => { if (selected.length === 0) { setShowError(true); return; } onNext(); }} className="flex-1">Next</Button>

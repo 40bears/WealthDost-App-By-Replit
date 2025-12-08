@@ -158,8 +158,8 @@ export function ExpertBasicProfile({
               { id: 'published', label: 'Published in Forbes/Moneycontrol' },
               { id: 'founder', label: 'Finance Startup Founder' },
             ].map(item => (
-              <div key={item.id} className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
-                <Checkbox id={item.id} checked={formData.achievements.includes(item.id)} onCheckedChange={handleAchievementChecked(item.id)} className="mr-2" />
+              <div key={item.id} className="flex items-start p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+                <Checkbox id={item.id} checked={formData.achievements.includes(item.id)} onCheckedChange={handleAchievementChecked(item.id)} className="mr-2 mt-0.5" />
                 <Label htmlFor={item.id} className="flex-1 cursor-pointer">{item.label}</Label>
               </div>
             ))}

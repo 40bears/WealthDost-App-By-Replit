@@ -6,10 +6,11 @@ type Props = {
   onChange: (value: string, checked: boolean) => void;
   onBack: () => void;
   onNext: () => void;
+  onSkipToDashboard: () => void;
   progress: number;
 };
 
-export function InvestorTopics({ selected, onChange, onBack, onNext, progress }: Props) {
+export function InvestorTopics({ selected, onChange, onBack, onNext, onSkipToDashboard, progress }: Props) {
   const [showError, setShowError] = useState(false);
   const tags = [
     '#ValueInvestor', '#GrowthInvestor', '#DividendInvestor', '#SwingTrader',
@@ -25,6 +26,22 @@ export function InvestorTopics({ selected, onChange, onBack, onNext, progress }:
     onChange(tag, !isSelected);
   };
 
+  const handleSelectAll = () => {
+    tags.forEach(tag => {
+      if (!selected.includes(tag)) {
+        onChange(tag, true);
+      }
+    });
+  };
+
+  const handleClearAll = () => {
+    tags.forEach(tag => {
+      if (selected.includes(tag)) {
+        onChange(tag, false);
+      }
+    });
+  };
+
   return (
     <div className="px-4 py-4 flex flex-col w-full h-screen overflow-auto">
       <div className="flex items-center mb-4">
@@ -36,7 +53,14 @@ export function InvestorTopics({ selected, onChange, onBack, onNext, progress }:
       <div className="h-1 bg-gray-200 rounded mb-4">
         <div className="h-1 bg-primary rounded" style={{ width: `${progress}%` }}></div>
       </div>
-      <p className="text-gray-600 mb-4 text-sm">Select tags that describe your investment style and interest:</p>
+      <div className="flex items-center justify-between mb-4 gap-2">
+        <p className="text-gray-600 text-sm flex-shrink">Select tags:</p>
+        <div className="flex gap-2 flex-shrink-0">
+          <button type="button" onClick={handleSelectAll} className="text-xs text-primary hover:underline">Select All</button>
+          <span className="text-gray-300">|</span>
+          <button type="button" onClick={handleClearAll} className="text-xs text-primary hover:underline">Clear All</button>
+        </div>
+      </div>
       <div className="flex flex-wrap gap-3 mb-4 flex-1">
         {tags.map(tag => (
           <button
@@ -55,12 +79,15 @@ export function InvestorTopics({ selected, onChange, onBack, onNext, progress }:
       <div className="text-center text-sm text-gray-500 mb-4">
         {selected.length} {selected.length === 1 ? 'tag' : 'tags'} selected
       </div>
-      {showError && selected.length === 0 && (
-        <p className="text-xs text-red-600 mb-2">Select at least one topic</p>
+      {showError && selected.length < 3 && (
+        <p className="text-xs text-red-600 mb-2">Select at least 3 tags</p>
       )}
-      <div className="mt-auto flex space-x-3 pb-6 safe-area-bottom">
-        <Button variant="outline" onClick={onBack} className="flex-1">Back</Button>
-        <Button onClick={() => { if (selected.length === 0) { setShowError(true); return; } onNext(); }} className="flex-1">Next</Button>
+      <div className="mt-auto pb-6 safe-area-bottom">
+        <Button onClick={onSkipToDashboard} className="w-full mb-3 bg-[#E2E8F0] text-gray-700 hover:bg-[#E2E8F0]/80">Skip to dashboard</Button>
+        <div className="flex space-x-3">
+          <Button variant="outline" onClick={onBack} className="flex-1">Back</Button>
+          <Button onClick={() => { if (selected.length < 3) { setShowError(true); return; } onNext(); }} className="flex-1">Next</Button>
+        </div>
       </div>
     </div>
   );

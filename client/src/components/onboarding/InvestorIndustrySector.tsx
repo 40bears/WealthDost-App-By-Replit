@@ -9,10 +9,11 @@ type Props = {
   onChange: (value: string, checked: boolean) => void;
   onBack: () => void;
   onNext: () => void;
+  onSkipToDashboard: () => void;
   progress: number;
 };
 
-export function InvestorIndustrySector({ selected, onChange, onBack, onNext, progress }: Props) {
+export function InvestorIndustrySector({ selected, onChange, onBack, onNext, onSkipToDashboard, progress }: Props) {
   const [showError, setShowError] = useState(false);
   const items = [
     { key: 'technology', title: '💻 Technology', desc: 'Software, Hardware AI, and tech innovation' },
@@ -22,6 +23,23 @@ export function InvestorIndustrySector({ selected, onChange, onBack, onNext, pro
     { key: 'consumer', title: '🛍️ Consumer Goods', desc: 'Retail, food & beverages, lifestyle brands' },
     { key: 'industrial', title: '🏭 Industrial & Manufacturing', desc: 'Machinery, aerospace, automotive, logistics' },
   ];
+
+  const handleSelectAll = () => {
+    items.forEach(item => {
+      if (!selected.includes(item.key)) {
+        onChange(item.key, true);
+      }
+    });
+  };
+
+  const handleClearAll = () => {
+    items.forEach(item => {
+      if (selected.includes(item.key)) {
+        onChange(item.key, false);
+      }
+    });
+  };
+
   return (
     <div className="px-4 py-4 flex flex-col w-full h-screen overflow-auto">
       <div className="flex items-center mb-4">
@@ -31,11 +49,18 @@ export function InvestorIndustrySector({ selected, onChange, onBack, onNext, pro
         <h2 className="text-lg font-semibold ml-2">Industry Sector</h2>
       </div>
       <Progress value={progress} className="h-1 mb-4" />
-      <p className="text-gray-600 mb-4 text-sm">Select industry sectors you're interested in:</p>
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-gray-600 text-sm">Select industry sectors you're interested in:</p>
+        <div className="flex gap-2">
+          <button type="button" onClick={handleSelectAll} className="text-xs text-primary hover:underline">Select All</button>
+          <span className="text-gray-300">|</span>
+          <button type="button" onClick={handleClearAll} className="text-xs text-primary hover:underline">Clear All</button>
+        </div>
+      </div>
       <div className="space-y-2 mb-4 flex-1">
         {items.map(item => (
-          <div key={item.key} className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
-            <Checkbox id={item.key} checked={selected.includes(item.key)} onCheckedChange={(c) => onChange(item.key, !!c)} className="mr-2" />
+          <div key={item.key} className="flex items-start p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <Checkbox id={item.key} checked={selected.includes(item.key)} onCheckedChange={(c) => onChange(item.key, !!c)} className="mr-2 mt-0.5" />
             <Label htmlFor={item.key} className="flex-1 cursor-pointer">
               <span className="font-medium text-gray-800">{item.title}</span>
               <p className="text-sm text-gray-700">{item.desc}</p>
@@ -46,9 +71,12 @@ export function InvestorIndustrySector({ selected, onChange, onBack, onNext, pro
       {showError && selected.length === 0 && (
         <p className="text-xs text-red-600 mb-2">Select at least one industry sector</p>
       )}
-      <div className="mt-auto flex space-x-3 pb-6 safe-area-bottom">
-        <Button variant="outline" onClick={onBack} className="flex-1">Back</Button>
-        <Button onClick={() => { if (selected.length === 0) { setShowError(true); return; } onNext(); }} className="flex-1">Next</Button>
+      <div className="mt-auto pb-6 safe-area-bottom">
+        <Button onClick={onSkipToDashboard} className="w-full mb-3 bg-[#E2E8F0] text-gray-700 hover:bg-[#E2E8F0]/80">Skip to dashboard</Button>
+        <div className="flex space-x-3">
+          <Button variant="outline" onClick={onBack} className="flex-1">Back</Button>
+          <Button onClick={() => { if (selected.length === 0) { setShowError(true); return; } onNext(); }} className="flex-1">Next</Button>
+        </div>
       </div>
     </div>
   );
