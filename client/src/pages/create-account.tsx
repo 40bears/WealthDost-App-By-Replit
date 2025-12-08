@@ -46,7 +46,7 @@ export default function CreateAccount() {
     transitions: {
       phone: { OTP_SENT: "otp" },
       otp: { OTP_VERIFIED: "role", BACK: "phone" },
-      role: {},
+      role: { BACK: "otp" },
       investor: {},
       expert: {},
     },
@@ -116,12 +116,18 @@ export default function CreateAccount() {
       toast.success("Phone Verified", "Choose your role to continue");
       flow.send("OTP_VERIFIED");
     } catch (err: any) {
-      toast.error("Invalid OTP", err?.message || "Please enter a valid 6-digit OTP");
+      // Extract error message from response
+      const errorMessage = err?.response?.data?.message || err?.message || "Please enter a valid 6-digit OTP";
+      toast.error("Invalid OTP", errorMessage);
     }
   };
 
   const handleChangeNumber = () => {
     setIsOtpSent(false);
+    flow.send("BACK");
+  };
+
+  const handleRoleBack = () => {
     flow.send("BACK");
   };
 
@@ -169,7 +175,15 @@ export default function CreateAccount() {
         if (refreshToken) {
           localStorage.setItem('refreshToken', refreshToken);
         }
-        const userWithLoginFlag = { ...userData, isLoggedIn: true };
+        // Add default profile stats for new users
+        const userWithDefaults = {
+          ...userData,
+          totalPosts: 0,
+          likesReceived: 0,
+          watchlistCount: 0,
+          totalComments: 0,
+        };
+        const userWithLoginFlag = { ...userWithDefaults, isLoggedIn: true };
         await auth.login(userWithLoginFlag);
       }
 
@@ -226,7 +240,7 @@ export default function CreateAccount() {
         <FlowRoute
           name="phone"
           element={
-            <SignupLayout>
+            <SignupLayout showWhiteAreas={true}>
               <PhoneNumberScreen
                 mobileNumber={mobileNumber}
                 isLoading={isLoading}
@@ -249,7 +263,7 @@ export default function CreateAccount() {
                   <button
                     type="button"
                     onClick={handleChangeNumber}
-                    className="text-white/90 hover:text-white font-medium transition-colors duration-300 inline-flex items-center"
+                    className="px-8 py-4 border-2 border-white/40 text-white text-md font-medium rounded-2xl transition-all duration-300 inline-flex items-center hover:bg-white/10 hover:border-white/60 active:scale-[0.98]"
                   >
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -273,7 +287,7 @@ export default function CreateAccount() {
         />
         <FlowRoute
           name="role"
-          element={<ChooseRoleScreen role={role} onSelect={handleRoleSelect} />}
+          element={<ChooseRoleScreen role={role} onSelect={handleRoleSelect} onBack={handleRoleBack} />}
         />
         <FlowRoute
           name="investor"

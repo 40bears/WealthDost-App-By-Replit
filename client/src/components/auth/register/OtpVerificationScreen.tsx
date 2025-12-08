@@ -1,5 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { useEffect, useState } from "react";
 
 type Props = {
@@ -15,6 +16,7 @@ type Props = {
 export function OtpVerificationScreen({ otp, isLoading, mobileNumber, onChange, onSubmit, onChangeNumber, onResend }: Props) {
   const [countdown, setCountdown] = useState(30);
   const [canResend, setCanResend] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
 
   useEffect(() => {
     // Start countdown when component mounts
@@ -108,7 +110,24 @@ export function OtpVerificationScreen({ otp, isLoading, mobileNumber, onChange, 
           </button>
         </div>
         </form>
+
+        {/* Feedback Link */}
+        <div className="mt-6 text-center">
+          <button
+            type="button"
+            onClick={() => setShowFeedback(true)}
+            className="text-white/90 hover:text-white text-sm transition-colors duration-300 inline-flex items-center"
+          >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+            </svg>
+            Having trouble? Send us feedback
+          </button>
+        </div>
       </div>
+
+      {/* Feedback Modal */}
+      <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} />
     </>
   );
 }

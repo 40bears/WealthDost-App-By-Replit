@@ -48,7 +48,10 @@ function AuthLayout() {
   // Only show FAB on specific routes
   const allowedRoutes = ['/dashboard', '/stock-tips', '/tribes']
   const currentPath = routerState.location.pathname
-  const showFAB = auth.isExpert && allowedRoutes.includes(currentPath)
+  // Show FAB on /dashboard for all users, but only for experts on other routes
+  const showFAB = currentPath === '/dashboard'
+    ? allowedRoutes.includes(currentPath)
+    : auth.isExpert && allowedRoutes.includes(currentPath)
 
   // Determine which modal to open based on current route
   const handleFABClick = () => {
@@ -73,7 +76,8 @@ function AuthLayout() {
         <div className="fixed bottom-[130px] right-0 left-0 max-w-md mx-auto pointer-events-none z-40">
           <Button
             onClick={handleFABClick}
-            className="absolute right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 bg-primary hover:bg-primary/90 pointer-events-auto"
+            className="absolute right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 pointer-events-auto"
+            style={{ backgroundColor: '#2563EB' }}
             size="icon"
           >
             <Plus className="h-6 w-6" />

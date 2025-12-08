@@ -1,23 +1,15 @@
 import { Role, RoleSelection } from "@/components/onboarding/RoleSelection";
 import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
-
 
 export interface ChooseRoleScreenProps {
   role: Role | null,
   onSelect: (role: Role | null) => void;
+  onBack?: () => void;
 }
 
-export function ChooseRoleScreen({ role, onSelect }: ChooseRoleScreenProps) {
+export function ChooseRoleScreen({ role, onSelect, onBack }: ChooseRoleScreenProps) {
   return (
     <div className="px-4 py-6 flex flex-col min-h-screen">
-      {/* Go to Dashboard Button */}
-      <div className="flex justify-end mb-4">
-        <Link href="/dashboard">
-          <Button variant="ghost" className="text-gray-500">Go to dashboard</Button>
-        </Link>
-      </div>
-
       {/* Role Selection Section */}
       <div className="bg-primary rounded-xl p-6 text-white mb-6 flex-1 flex flex-col justify-center">
         <div className="text-center mb-8">
@@ -30,11 +22,9 @@ export function ChooseRoleScreen({ role, onSelect }: ChooseRoleScreenProps) {
       {/* Back Button */}
       <div className="text-center mb-4">
         {!role ? (
-          <Link href="/create-account">
-            <Button variant="ghost" className="text-gray-600 hover:text-gray-800">
-              ← Back
-            </Button>
-          </Link>
+          <Button variant="ghost" className="text-gray-600 hover:text-gray-800" onClick={onBack}>
+            ← Back
+          </Button>
         ) : (
           <Button variant="ghost" className="text-gray-600 hover:text-gray-800" onClick={() => onSelect(null)}>
             ← Back
@@ -43,7 +33,14 @@ export function ChooseRoleScreen({ role, onSelect }: ChooseRoleScreenProps) {
       </div>
 
       <div className="mt-auto text-center text-xs text-gray-500">
-        By signing up, you agree to our Terms of Service and Privacy Policy
+        By signing up, you agree to our{" "}
+        <a href="https://wealthdost.com/terms" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+          Terms of Service
+        </a>{" "}
+        and{" "}
+        <a href="https://wealthdost.com/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+          Privacy Policy
+        </a>
       </div>
     </div>
   );
