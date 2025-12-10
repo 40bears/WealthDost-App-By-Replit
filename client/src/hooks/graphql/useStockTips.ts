@@ -22,9 +22,9 @@ export const useStockTips = () => {
   });
 };
 
-export const useStockTip = (id: number) => {
+export const useStockTip = (id: number | string) => {
   return useQuery(GET_STOCK_TIP, {
-    variables: { id },
+    variables: { id: String(id) },
     skip: !id,
   });
 };

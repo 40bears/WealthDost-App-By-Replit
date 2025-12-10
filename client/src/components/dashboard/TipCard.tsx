@@ -74,6 +74,10 @@ export function TipCard({
     navigate({ to: '/user/$userId', params: { userId: author.id } });
   };
 
+  const handleTipClick = () => {
+    navigate({ to: '/stock-tips/$tipId', params: { tipId: id } });
+  };
+
   const handleLike = async () => {
     try {
       console.log('TipCard - Toggling like for stock tip:', id, 'isLikedByMe:', isLikedByMe);
@@ -88,14 +92,15 @@ export function TipCard({
     }
   };
 
-  const toggleChart = () => {
+  const toggleChart = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setShowChart(!showChart);
   };
 
   return (
     <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
       {/* Stock Header */}
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex items-center justify-between mb-5 cursor-pointer" onClick={handleTipClick}>
         <div className="flex items-center gap-3">
           <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
             {stock.logo ? (
@@ -117,7 +122,7 @@ export function TipCard({
       </div>
 
       {/* Price Info */}
-      <div className="grid grid-cols-3 gap-4 mb-5">
+      <div className="grid grid-cols-3 gap-4 mb-5 cursor-pointer" onClick={handleTipClick}>
         <div>
           <p className="text-xs text-gray-500 mb-1">Entry Price</p>
           <p className="font-semibold text-gray-900">{entryPrice}</p>
@@ -134,7 +139,7 @@ export function TipCard({
 
       {/* Reasoning - Only show if reasoning or chartImage exists */}
       {(reasoning || chartImage) && (
-        <div className="relative bg-[#BFDBFE]/30 rounded-lg p-3 pt-5 mb-5">
+        <div className="relative bg-[#BFDBFE]/30 rounded-lg p-3 pt-5 mb-5 cursor-pointer" onClick={handleTipClick}>
           <span className="absolute -top-2.5 left-3 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-medium">
             REASONING
           </span>
