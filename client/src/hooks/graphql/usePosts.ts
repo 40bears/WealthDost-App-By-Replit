@@ -26,9 +26,9 @@ export const usePosts = () => {
   });
 };
 
-export const usePost = (id: number) => {
+export const usePost = (id: number | string) => {
   return useQuery(GET_POST, {
-    variables: { id },
+    variables: { id: String(id) },
     skip: !id,
   });
 };

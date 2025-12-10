@@ -38,7 +38,7 @@ export function InvestorRiskProfile({ value, onChange, onBack, onNext, onSkipToD
               </div>
             </Label>
           </div>
-          <div className="flex items-start p-4 bg-blue-50 border border-blue-200 rounded-xl hover:border-blue-300 cursor-pointer transition-all">
+          <div className="flex items-start p-4 bg-white border border-gray-200 rounded-xl hover:border-gray-300 cursor-pointer transition-all">
             <RadioGroupItem value="moderate" id="moderate" className="mt-1 mr-3" />
             <Label htmlFor="moderate" className="flex-1 cursor-pointer">
               <div className="font-medium text-base mb-1">🤷‍♂️ Hold, but get slightly anxious</div>

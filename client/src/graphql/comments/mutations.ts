@@ -33,3 +33,9 @@ export const UNLIKE_COMMENT = gql`
     unlikeComment(commentId: $commentId)
   }
 `;
+
+export const DELETE_COMMENT = gql`
+  mutation DeleteComment($commentId: String!) {
+    deleteComment(commentId: $commentId)
+  }
+`;
