@@ -65,16 +65,6 @@ export default function CommentItem({
   const replies = repliesData?.replies || []
   const isOwner = user?.id === comment.user.id
 
-  // Debug logging
-  console.log('CommentItem Debug:', {
-    currentUserId: user?.id,
-    currentUserType: typeof user?.id,
-    commentUserId: comment.user.id,
-    commentUserIdType: typeof comment.user.id,
-    isOwner,
-    comment
-  })
-
   const handleLike = async () => {
     try {
       if (isLiked) {

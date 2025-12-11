@@ -106,13 +106,18 @@ export function InvestorBasicProfile({
             <p className="text-xs text-red-600 mt-1">{errors.fullName}</p>
           )}
         </div>
-        <UsernameInput
-          label="Finance Username"
-          value={formData.username}
-          onChange={handleUsernameValueChange}
-          placeholder="StockGuru, CryptoWhale"
-          onStatusChange={handleUsernameStatusChange}
-        />
+        <div>
+          <UsernameInput
+            label="Finance Username"
+            value={formData.username}
+            onChange={handleUsernameValueChange}
+            placeholder="StockGuru, CryptoWhale"
+            onStatusChange={handleUsernameStatusChange}
+          />
+          {errors?.username && (
+            <p className="text-xs text-red-600 mt-1">{errors.username}</p>
+          )}
+        </div>
         <div>
           <Label htmlFor="profileBio">Profile Bio</Label>
           <Textarea id="profileBio" name="profileBio" value={formData.profileBio} onChange={onBasicChange} className="mt-1" placeholder="Long-term investor | Tech stocks | AI enthusiast" rows={3} />

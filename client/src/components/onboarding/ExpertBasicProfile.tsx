@@ -110,13 +110,18 @@ export function ExpertBasicProfile({
             <p className="text-xs text-red-600 mt-1">{errors.fullName}</p>
           )}
         </div>
-        <UsernameInput
-          label="Expert Username"
-          value={formData.username}
-          onChange={handleUsernameValueChange}
-          placeholder="AlphaAnalyst, MarketMaverick"
-          onStatusChange={handleUsernameStatusChange}
-        />
+        <div>
+          <UsernameInput
+            label="Expert Username"
+            value={formData.username}
+            onChange={handleUsernameValueChange}
+            placeholder="AlphaAnalyst, MarketMaverick"
+            onStatusChange={handleUsernameStatusChange}
+          />
+          {errors?.username && (
+            <p className="text-xs text-red-600 mt-1">{errors.username}</p>
+          )}
+        </div>
         <div>
           <Label htmlFor="profileBio">Professional Bio</Label>
           <Textarea id="profileBio" name="profileBio" value={formData.profileBio} onChange={onBasicChange} className="mt-1" placeholder="Equity Research | Options Trader | Macro Specialist" rows={3} />
@@ -167,7 +172,7 @@ export function ExpertBasicProfile({
         </div>
       </form>
 
-      <div className="mt-auto pb-6 safe-area-bottom">
+      <div className="mt-auto pt-6 pb-6 safe-area-bottom">
         <Button onClick={handleNextClick} className="w-full">Next</Button>
       </div>
     </div>

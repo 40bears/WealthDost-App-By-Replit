@@ -14,6 +14,8 @@ interface ExpertCardProps {
   isFollowing?: boolean;
   onFollowClick?: () => void;
   onCardClick?: () => void;
+  specializations?: string[];
+  achievements?: string[];
 }
 
 export default function ExpertCard({
@@ -25,7 +27,9 @@ export default function ExpertCard({
   avatar,
   isFollowing = false,
   onFollowClick,
-  onCardClick
+  onCardClick,
+  specializations = [],
+  achievements = []
 }: ExpertCardProps) {
   const getInitials = (name: string) => {
     return name
@@ -53,14 +57,13 @@ export default function ExpertCard({
           </AvatarFallback>
         </Avatar>
 
-        {/* Name, Username, and Returns */}
+        {/* Name and Username */}
         <div className="flex-1 min-w-0">
           <h3 className="font-bold text-base text-gray-900 mb-0.5">
             {name}
           </h3>
           <div className="flex items-center gap-1.5 text-sm text-gray-600 flex-wrap">
             <span className="whitespace-nowrap">{username}</span>
-            <span className="text-green-600 font-medium whitespace-nowrap">({avgReturn})</span>
           </div>
         </div>
 
@@ -79,23 +82,51 @@ export default function ExpertCard({
         </Button>
       </div>
 
-      {/* Categories */}
-      <div className="flex flex-wrap gap-2 mb-3">
-        {categories.map((category, index) => (
-          <Badge
-            key={index}
-            variant="secondary"
-            className="text-sm px-3 py-1 bg-gray-100 text-gray-800 hover:bg-gray-200 font-medium"
-          >
-            {category}
-          </Badge>
-        ))}
-      </div>
-
       {/* Bio */}
-      <p className="text-sm text-gray-600 leading-relaxed">
+      <p className="text-sm text-gray-600 leading-relaxed mb-3">
         {bio}
       </p>
+
+      {/* Specializations - Show max 3 chips with +x more */}
+      {specializations.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-3">
+          {specializations.slice(0, 3).map((specialization, index) => (
+            <Badge
+              key={index}
+              variant="secondary"
+              className="text-xs px-2.5 py-1 bg-purple-100 text-purple-700 hover:bg-purple-200 font-medium capitalize"
+            >
+              {specialization}
+            </Badge>
+          ))}
+          {specializations.length > 3 && (
+            <Badge
+              variant="secondary"
+              className="text-xs px-2.5 py-1 bg-gray-100 text-gray-600 font-medium"
+            >
+              +{specializations.length - 3} more
+            </Badge>
+          )}
+        </div>
+      )}
+
+      {/* Achievements */}
+      {achievements.length > 0 && (
+        <div className="space-y-1.5">
+          <p className="text-xs font-semibold text-gray-700">Achievements</p>
+          <div className="flex flex-wrap gap-1.5">
+            {achievements.map((achievement, index) => (
+              <Badge
+                key={index}
+                variant="outline"
+                className="text-xs px-2 py-0.5 bg-green-50 text-green-700 border-green-200 font-medium capitalize"
+              >
+                {achievement}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
     </Card>
   );
 }

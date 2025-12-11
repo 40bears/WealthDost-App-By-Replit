@@ -10,6 +10,7 @@ import { InvestorRiskProfile } from "@/components/onboarding/InvestorRiskProfile
 import { InvestorTopics } from "@/components/onboarding/InvestorTopics";
 import { useState } from "react";
 import { useLocation } from "wouter";
+import type { Expert } from "@/hooks/graphql";
 
 interface InvestorOnboardingProps {
   onBack: () => void;
@@ -43,7 +44,7 @@ export const InvestorOnboarding = ({ onBack, onComplete }: InvestorOnboardingPro
     riskLevel: "",
     returnTarget: "",
     riskPersona: "",
-    followedExperts: [] as string[],
+    followedExperts: [] as Expert[],
   });
 
 
@@ -108,12 +109,12 @@ export const InvestorOnboarding = ({ onBack, onComplete }: InvestorOnboardingPro
   };
 
   // Step 6: Recommended experts
-  const handleExpertsChange = (expertId: string, checked: boolean) => {
+  const handleExpertsChange = (expert: Expert, checked: boolean) => {
     setFormData(prev => ({
       ...prev,
       followedExperts: checked
-        ? [...prev.followedExperts, expertId]
-        : prev.followedExperts.filter(id => id !== expertId)
+        ? [...prev.followedExperts, expert]
+        : prev.followedExperts.filter(e => e.id !== expert.id)
     }));
   };
 

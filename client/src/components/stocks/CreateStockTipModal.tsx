@@ -364,8 +364,8 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-md rounded-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
-        <div className="p-5 flex items-center justify-between border-b border-gray-200 shrink-0">
+      <div className="bg-white w-full max-w-md rounded-2xl max-h-[90vh] flex flex-col shadow-2xl">
+        <div className="p-5 flex items-center justify-between border-b border-gray-200 flex-shrink-0">
           <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
             <TrendingUp className="h-5 w-5" />
             Share a Stock Tip
@@ -379,8 +379,8 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col">
-          <div className="px-5 py-4 overflow-y-auto flex-1">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
+          <div className="px-5 py-4 overflow-y-auto flex-1 min-h-0">
             <div className="space-y-4">
               {/* Type Selection */}
               <div>
@@ -616,7 +616,7 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
           </div>
 
           {/* Bottom Section with Visibility and Post Button */}
-          <div className="px-5 py-4 border-t border-gray-200 bg-white shrink-0">
+          <div className="px-5 py-4 border-t border-gray-200 bg-white flex-shrink-0">
             <div className="flex items-center justify-between gap-3">
               {/* Visibility Dropdown */}
               <div className="flex items-center gap-3">

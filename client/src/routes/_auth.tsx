@@ -5,6 +5,7 @@ import BottomNavigation from '@/components/dashboard/BottomNavigation'
 import CreateTribeModal from '@/components/tribes/CreateTribeModal'
 import CreateStockTipModal from '@/components/stocks/CreateStockTipModal'
 import ShareThoughtsModal from '@/components/dashboard/ShareThoughtsModal'
+import KycPrompt from '@/components/auth/KycPrompt'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
@@ -44,6 +45,7 @@ function AuthLayout() {
   const [showCreateTribe, setShowCreateTribe] = useState(false)
   const [showCreateStockTip, setShowCreateStockTip] = useState(false)
   const [showShareThoughts, setShowShareThoughts] = useState(false)
+  const [showKycPrompt, setShowKycPrompt] = useState(false)
 
   // Only show FAB on specific routes
   const allowedRoutes = ['/dashboard', '/stock-tips', '/tribes']
@@ -56,7 +58,12 @@ function AuthLayout() {
   // Determine which modal to open based on current route
   const handleFABClick = () => {
     if (currentPath === '/stock-tips') {
-      setShowCreateStockTip(true)
+      // Check if user is KYC verified before showing stock tip form
+      if (auth.user?.kycStatus) {
+        setShowCreateStockTip(true)
+      } else {
+        setShowKycPrompt(true)
+      }
     } else if (currentPath === '/dashboard') {
       setShowShareThoughts(true)
     } else {
@@ -104,6 +111,15 @@ function AuthLayout() {
         onClose={() => setShowCreateStockTip(false)}
         onTipCreated={() => {
           console.log('Stock tip created');
+        }}
+      />
+
+      <KycPrompt
+        isOpen={showKycPrompt}
+        onClose={() => setShowKycPrompt(false)}
+        onGetStarted={() => {
+          // TODO: Navigate to KYC page
+          console.log('Navigate to KYC');
         }}
       />
     </div>
