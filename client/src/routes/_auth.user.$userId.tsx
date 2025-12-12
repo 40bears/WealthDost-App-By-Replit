@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useUserProfile } from "@/hooks/graphql";
+import { BadgeCheck } from "lucide-react";
 
 export const Route = createFileRoute("/_auth/user/$userId")({
   component: UserProfilePage,
@@ -39,6 +40,7 @@ function UserProfilePage() {
   const interests = user.interests || [];
   const industrySectors = user.industrySectors || [];
   const topics = user.topics || [];
+  const isExpert = user.roles?.includes('expert') || false;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -52,7 +54,12 @@ function UserProfilePage() {
                 {initials}
               </AvatarFallback>
             </Avatar>
-            <h2 className="text-xl font-semibold text-gray-900">{fullName}</h2>
+            <div className="flex items-center gap-2 mb-1">
+              <h2 className="text-xl font-semibold text-gray-900">{fullName}</h2>
+              {isExpert && (
+                <BadgeCheck className="h-5 w-5 text-blue-600 fill-blue-100" />
+              )}
+            </div>
             <p className="text-sm text-gray-600 mb-2">{email}</p>
             <div className="inline-flex items-center px-3 py-1 rounded-full bg-orange-500 text-white text-xs font-medium mb-2">
               Value Investing
