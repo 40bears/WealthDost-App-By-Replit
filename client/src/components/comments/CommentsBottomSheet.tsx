@@ -54,7 +54,6 @@ function CommentItem({ comment, depth = 0, entityType, entityId }: CommentItemPr
   const [deleteCommentMutation] = useDeleteComment();
 
   const isOwner = user?.id === comment.user?.id;
-
   const handleLike = async () => {
     try {
       if (comment.isLikedByMe) {
