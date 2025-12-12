@@ -8,15 +8,23 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Heart, MessageCircle, Send, MoreVertical } from 'lucide-react';
+import { Heart, MessageCircle, Send, MoreVertical, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   useComments,
   useReplies,
   useCreateComment,
   useLikeComment,
   useUnlikeComment,
+  useDeleteComment,
 } from '@/hooks/graphql';
+import { useAuth } from '@/hooks/useAuth';
 
 interface CommentsBottomSheetProps {
   open: boolean;
@@ -36,11 +44,16 @@ function CommentItem({ comment, depth = 0, entityType, entityId }: CommentItemPr
   const [showReplies, setShowReplies] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
   const [replyText, setReplyText] = useState('');
+  const [isDeleted, setIsDeleted] = useState(false);
 
+  const { user } = useAuth();
   const { data: repliesData, refetch: refetchReplies } = useReplies(String(comment.id), 'oldest', !showReplies);
   const [createComment] = useCreateComment();
   const [likeComment] = useLikeComment();
   const [unlikeComment] = useUnlikeComment();
+  const [deleteCommentMutation] = useDeleteComment();
+
+  const isOwner = user?.id === comment.user?.id;
 
   const handleLike = async () => {
     try {
@@ -79,6 +92,37 @@ function CommentItem({ comment, depth = 0, entityType, entityId }: CommentItemPr
     }
   };
 
+  const handleDelete = async () => {
+    if (!isOwner) {
+      console.error('Only the comment owner can delete this comment');
+      return;
+    }
+
+    if (!confirm('Are you sure you want to delete this comment? This will also delete all replies.')) {
+      return;
+    }
+
+    try {
+      await deleteCommentMutation({
+        variables: { commentId: String(comment.id) }
+      });
+
+      // Mark as deleted locally for immediate UI update
+      setIsDeleted(true);
+    } catch (error: any) {
+      console.error('Error deleting comment:', error);
+
+      // Handle specific errors
+      if (error.message?.includes('403') || error.message?.includes('forbidden')) {
+        alert('You do not have permission to delete this comment.');
+      } else if (error.message?.includes('404') || error.message?.includes('not found')) {
+        alert('Comment not found.');
+      } else {
+        alert('Failed to delete comment. Please try again.');
+      }
+    }
+  };
+
   const formatTimestamp = (timestamp: string) => {
     const date = new Date(timestamp);
     const now = new Date();
@@ -95,6 +139,11 @@ function CommentItem({ comment, depth = 0, entityType, entityId }: CommentItemPr
   };
 
   const replies = repliesData?.replies || [];
+
+  // Don't render if deleted
+  if (isDeleted) {
+    return null;
+  }
 
   return (
     <div className={cn('', depth > 0 && 'ml-8 border-l-2 border-gray-100 pl-4')}>
@@ -152,9 +201,21 @@ function CommentItem({ comment, depth = 0, entityType, entityId }: CommentItemPr
               </button>
             )}
 
-            <button className="ml-auto text-gray-400 hover:text-gray-600">
-              <MoreVertical className="h-3.5 w-3.5" />
-            </button>
+            {isOwner && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="ml-auto text-gray-400 hover:text-gray-600 p-1">
+                    <MoreVertical className="h-3.5 w-3.5" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={handleDelete} className="text-red-600 focus:text-red-600">
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete Comment
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
 
           {/* Reply Input */}

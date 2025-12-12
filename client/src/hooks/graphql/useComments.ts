@@ -10,6 +10,7 @@ import {
   CREATE_COMMENT,
   LIKE_COMMENT,
   UNLIKE_COMMENT,
+  DELETE_COMMENT,
 } from '@/graphql/comments/mutations';
 
 // Query Hooks
@@ -67,4 +68,8 @@ export const useLikeComment = () => {
 
 export const useUnlikeComment = () => {
   return useMutation(UNLIKE_COMMENT);
+};
+
+export const useDeleteComment = () => {
+  return useMutation(DELETE_COMMENT);
 };

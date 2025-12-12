@@ -70,16 +70,17 @@ export const useAuth = () => {
 
   const isAuthenticated = !!user?.id;
 
-  const getRole = (): 'investor' | 'expert' | null => {
+  const getRole = (): 'investor' | 'expert' | 'admin' | null => {
     if (!user?.roles || user.roles.length === 0) return null;
     const role = user.roles[0];
-    if (role === 'investor' || role === 'expert') return role;
+    if (role === 'investor' || role === 'expert' || role === 'admin') return role;
     return null;
   };
 
   const role = getRole();
   const isInvestor = role === 'investor';
   const isExpert = role === 'expert';
+  const isAdmin = user?.roles?.includes('admin') || false;
 
   return {
     user,
@@ -88,6 +89,7 @@ export const useAuth = () => {
     role,
     isInvestor,
     isExpert,
+    isAdmin,
     login,
     logout,
     refreshProfile

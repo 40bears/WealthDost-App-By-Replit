@@ -62,6 +62,10 @@ export function PostCard({
     navigate({ to: '/user/$userId', params: { userId: author.id } });
   };
 
+  const handlePostClick = () => {
+    navigate({ to: '/posts/$postId', params: { postId: id } });
+  };
+
   const handleLike = async () => {
     try {
       console.log('PostCard - Toggling like for post:', id, 'isLikedByMe:', isLikedByMe);
@@ -127,18 +131,20 @@ export function PostCard({
       </div>
 
       {/* Content */}
-      <p className="text-gray-700 text-sm mb-4 leading-relaxed">{content}</p>
+      <div className="cursor-pointer" onClick={handlePostClick}>
+        <p className="text-gray-700 text-sm mb-4 leading-relaxed">{content}</p>
 
-      {/* Image */}
-      {image && (
-        <div className="mb-4 rounded-lg overflow-hidden">
-          <img
-            src={image}
-            alt="Post content"
-            className="w-full h-auto object-cover max-h-96"
-          />
-        </div>
-      )}
+        {/* Image */}
+        {image && (
+          <div className="mb-4 rounded-lg overflow-hidden">
+            <img
+              src={image}
+              alt="Post content"
+              className="w-full h-auto object-cover max-h-96"
+            />
+          </div>
+        )}
+      </div>
 
       {/* Tags */}
       <div className="flex flex-wrap gap-2 mb-4">

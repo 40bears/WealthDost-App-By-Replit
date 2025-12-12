@@ -159,7 +159,7 @@ export default function CreateAccount() {
         password: data.password,
         confirm_password: data.confirmPassword,
         additional: {
-          role: 'investor',
+          role: 'finmate',
           investor: data,
           phone: mobileNumber,
           pendingId,

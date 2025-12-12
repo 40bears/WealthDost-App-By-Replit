@@ -47,10 +47,12 @@ export const GET_POST = gql`
         id
         firstName
         lastName
+        username
       }
       image {
         id
         path
+        publicUrl
       }
     }
   }
