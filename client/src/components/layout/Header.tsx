@@ -11,9 +11,11 @@ import {
 import { useAuth } from "@/components/auth/auth-context";
 import { getUsername } from "@/lib/user-utils";
 import { useNavigate } from "@tanstack/react-router";
+import { useAuth as useAuthHook } from "@/hooks/useAuth";
 
 const Header = () => {
   const { logout } = useAuth();
+  const { isAdmin } = useAuthHook();
   const navigate = useNavigate();
 
   // Get greeting based on time of day
@@ -88,6 +90,18 @@ const Header = () => {
                 My Profile
               </DropdownMenuItem>
               <DropdownMenuSeparator />
+              {isAdmin && (
+                <>
+                  <DropdownMenuItem
+                    onClick={() => navigate({ to: "/admin/pending-sebi-approvals" })}
+                    className="cursor-pointer"
+                  >
+                    <span className="material-icons text-sm mr-2">admin_panel_settings</span>
+                    Pending Approvals
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                </>
+              )}
               <DropdownMenuItem
                 onClick={() => navigate({ to: "/feedback" })}
                 className="cursor-pointer"
