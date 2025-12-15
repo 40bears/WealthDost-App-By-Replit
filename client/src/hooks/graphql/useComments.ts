@@ -57,17 +57,55 @@ export const useMyComments = () => {
   });
 };
 
-// Mutation Hooks - Remove refetchQueries to prevent multiple requests
+// Mutation Hooks
 export const useCreateComment = () => {
   return useMutation(CREATE_COMMENT);
 };
 
 export const useLikeComment = () => {
-  return useMutation(LIKE_COMMENT);
+  return useMutation(LIKE_COMMENT, {
+    optimisticResponse: {
+      likeComment: true,
+    },
+    update(cache, result, { variables }) {
+      if (result.data && variables?.commentId) {
+        cache.modify({
+          id: cache.identify({ __typename: 'Comment', id: variables.commentId }),
+          fields: {
+            isLikedByMe() {
+              return true;
+            },
+            likeCount(existingCount = 0) {
+              return existingCount + 1;
+            },
+          },
+        });
+      }
+    },
+  });
 };
 
 export const useUnlikeComment = () => {
-  return useMutation(UNLIKE_COMMENT);
+  return useMutation(UNLIKE_COMMENT, {
+    optimisticResponse: {
+      unlikeComment: true,
+    },
+    update(cache, result, { variables }) {
+      if (result.data && variables?.commentId) {
+        cache.modify({
+          id: cache.identify({ __typename: 'Comment', id: variables.commentId }),
+          fields: {
+            isLikedByMe() {
+              return false;
+            },
+            likeCount(existingCount = 0) {
+              return Math.max(0, existingCount - 1);
+            },
+          },
+        });
+      }
+    },
+  });
 };
 
 export const useDeleteComment = () => {

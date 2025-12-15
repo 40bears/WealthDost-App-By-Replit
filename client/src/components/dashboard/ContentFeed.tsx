@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Post } from "@shared/schema";
-import { timeAgo } from "@/lib/utils";
+import { timeAgo, formatDate } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useInteraction } from "@/lib/interactionContext";
@@ -96,7 +96,7 @@ const ContentFeed = ({ posts, isLoading = false }: ContentFeedProps) => {
                         {post.userId === 1 ? "You" : `User ${post.userId}`}
                       </h4>
                       <p className="text-xs text-gray-500">
-                        {new Date(post.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} • {new Date(post.createdAt).toLocaleDateString()}
+                        {new Date(post.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} • {formatDate(post.createdAt)}
                       </p>
                     </div>
                     {post.userId !== 1 && (
