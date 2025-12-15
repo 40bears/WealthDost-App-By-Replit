@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Heart, MessageCircle, Send, MoreVertical, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { formatDate } from '@/lib/utils';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,9 +39,10 @@ interface CommentItemProps {
   depth?: number;
   entityType: 'POST' | 'STOCK_TIP';
   entityId: number;
+  onCommentUpdate?: () => void;
 }
 
-function CommentItem({ comment, depth = 0, entityType, entityId }: CommentItemProps) {
+function CommentItem({ comment, depth = 0, entityType, entityId, onCommentUpdate }: CommentItemProps) {
   const [showReplies, setShowReplies] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
   const [replyText, setReplyText] = useState('');
@@ -61,7 +63,6 @@ function CommentItem({ comment, depth = 0, entityType, entityId }: CommentItemPr
       } else {
         await likeComment({ variables: { commentId: String(comment.id) } });
       }
-      // Note: We don't refetch here because the backend updates are reflected via cache
     } catch (error) {
       console.error('Error toggling like:', error);
     }
@@ -134,7 +135,7 @@ function CommentItem({ comment, depth = 0, entityType, entityId }: CommentItemPr
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString();
+    return formatDate(date);
   };
 
   const replies = repliesData?.replies || [];
@@ -256,6 +257,7 @@ function CommentItem({ comment, depth = 0, entityType, entityId }: CommentItemPr
               depth={depth + 1}
               entityType={entityType}
               entityId={entityId}
+              onCommentUpdate={refetchReplies}
             />
           ))}
         </div>
@@ -336,6 +338,7 @@ export function CommentsBottomSheet({
                   comment={comment}
                   entityType={entityType}
                   entityId={entityId}
+                  onCommentUpdate={refetch}
                 />
               ))}
             </div>

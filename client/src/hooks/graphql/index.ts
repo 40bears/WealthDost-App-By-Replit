@@ -8,3 +8,4 @@ export * from './useExplore';
 export * from './useExperts';
 export * from './useSebi';
 export * from './useAdminSebi';
+export * from './useAccountDeletion';

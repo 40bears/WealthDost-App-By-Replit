@@ -30,6 +30,7 @@ export interface UserProfileData {
   likesReceived: number;
   totalComments: number;
   watchlistCount: number;
+  deletionRequestedAt: string | null;
 }
 
 // Query for logged-in user's profile
@@ -63,6 +64,7 @@ const MY_PROFILE_QUERY = gql`
       likesReceived
       totalComments
       watchlistCount
+      deletionRequestedAt
     }
   }
 `;

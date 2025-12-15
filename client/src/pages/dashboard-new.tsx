@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { usePosts } from "@/hooks/graphql";
 import MarketOverview from "@/components/dashboard/MarketOverview";
 import FeatureNavigation from "@/components/dashboard/FeatureNavigation";
 import BottomNavigation from "@/components/dashboard/BottomNavigation";
@@ -30,13 +31,11 @@ const Dashboard = () => {
   });
 
   // Fetch feed posts
-  const { data: posts, isLoading: isLoadingPosts } = useQuery({
-    queryKey: ["/api/posts"],
-  });
+  const { data: postsData, loading: isLoadingPosts } = usePosts();
 
   // Type assertions for data to fix typescript issues
   const typedMarketData = marketData as any[];
-  const typedPosts = posts as any[];
+  const typedPosts = (postsData as any)?.posts || [];
 
   // Function to handle feature selection
   const handleFeatureSelect = (feature: FeatureType) => {

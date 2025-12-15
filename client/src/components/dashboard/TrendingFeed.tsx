@@ -4,6 +4,7 @@ import { Label } from '@/components/ui/label';
 import { PostCard } from './PostCard';
 import { TipCard } from './TipCard';
 import { usePublicPosts, usePublicStockTips } from '@/hooks/graphql';
+import { formatDate } from '@/lib/utils';
 
 interface FeedItem {
   id: string;
@@ -42,7 +43,7 @@ export function TrendingFeed() {
       tags: [], // TODO: extract hashtags from content
       likes: post.likeCount || 0,
       comments: post.commentCount || 0,
-      timestamp: new Date(post.createdAt).toLocaleDateString(),
+      timestamp: formatDate(post.createdAt),
       isFollowing: false,
       image: post.image?.path,
       isLikedByMe: post.isLikedByMe || false,

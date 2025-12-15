@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Edit } from "lucide-react";
 import { useMyProfile } from "@/hooks/graphql";
+import { AccountDeletion } from "@/components/auth/AccountDeletion";
 
 export const Route = createFileRoute("/_auth/my-profile")({
   component: MyProfilePage,
@@ -178,6 +179,11 @@ function MyProfilePage() {
             </div>
           </div>
         </div>
+
+        {/* Account Deletion */}
+        <AccountDeletion
+          deletionRequestedAt={user.deletionRequestedAt}
+        />
       </div>
     </div>
   );

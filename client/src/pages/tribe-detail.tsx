@@ -10,6 +10,7 @@ import { useIsMemberOfTribe, useJoinTribe, useLeaveTribe, useTribePosts, useTrib
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiClient } from "@/lib/api";
+import { formatDate } from "@/lib/utils";
 import { GET_TRIBE } from "@/graphql/tribes/queries";
 import { useMutation, useQueryClient, useQuery as useTanstackQuery } from "@tanstack/react-query";
 import { useQuery } from "@apollo/client/react";
@@ -389,7 +390,7 @@ const TribeDetail = () => {
                     tags={[]}
                     likes={post.likeCount || 0}
                     comments={post.commentCount || 0}
-                    timestamp={new Date(post.createdAt).toLocaleDateString()}
+                    timestamp={formatDate(post.createdAt)}
                     isFollowing={false}
                     image={post.image?.path}
                     isLikedByMe={post.isLikedByMe || false}
