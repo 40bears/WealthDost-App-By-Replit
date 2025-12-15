@@ -7,6 +7,7 @@ import UserCard from "@/components/dashboard/UserCard";
 import { PostCard } from "@/components/dashboard/PostCard";
 import { useInteraction } from "@/lib/interactionContext";
 import { useExplore, ExploreType } from "@/hooks/graphql";
+import { formatDate } from "@/lib/utils";
 
 export default function GlobalSearch() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -73,7 +74,7 @@ export default function GlobalSearch() {
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString();
+    return formatDate(date);
   };
 
   const renderSearchResults = () => {

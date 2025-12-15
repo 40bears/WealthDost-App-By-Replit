@@ -90,15 +90,41 @@ export const useDeletePost = () => {
 
 export const useLikePost = () => {
   return useMutation(LIKE_POST, {
-    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_PUBLIC_POSTS, GET_MY_FEED, GET_POST],
-    awaitRefetchQueries: true,
+    update(cache, result, { variables }) {
+      if (result.data && variables?.postId) {
+        cache.modify({
+          id: cache.identify({ __typename: 'Post', id: variables.postId }),
+          fields: {
+            isLikedByMe() {
+              return true;
+            },
+            likeCount(existingCount = 0) {
+              return existingCount + 1;
+            },
+          },
+        });
+      }
+    },
   });
 };
 
 export const useUnlikePost = () => {
   return useMutation(UNLIKE_POST, {
-    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_PUBLIC_POSTS, GET_MY_FEED, GET_POST],
-    awaitRefetchQueries: true,
+    update(cache, result, { variables }) {
+      if (result.data && variables?.postId) {
+        cache.modify({
+          id: cache.identify({ __typename: 'Post', id: variables.postId }),
+          fields: {
+            isLikedByMe() {
+              return false;
+            },
+            likeCount(existingCount = 0) {
+              return Math.max(0, existingCount - 1);
+            },
+          },
+        });
+      }
+    },
   });
 };
 
