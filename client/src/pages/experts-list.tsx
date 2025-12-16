@@ -6,17 +6,14 @@ import { useNavigate } from "@tanstack/react-router";
 import { useExperts } from "@/hooks/graphql";
 import { Loader2 } from "lucide-react";
 
-const industrySectors = [
-  { value: "all", label: "All Sectors" },
-  { value: "Finance", label: "Finance" },
-  { value: "Technology", label: "Technology" },
-  { value: "Healthcare", label: "Healthcare" },
-  { value: "Real Estate", label: "Real Estate" },
-  { value: "Commodities", label: "Commodities" },
-  { value: "Cryptocurrency", label: "Cryptocurrency" },
-  { value: "Manufacturing", label: "Manufacturing" },
-  { value: "Energy", label: "Energy" },
-  { value: "Consumer Goods", label: "Consumer Goods" },
+const expertSpecializations = [
+  { value: "all", label: "All" },
+  { value: "Stock Market & Equity Research", label: "Stock Market & Equity Research" },
+  { value: "Crypto & Web3", label: "Crypto & Web3" },
+  { value: "Private Equity & Venture Capital", label: "Private Equity & Venture Capital" },
+  { value: "Macroeconomics & Global Markets", label: "Macroeconomics & Global Markets" },
+  { value: "Wealth Planning & Financial Advisory", label: "Wealth Planning & Financial Advisory" },
+  { value: "Real Estate & Alternative Investments", label: "Real Estate & Alternative Investments" },
 ];
 
 const ExpertsList = () => {
@@ -46,12 +43,12 @@ const ExpertsList = () => {
           <div className="flex gap-2">
             <Select value={selectedSector} onValueChange={setSelectedSector}>
               <SelectTrigger className="h-8 text-xs bg-white/70 backdrop-blur-sm border-2 border-gray-200 hover:border-purple-300 focus:border-purple-400 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 rounded-xl">
-                <SelectValue placeholder="Industry Sector" />
+                <SelectValue placeholder="Specialization" />
               </SelectTrigger>
               <SelectContent>
-                {industrySectors.map((sector) => (
-                  <SelectItem key={sector.value} value={sector.value}>
-                    {sector.label}
+                {expertSpecializations.map((specialization) => (
+                  <SelectItem key={specialization.value} value={specialization.value}>
+                    {specialization.label}
                   </SelectItem>
                 ))}
               </SelectContent>
