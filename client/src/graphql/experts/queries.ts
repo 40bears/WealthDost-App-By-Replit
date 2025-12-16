@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const GET_EXPERTS = gql`
-  query GetExperts($industrySector: String) {
-    experts(industrySector: $industrySector) {
+  query GetExperts($specialization: String) {
+    experts(specialization: $specialization) {
       id
       username
       firstName

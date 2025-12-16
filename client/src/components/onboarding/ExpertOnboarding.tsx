@@ -130,11 +130,41 @@ export const ExpertOnboarding = ({ onBack, onComplete }: ExpertOnboardingProps) 
 
   // Step 4: Generated Profile
   const renderGeneratedProfile = () => {
+    const getAchievementLabel = (id: string): string => {
+      switch (id) {
+        case "tv": return "Featured on CNBC/ET Now";
+        case "recognition": return "SEBI/RBI Recognized";
+        case "aum": return "Managed ₹100Cr+ AUM";
+        case "speaker": return "Top Finance Speaker";
+        case "published": return "Published in Forbes/Moneycontrol";
+        case "founder": return "Finance Startup Founder";
+        default: return id;
+      }
+    };
+
+    const getSpecializationLabel = (id: string): string => {
+      switch (id) {
+        case "stocks": return "Stock Market & Equity Research";
+        case "crypto": return "Crypto & Web3";
+        case "privateequity": return "Private Equity & Venture Capital";
+        case "macro": return "Macroeconomics & Global Markets";
+        case "wealth": return "Wealth Planning & Financial Advisory";
+        case "realestate": return "Real Estate & Alternative Investments";
+        default: return id;
+      }
+    };
+
+    const mappedFormData = {
+      ...formData,
+      achievements: formData.achievements.map(getAchievementLabel),
+      specializations: formData.specializations.map(getSpecializationLabel),
+    };
+
     return (
       <ExpertGeneratedProfile
-        formData={formData}
+        formData={mappedFormData}
         onBack={goToPreviousStep}
-        onComplete={() => { if (onComplete) { onComplete(formData); } else { navigate("/dashboard"); } }}
+        onComplete={() => { if (onComplete) { onComplete(mappedFormData); } else { navigate("/dashboard"); } }}
       />
     );
   };
