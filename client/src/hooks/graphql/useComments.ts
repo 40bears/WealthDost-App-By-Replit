@@ -1,4 +1,5 @@
 import { useQuery, useMutation } from '@apollo/client/react';
+import { gql } from '@apollo/client';
 import {
   GET_COMMENTS,
   GET_REPLIES,
@@ -59,7 +60,26 @@ export const useMyComments = () => {
 
 // Mutation Hooks
 export const useCreateComment = () => {
-  return useMutation(CREATE_COMMENT);
+  return useMutation(CREATE_COMMENT, {
+    update(cache, result, { variables }) {
+      if (result.data && (result.data as any).createComment && variables?.input) {
+        const { commentableType, commentableId, parentId } = variables.input;
+        // Only increment commentCount for top-level comments, not replies
+        if (!parentId) {
+          const typename = commentableType === 'POST' ? 'Post' : 'StockTip';
+
+          cache.modify({
+            id: cache.identify({ __typename: typename, id: commentableId }),
+            fields: {
+              commentCount(existingCount = 0) {
+                return existingCount + 1;
+              },
+            },
+          });
+        }
+      }
+    },
+  });
 };
 
 export const useLikeComment = () => {
@@ -109,5 +129,36 @@ export const useUnlikeComment = () => {
 };
 
 export const useDeleteComment = () => {
-  return useMutation(DELETE_COMMENT);
+  return useMutation(DELETE_COMMENT, {
+    update(cache, result, { variables }) {
+      if (result.data && variables?.commentId) {
+        // Read the comment from cache to get commentable info
+        const commentId = cache.identify({ __typename: 'Comment', id: variables.commentId });
+        const commentFragment = cache.readFragment({
+          id: commentId,
+          fragment: gql`
+            fragment CommentFragment on Comment {
+              commentableType
+              commentableId
+              parentId
+            }
+          `,
+        }) as { commentableType: string; commentableId: string; parentId?: string } | null;
+
+        if (commentFragment && !commentFragment.parentId) { // Only decrement for top-level comments
+          const { commentableType, commentableId } = commentFragment;
+          const typename = commentableType === 'POST' ? 'Post' : 'StockTip';
+
+          cache.modify({
+            id: cache.identify({ __typename: typename, id: commentableId }),
+            fields: {
+              commentCount(existingCount = 0) {
+                return Math.max(0, existingCount - 1);
+              },
+            },
+          });
+        }
+      }
+    },
+  });
 };

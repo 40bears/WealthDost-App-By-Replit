@@ -27,17 +27,17 @@ export interface Expert {
 }
 
 export interface GetExpertsVariables {
-  industrySector?: string;
+  specialization?: string;
 }
 
 export interface GetExpertsResponse {
   experts: Expert[];
 }
 
-export const useExperts = (industrySector?: string) => {
+export const useExperts = (specialization?: string) => {
   return useQuery<GetExpertsResponse, GetExpertsVariables>(GET_EXPERTS, {
     variables: {
-      industrySector: industrySector && industrySector !== 'all' ? industrySector : undefined,
+      specialization: specialization && specialization !== 'all' ? specialization : undefined,
     },
     fetchPolicy: 'cache-and-network',
   });
