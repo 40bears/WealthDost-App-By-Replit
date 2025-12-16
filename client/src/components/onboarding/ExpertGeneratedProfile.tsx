@@ -69,27 +69,22 @@ export function ExpertGeneratedProfile({ formData, onBack, onComplete }: {
             </Avatar>
             <div>
               <div className="flex items-center">
-                <h3 className="font-semibold text-xl">{formData.fullName || "Rahul Sharma"}</h3>
+                <h3 className="font-semibold text-xl">{formData.fullName}</h3>
                 <span className="ml-2 bg-white text-primary text-xs py-0.5 px-1.5 rounded-full flex items-center">
                   <span className="material-icons text-xs mr-0.5">verified</span>
                   Expert
                 </span>
               </div>
-              <p className="text-primary-100">@{formData.username || "ValueInvestor"}</p>
+              <p className="text-primary-100">@{formData.username}</p>
             </div>
           </div>
         </div>
         <div className="p-4">
-          <p className="text-gray-700 mb-4">{formData.profileBio || "Equity Research | Value Investing | 15+ years experience"}</p>
+          <p className="text-gray-700 mb-4">{formData.profileBio}</p>
           <div className="flex flex-wrap gap-2 mb-4">
             {formData.education && (
               <div className="bg-gray-100 rounded-lg px-3 py-1.5 text-sm">
                 <span className="text-gray-500">{getEducationDisplay(formData.education)}</span>
-              </div>
-            )}
-            {!formData.education && (
-              <div className="bg-gray-100 rounded-lg px-3 py-1.5 text-sm">
-                <span className="text-gray-500">CFA</span>
               </div>
             )}
           </div>
