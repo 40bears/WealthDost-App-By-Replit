@@ -1,16 +1,22 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { UserPlus, UserCheck } from "lucide-react";
+import { UserPlus, MoreVertical } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useIsFollowing, useFollowerCount, useFollowUser, useUnfollowUser } from "@/hooks/graphql/useFollow";
+import { useToast } from "@/hooks/use-toast";
 
 interface UserCardProps {
   name: string;
   username: string;
   avatar?: string;
   expertise: string;
-  followers: number;
-  isFollowing?: boolean;
-  onFollowToggle?: () => void;
+  userUuid: string;
 }
 
 export default function UserCard({
@@ -18,10 +24,17 @@ export default function UserCard({
   username,
   avatar,
   expertise,
-  followers,
-  isFollowing = false,
-  onFollowToggle
+  userUuid
 }: UserCardProps) {
+  const { toast } = useToast();
+  const { data: isFollowingData } = useIsFollowing(userUuid);
+  const { data: followerCountData } = useFollowerCount(userUuid);
+  const [followUser] = useFollowUser();
+  const [unfollowUser] = useUnfollowUser();
+
+  const isFollowing = isFollowingData?.isFollowing || false;
+  const followers = followerCountData?.followerCount || 0;
+
   const formatFollowers = (count: number) => {
     if (count >= 1000) {
       return `${(count / 1000).toFixed(1)}K`;
@@ -37,6 +50,34 @@ export default function UserCard({
       .join('')
       .toUpperCase()
       .slice(0, 2);
+  };
+
+  const handleFollowToggle = async () => {
+    try {
+      if (isFollowing) {
+        await unfollowUser({ variables: { input: { userUuid } } });
+        toast({
+          title: "Unfollowed",
+          description: `You unfollowed ${name}`,
+          duration: 2000
+        });
+      } else {
+        await followUser({ variables: { input: { userUuid } } });
+        toast({
+          title: "Following",
+          description: `You are now following ${name}`,
+          duration: 2000
+        });
+      }
+    } catch (error) {
+      console.error('Follow/Unfollow error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update follow status. Please try again.",
+        variant: "destructive",
+        duration: 3000
+      });
+    }
   };
 
   return (
@@ -68,28 +109,27 @@ export default function UserCard({
 
         {/* Right side: Follow button and followers */}
         <div className="flex flex-col items-end gap-1 ml-3">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onFollowToggle}
-            className={`h-8 px-3 text-sm font-medium transition-all duration-200 ${
-              isFollowing
-                ? 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
-                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-            {isFollowing ? (
-              <>
-                <UserCheck className="h-3.5 w-3.5 mr-1" />
-                Unfollow
-              </>
-            ) : (
-              <>
-                <UserPlus className="h-3.5 w-3.5 mr-1" />
-                Follow
-              </>
-            )}
-          </Button>
+          {!isFollowing ? (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 bg-gray-100 hover:bg-gray-200"
+              onClick={handleFollowToggle}
+            >
+              <UserPlus className="h-4 w-4" />
+            </Button>
+          ) : (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 bg-gray-100 hover:bg-gray-200">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleFollowToggle}>Unfollow</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
           <p className="text-xs text-gray-500 whitespace-nowrap">
             {formatFollowers(followers)} followers
           </p>

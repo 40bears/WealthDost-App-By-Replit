@@ -2,7 +2,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { UserPlus } from "lucide-react";
+import { UserPlus, MoreVertical } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useIsFollowing, useFollowUser, useUnfollowUser } from "@/hooks/graphql/useFollow";
+import { useToast } from "@/hooks/use-toast";
 
 interface ExpertCardProps {
   name: string;
@@ -11,8 +19,7 @@ interface ExpertCardProps {
   categories: string[];
   bio: string;
   avatar?: string;
-  isFollowing?: boolean;
-  onFollowClick?: () => void;
+  userUuid: string;
   onCardClick?: () => void;
   specializations?: string[];
   achievements?: string[];
@@ -25,12 +32,18 @@ export default function ExpertCard({
   categories,
   bio,
   avatar,
-  isFollowing = false,
-  onFollowClick,
+  userUuid,
   onCardClick,
   specializations = [],
   achievements = []
 }: ExpertCardProps) {
+  const { toast } = useToast();
+  const { data: isFollowingData } = useIsFollowing(userUuid);
+  const [followUser] = useFollowUser();
+  const [unfollowUser] = useUnfollowUser();
+
+  const isFollowing = isFollowingData?.isFollowing || false;
+
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -38,6 +51,35 @@ export default function ExpertCard({
       .join('')
       .toUpperCase()
       .slice(0, 2);
+  };
+
+  const handleFollowClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      if (isFollowing) {
+        await unfollowUser({ variables: { input: { userUuid } } });
+        toast({
+          title: "Unfollowed",
+          description: `You unfollowed ${name}`,
+          duration: 2000
+        });
+      } else {
+        await followUser({ variables: { input: { userUuid } } });
+        toast({
+          title: "Following",
+          description: `You are now following ${name}`,
+          duration: 2000
+        });
+      }
+    } catch (error) {
+      console.error('Follow/Unfollow error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update follow status. Please try again.",
+        variant: "destructive",
+        duration: 3000
+      });
+    }
   };
 
   return (
@@ -68,18 +110,27 @@ export default function ExpertCard({
         </div>
 
         {/* Follow Button */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={(e) => {
-            e.stopPropagation();
-            onFollowClick?.();
-          }}
-          className="h-9 px-4 text-sm font-medium border-gray-300 hover:bg-gray-50 transition-all duration-200 flex-shrink-0 flex items-center gap-2"
-        >
-          <UserPlus className="h-4 w-4" />
-          {isFollowing ? "Following" : "Follow"}
-        </Button>
+        {!isFollowing ? (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 bg-gray-100 hover:bg-gray-200 flex-shrink-0"
+            onClick={handleFollowClick}
+          >
+            <UserPlus className="h-4 w-4" />
+          </Button>
+        ) : (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8 bg-gray-100 hover:bg-gray-200 flex-shrink-0">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleFollowClick}>Unfollow</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
 
       {/* Bio */}
