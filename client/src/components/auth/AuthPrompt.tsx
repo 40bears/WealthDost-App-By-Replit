@@ -78,8 +78,9 @@ const AuthPrompt = ({ isOpen, onClose, onSuccess, message }: AuthPromptProps) =>
         isLoggedIn: true
       }));
 
-      // Mock access token
+      // Mock access token and refresh token
       localStorage.setItem('accessToken', 'mock-token');
+      localStorage.setItem('refreshToken', 'mock-refresh-token');
 
       toast({
         title: "Welcome back!",
@@ -130,8 +131,9 @@ const AuthPrompt = ({ isOpen, onClose, onSuccess, message }: AuthPromptProps) =>
         isLoggedIn: true
       }));
 
-      // Mock access token
+      // Mock access token and refresh token
       localStorage.setItem('accessToken', 'mock-token');
+      localStorage.setItem('refreshToken', 'mock-refresh-token');
 
       toast({
         title: "Account Created!",

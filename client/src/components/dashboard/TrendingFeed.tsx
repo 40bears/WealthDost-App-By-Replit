@@ -37,14 +37,15 @@ export function TrendingFeed() {
         id: post.user.id.toString(),
         name: `${post.user.firstName} ${post.user.lastName}`,
         username: post.user.username ? `@${post.user.username}` : `@user${post.user.id}`,
+        avatar: '',
         initials: post.user.firstName[0] + (post.user.lastName?.[0] || ''),
+        uuid: post.user.id.toString(), // Assuming id is the uuid
       },
       content: post.content,
       tags: [], // TODO: extract hashtags from content
       likes: post.likeCount || 0,
       comments: post.commentCount || 0,
       timestamp: formatDate(post.createdAt),
-      isFollowing: false,
       image: post.image?.path,
       isLikedByMe: post.isLikedByMe || false,
       tribe: post.tribe ? { id: post.tribe.id, name: post.tribe.name } : undefined,
@@ -65,6 +66,7 @@ export function TrendingFeed() {
           id: tip.user?.id?.toString() || 'unknown',
           name: tip.user ? `${tip.user.firstName} ${tip.user.lastName}`.trim() : 'User',
           username: tip.user?.username ? `@${tip.user.username}` : `@user${tip.user?.id || 'unknown'}`,
+          avatar: '',
           initials: tip.user ? `${tip.user.firstName?.[0] || ''}${tip.user.lastName?.[0] || ''}` : 'U',
         },
         stock: {
