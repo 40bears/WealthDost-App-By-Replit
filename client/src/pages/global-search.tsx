@@ -15,8 +15,6 @@ export default function GlobalSearch() {
   const [activeTab, setActiveTab] = useState<'all' | 'users' | 'posts'>('all');
   const [location] = useLocation();
 
-  const { toggleFollow, isFollowing } = useInteraction();
-
   // Debounce search query
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -141,9 +139,7 @@ export default function GlobalSearch() {
                   username={`@${user.username}`}
                   avatar=""
                   expertise={user.roles?.[0] || 'Investor'}
-                  followers={0}
-                  isFollowing={isFollowing(`@${user.username}`)}
-                  onFollowToggle={() => toggleFollow(`@${user.username}`)}
+                  userUuid={user.id} // Assuming id is the uuid
                 />
               ))}
             </div>
@@ -168,14 +164,14 @@ export default function GlobalSearch() {
                     name: `${post.user.firstName} ${post.user.lastName}`.trim(),
                     username: `@${post.user.username}`,
                     avatar: '',
-                    initials: post.user.firstName[0] + (post.user.lastName?.[0] || '')
+                    initials: post.user.firstName[0] + (post.user.lastName?.[0] || ''),
+                    uuid: post.user.id // Assuming id is the uuid
                   }}
                   content={post.content}
                   tags={[]}
                   likes={post.likeCount}
                   comments={post.commentCount}
                   timestamp={formatTimestamp(post.createdAt)}
-                  isFollowing={isFollowing(`@${post.user.username}`)}
                   image={post.image?.publicUrl}
                   isLikedByMe={post.isLikedByMe}
                   tribe={post.tribe}

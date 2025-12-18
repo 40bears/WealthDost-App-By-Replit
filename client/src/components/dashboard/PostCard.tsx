@@ -10,6 +10,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useLikePost, useUnlikePost } from '@/hooks/graphql';
+import { useIsFollowing, useFollowUser, useUnfollowUser } from '@/hooks/graphql/useFollow';
+import { useToast } from '@/hooks/use-toast';
 import { CommentsBottomSheet } from '@/components/comments/CommentsBottomSheet';
 
 interface PostCardProps {
@@ -20,13 +22,13 @@ interface PostCardProps {
     username: string;
     avatar?: string;
     initials: string;
+    uuid: string;
   };
   content: string;
   tags: string[];
   likes: number;
   comments: number;
   timestamp: string;
-  isFollowing?: boolean;
   image?: string;
   isLikedByMe?: boolean;
   tribe?: {
@@ -43,19 +45,47 @@ export function PostCard({
   likes,
   comments,
   timestamp,
-  isFollowing = false,
   image,
   isLikedByMe = false,
   tribe,
 }: PostCardProps) {
   const navigate = useNavigate();
-  const [following, setFollowing] = useState(isFollowing);
+  const { toast } = useToast();
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [likePost] = useLikePost();
   const [unlikePost] = useUnlikePost();
+  const { data: isFollowingData } = useIsFollowing(author.uuid);
+  const [followUser] = useFollowUser();
+  const [unfollowUser] = useUnfollowUser();
 
-  const handleFollow = () => {
-    setFollowing(!following);
+  const isFollowing = isFollowingData?.isFollowing || false;
+
+  const handleFollow = async () => {
+    try {
+      if (isFollowing) {
+        await unfollowUser({ variables: { input: { userUuid: author.uuid } } });
+        toast({
+          title: "Unfollowed",
+          description: `You unfollowed ${author.name}`,
+          duration: 2000
+        });
+      } else {
+        await followUser({ variables: { input: { userUuid: author.uuid } } });
+        toast({
+          title: "Following",
+          description: `You are now following ${author.name}`,
+          duration: 2000
+        });
+      }
+    } catch (error) {
+      console.error('Follow/Unfollow error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update follow status. Please try again.",
+        variant: "destructive",
+        duration: 3000
+      });
+    }
   };
 
   const handleUserClick = () => {
@@ -107,7 +137,7 @@ export function PostCard({
           </div>
         </div>
         
-        {!following ? (
+        {!isFollowing ? (
           <Button
             variant="ghost"
             size="icon"

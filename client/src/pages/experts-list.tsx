@@ -18,22 +18,11 @@ const expertSpecializations = [
 
 const ExpertsList = () => {
   const [selectedSector, setSelectedSector] = useState("all");
-  const [followedExperts, setFollowedExperts] = useState<string[]>([]);
 
   const { data, loading, error } = useExperts(selectedSector);
   const experts = data?.experts || [];
 
   const navigate = useNavigate();
-
-  const handleFollowClick = (expertId: string) => {
-    setFollowedExperts(prev => {
-      if (prev.includes(expertId)) {
-        return prev.filter(id => id !== expertId);
-      } else {
-        return [...prev, expertId];
-      }
-    });
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50/30 to-gray-100">
@@ -92,8 +81,7 @@ const ExpertsList = () => {
                 avgReturn=""
                 categories={industrySectors}
                 bio={expert.profile?.profileBio || ''}
-                isFollowing={followedExperts.includes(expert.id)}
-                onFollowClick={() => handleFollowClick(expert.id)}
+                userUuid={expert.id} // Assuming id is the uuid, adjust if needed
                 onCardClick={() => navigate({ to: `/user/${expert.id}` })}
                 specializations={expert.profile?.specializations || []}
                 achievements={expert.profile?.achievements || []}
