@@ -4,7 +4,6 @@ import {
   GET_POST,
   GET_MY_POSTS,
   GET_POST_COMMENTS,
-  GET_PUBLIC_POSTS,
   GET_TRIBE_POSTS,
   GET_MY_FEED,
 } from '@/graphql/posts/queries';
@@ -18,6 +17,7 @@ import {
   // UPDATE_COMMENT,
   // DELETE_COMMENT,
 } from '@/graphql/posts/mutations';
+import { GET_FEED } from '@/graphql/feed/queries';
 
 // Query Hooks
 export const usePosts = () => {
@@ -46,11 +46,6 @@ export const usePostComments = (postId: number) => {
   });
 };
 
-export const usePublicPosts = () => {
-  return useQuery(GET_PUBLIC_POSTS, {
-    fetchPolicy: 'cache-and-network',
-  });
-};
 
 export const useTribePosts = (tribeId: number) => {
   return useQuery(GET_TRIBE_POSTS, {
@@ -69,21 +64,21 @@ export const useMyFeed = () => {
 // Mutation Hooks
 export const useCreatePost = () => {
   return useMutation(CREATE_POST, {
-    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_PUBLIC_POSTS, GET_MY_FEED],
+    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_FEED, GET_MY_FEED],
     awaitRefetchQueries: true,
   });
 };
 
 export const useUpdatePost = () => {
   return useMutation(UPDATE_POST, {
-    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_PUBLIC_POSTS, GET_MY_FEED, GET_POST],
+    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_FEED, GET_MY_FEED, GET_POST],
     awaitRefetchQueries: true,
   });
 };
 
 export const useDeletePost = () => {
   return useMutation(DELETE_POST, {
-    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_PUBLIC_POSTS, GET_MY_FEED],
+    refetchQueries: [GET_POSTS, GET_MY_POSTS, GET_FEED, GET_MY_FEED],
     awaitRefetchQueries: true,
   });
 };

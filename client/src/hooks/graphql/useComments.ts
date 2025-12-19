@@ -16,7 +16,7 @@ import {
 
 // Query Hooks
 export const useComments = (commentableType: string, commentableId: string, sortOrder?: string, skip?: boolean) => {
-  return useQuery(GET_COMMENTS, {
+  return useQuery<{ comments: any[] }>(GET_COMMENTS, {
     variables: {
       commentableType,
       commentableId,
@@ -28,7 +28,7 @@ export const useComments = (commentableType: string, commentableId: string, sort
 };
 
 export const useReplies = (parentId: string, sortOrder?: string, skip?: boolean) => {
-  return useQuery(GET_REPLIES, {
+  return useQuery<{ replies: any[] }>(GET_REPLIES, {
     variables: {
       parentId,
       sortOrder: sortOrder || 'oldest',

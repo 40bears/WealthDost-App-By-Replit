@@ -7,10 +7,12 @@ import { useStockTip, useComments, useLikeStockTip, useUnlikeStockTip } from '@/
 import CommentItem from '@/components/comments/CommentItem'
 import CommentInput from '@/components/comments/CommentInput'
 import { formatDistanceToNow } from 'date-fns'
+import { useToast } from '@/hooks/use-toast'
 
 export default function StockTipDetailPage() {
   const { tipId } = useParams({ from: '/_auth/stock-tips/$tipId' })
   const navigate = useNavigate()
+  const { toast } = useToast()
 
   const { data: tipData, loading: tipLoading, refetch: refetchTip } = useStockTip(tipId)
   const { data: commentsData, loading: commentsLoading, refetch: refetchComments } = useComments(
@@ -61,7 +63,10 @@ export default function StockTipDetailPage() {
       })
     } catch (error) {
       await navigator.clipboard.writeText(url)
-      alert('Link copied to clipboard!')
+      toast({
+        title: "Copied!",
+        description: "Stock tip link copied to clipboard.",
+      })
     }
   }
 

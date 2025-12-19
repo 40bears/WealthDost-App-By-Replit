@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useMasterHashtags } from "@/hooks/graphql/useHashtags";
 
 type Props = {
   selected: string[];
@@ -12,7 +13,10 @@ type Props = {
 
 export function InvestorTopics({ selected, onChange, onBack, onNext, onSkipToDashboard, progress }: Props) {
   const [showError, setShowError] = useState(false);
-  const tags = [
+  const { data } = useMasterHashtags();
+
+  // Fallback to hardcoded tags if query fails or is loading
+  const fallbackTags = [
     '#ValueInvestor', '#GrowthInvestor', '#DividendInvestor', '#SwingTrader',
     '#LongTermInvestor', '#ESGInvestor', '#DayTrader', '#CryptoInvestor',
     '#TechStocks', '#BlueChip', '#SmallCap', '#MidCap', '#LargeCap',
@@ -21,13 +25,23 @@ export function InvestorTopics({ selected, onChange, onBack, onNext, onSkipToDas
     '#SectorRotation', '#IncomeInvesting'
   ];
 
+  const tags = useMemo(() => {
+    if (data?.masterHashtags && data.masterHashtags.length > 0) {
+      // Add # prefix to tags from API if not already present
+      return data.masterHashtags.map((hashtag: { tag: string }) =>
+        hashtag.tag.startsWith('#') ? hashtag.tag : `#${hashtag.tag}`
+      );
+    }
+    return fallbackTags;
+  }, [data]);
+
   const toggleTag = (tag: string) => {
     const isSelected = selected.includes(tag);
     onChange(tag, !isSelected);
   };
 
   const handleSelectAll = () => {
-    tags.forEach(tag => {
+    tags.forEach((tag: string) => {
       if (!selected.includes(tag)) {
         onChange(tag, true);
       }
@@ -35,7 +49,7 @@ export function InvestorTopics({ selected, onChange, onBack, onNext, onSkipToDas
   };
 
   const handleClearAll = () => {
-    tags.forEach(tag => {
+    tags.forEach((tag: string) => {
       if (selected.includes(tag)) {
         onChange(tag, false);
       }
@@ -62,7 +76,7 @@ export function InvestorTopics({ selected, onChange, onBack, onNext, onSkipToDas
         </div>
       </div>
       <div className="flex flex-wrap gap-3 mb-4 flex-1">
-        {tags.map(tag => (
+        {tags.map((tag: string) => (
           <button
             key={tag}
             onClick={() => toggleTag(tag)}
