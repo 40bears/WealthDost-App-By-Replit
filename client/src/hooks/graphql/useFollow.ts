@@ -30,7 +30,7 @@ export const useFollowing = (userUuid: string, skip?: boolean) => {
 };
 
 export const useIsFollowing = (userUuid: string, skip?: boolean) => {
-  return useQuery(IS_FOLLOWING, {
+  return useQuery<{ isFollowing: boolean }, { userUuid: string }>(IS_FOLLOWING, {
     variables: { userUuid },
     skip: skip || false,
     fetchPolicy: 'cache-and-network',

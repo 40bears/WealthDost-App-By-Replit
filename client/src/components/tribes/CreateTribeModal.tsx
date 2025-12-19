@@ -311,7 +311,7 @@ export default function CreateTribeModal({ isOpen, onClose, onTribeCreated }: Cr
                     />
                     <span className="text-sm text-gray-900">Free</span>
                   </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
+                  {/* <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="radio"
                       value="true"
@@ -320,7 +320,7 @@ export default function CreateTribeModal({ isOpen, onClose, onTribeCreated }: Cr
                       onChange={() => setValue("isPremium", true)}
                     />
                     <span className="text-sm text-gray-900">Premium</span>
-                  </label>
+                  </label> */}
                 </div>
                 {isPremium && (
                   <div className="mt-3">

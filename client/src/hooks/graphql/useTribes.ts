@@ -49,7 +49,7 @@ export const useTribeRules = (tribeId: number) => {
   });
 };
 
-export const useIsMemberOfTribe = (tribeId: number) => {
+export const useIsMemberOfTribe = (tribeId: string) => {
   return useQuery(IS_MEMBER_OF_TRIBE, {
     variables: { tribeId },
     skip: !tribeId,

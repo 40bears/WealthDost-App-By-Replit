@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Users, TrendingUp, BarChart3, Loader2 } from "lucide-react";
+import { Users, TrendingUp, BarChart3, Loader2, Share2 } from "lucide-react";
 import { useIsMemberOfTribe, useJoinTribe, useLeaveTribe } from "@/hooks/graphql";
 import { useToast } from "@/hooks/use-toast";
 
@@ -24,6 +24,10 @@ interface TribeCardProps {
   coverImage?: string;
   onCardClick?: () => void;
   currentUserId?: number;
+}
+
+interface IsMemberData {
+  isMemberOfTribe: boolean;
 }
 
 export default function TribeCard({
@@ -50,7 +54,7 @@ export default function TribeCard({
   const [joinTribe, { loading: joining }] = useJoinTribe();
   const [leaveTribe, { loading: leaving }] = useLeaveTribe();
 
-  const isMember = isMemberData?.isMemberOfTribe || false;
+  const isMember = (isMemberData as IsMemberData)?.isMemberOfTribe || false;
   const isOwner = currentUserId === userId;
   const isLoading = joining || leaving || membershipLoading;
 
@@ -72,6 +76,7 @@ export default function TribeCard({
 
   const handleJoin = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    console.log('tribeid', id)
     try {
       await joinTribe({ variables: { tribeId: id } });
       toast({
@@ -113,10 +118,49 @@ export default function TribeCard({
     }
   };
 
+  const handleCardClick = () => {
+    if (isMember || isOwner) {
+      onCardClick?.();
+    } else {
+      toast({
+        title: "Join Required",
+        description: "You need to join the tribe to view its details.",
+      });
+    }
+  };
+
+  const handleShare = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const shareUrl = `${window.location.origin}/tribes/${id}`;
+      if (navigator.share) {
+        await navigator.share({
+          title: `Tribe: ${name}`,
+          text: description,
+          url: shareUrl,
+        });
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        toast({
+          title: "Copied!",
+          description: "Tribe link copied to clipboard.",
+        });
+      }
+    } catch (error) {
+      console.error('Share error:', error);
+      const shareUrl = `${window.location.origin}/tribes/${id}`;
+      await navigator.clipboard.writeText(shareUrl);
+      toast({
+        title: "Copied!",
+        description: "Tribe link copied to clipboard.",
+      });
+    }
+  };
+
   return (
     <Card
       className="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-md transition-all duration-300 cursor-pointer"
-      onClick={onCardClick}
+      onClick={handleCardClick}
     >
       {/* Cover Image */}
       <div className="relative">
@@ -227,6 +271,19 @@ export default function TribeCard({
           ))}
         </div>
 
+        {/* Share Button */}
+        <div className="flex justify-end mb-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleShare}
+            className="flex items-center gap-1 text-gray-600 hover:text-green-500 transition-colors"
+          >
+            <Share2 className="h-4 w-4" />
+            <span className="text-sm">Share</span>
+          </Button>
+        </div>
+      
         {/* Join/Leave Button */}
         {!isOwner && (
           <Button

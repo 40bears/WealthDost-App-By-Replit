@@ -7,10 +7,12 @@ import { usePost, useComments, useLikePost, useUnlikePost } from '@/hooks/graphq
 import CommentItem from '@/components/comments/CommentItem'
 import CommentInput from '@/components/comments/CommentInput'
 import { formatDistanceToNow } from 'date-fns'
+import { useToast } from '@/hooks/use-toast'
 
 export default function PostDetailPage() {
   const { postId } = useParams({ from: '/_auth/posts/$postId' })
   const navigate = useNavigate()
+  const { toast } = useToast()
 
   const { data: postData, loading: postLoading, refetch: refetchPost } = usePost(postId)
   const { data: commentsData, loading: commentsLoading, refetch: refetchComments } = useComments(
@@ -60,7 +62,10 @@ export default function PostDetailPage() {
       })
     } catch (error) {
       await navigator.clipboard.writeText(url)
-      alert('Link copied to clipboard!')
+      toast({
+        title: "Copied!",
+        description: "Post link copied to clipboard.",
+      })
     }
   }
 

@@ -7,6 +7,53 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useIsMemberOfTribe, useJoinTribe, useLeaveTribe, useTribePosts, useTribeStockTips } from "@/hooks/graphql";
+
+interface TribeQueryData {
+  tribe: {
+    id: string;
+    name: string;
+    description?: string;
+    category?: string;
+    features: string[];
+    price?: string;
+    isPremium: boolean;
+    isActive: boolean;
+    coverImage?: {
+      id: string;
+      url: string;
+      publicUrl?: string;
+      fileName: string;
+    };
+    user?: {
+      id: string;
+      firstName: string;
+      lastName?: string;
+      username?: string;
+    };
+    userId: number;
+    memberCount: number;
+    tipsHits: number;
+    weeklyFeeds: number;
+    badges: string[];
+    rules?: Array<{
+      id: number;
+      content: string;
+      displayOrder: number;
+      isDefault: boolean;
+      createdAt: string;
+    }>;
+    createdAt: string;
+    updatedAt: string;
+  };
+}
+
+interface IsMemberData {
+  isMemberOfTribe: boolean;
+}
+
+interface IsMemberData {
+  isMemberOfTribe: boolean;
+}
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiClient } from "@/lib/api";
@@ -29,7 +76,7 @@ const TribeDetail = () => {
   const [editedRules, setEditedRules] = useState<string[]>([]);
   const [originalRules, setOriginalRules] = useState<TribeRule[]>([]);
 
-  const { data, loading: isLoading, error } = useQuery(GET_TRIBE, {
+  const { data, loading: isLoading, error } = useQuery<TribeQueryData>(GET_TRIBE, {
     variables: { id },
     skip: !id,
   });
@@ -41,7 +88,7 @@ const TribeDetail = () => {
   const [joinTribe, { loading: joining }] = useJoinTribe();
   const [leaveTribe, { loading: leaving }] = useLeaveTribe();
 
-  const isMember = isMemberData?.isMemberOfTribe || false;
+  const isMember = (isMemberData as IsMemberData)?.isMemberOfTribe || false;
   const isMembershipLoading = joining || leaving || membershipLoading;
 
   // Fetch tribe posts and stock tips (only if user is a member or owner)
@@ -66,7 +113,7 @@ const TribeDetail = () => {
           // Update existing rule if content changed
           if (originalRule.content !== ruleContent) {
             operations.push(
-              apiClient.tribes._id(Number(id)).rules._ruleId(originalRule.id).$patch({
+              apiClient.tribes._id(id).rules._ruleId(originalRule.id).$patch({
                 body: { content: ruleContent }
               })
             );
@@ -74,7 +121,7 @@ const TribeDetail = () => {
         } else {
           // Create new rule
           operations.push(
-            apiClient.tribes._id(Number(id)).rules.$post({
+            apiClient.tribes._id(id).rules.$post({
               body: { content: ruleContent }
             })
           );
@@ -84,7 +131,7 @@ const TribeDetail = () => {
       // Delete removed rules
       for (let i = rules.length; i < originalRules.length; i++) {
         operations.push(
-          apiClient.tribes._id(Number(id)).rules._ruleId(originalRules[i].id).$delete()
+          apiClient.tribes._id(id).rules._ruleId(originalRules[i].id).$delete()
         );
       }
 
@@ -199,19 +246,19 @@ const TribeDetail = () => {
     creatorAvatar: "",
     creatorUsername: creatorUsername,
     category: tribeData.category || "General",
-    memberCount: 0,
+    memberCount: tribeData.memberCount || 0,
     isPremium: tribeData.isPremium,
     premiumPrice: tribeData.price || "0",
-    tipsHits: 0,
-    weeklyFeeds: 0,
-    badges: [],
+    tipsHits: tribeData.tipsHits || 0,
+    weeklyFeeds: tribeData.weeklyFeeds || 0,
+    badges: tribeData.badges || [],
     coverImage: coverImageUrl || "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=400&fit=crop",
     rules: apiRules,
     stats: {
-      totalMembers: 0,
-      tipsHits: 0,
+      totalMembers: tribeData.memberCount || 0,
+      tipsHits: tribeData.tipsHits || 0,
       category: tribeData.category || "General",
-      weeklyEngagement: "N/A"
+      weeklyEngagement: tribeData.weeklyFeeds ? `${tribeData.weeklyFeeds} feeds weekly` : "N/A"
     }
   };
 
@@ -387,7 +434,7 @@ const TribeDetail = () => {
                       username: post.user.username || `@user${post.user.id}`,
                       avatar: '',
                       initials: post.user.firstName[0] + (post.user.lastName?.[0] || ''),
-                      uuid: post.user.id // Assuming id is the uuid
+                      uuid: post.user.id.toString()
                     }}
                     content={post.content}
                     tags={[]}
@@ -415,6 +462,7 @@ const TribeDetail = () => {
                         username: tip.user?.username ? `@${tip.user.username}` : `@user${tip.userId}`,
                         avatar: '',
                         initials: tip.user ? `${tip.user.firstName?.[0] || ''}${tip.user.lastName?.[0] || ''}` : 'U',
+                        uuid: (tip.user?.id || tip.userId).toString()
                       }}
                       stock={{
                         name: tip.stockName,
@@ -429,7 +477,6 @@ const TribeDetail = () => {
                       chartImage={tip.chartImage?.publicUrl?.replace('http://minio:', 'http://localhost:')}
                       likes={tip.likeCount || 0}
                       comments={tip.commentCount || 0}
-                      isFollowing={false}
                       isLikedByMe={tip.isLikedByMe || false}
                       tribe={tip.tribe ? { id: tip.tribe.id, name: tip.tribe.name } : undefined}
                     />
@@ -542,7 +589,7 @@ const TribeDetail = () => {
 
                 {tribe.badges.length > 0 && (
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {tribe.badges.map((badge, index) => (
+                    {tribe.badges.map((badge: string, index: number) => (
                       <Badge
                         key={index}
                         variant="outline"
