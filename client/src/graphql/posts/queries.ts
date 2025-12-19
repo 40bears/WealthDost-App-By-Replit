@@ -101,29 +101,6 @@ export const GET_POST_COMMENTS = gql`
   }
 `;
 
-export const GET_PUBLIC_POSTS = gql`
-  query GetPublicPosts {
-    publicPosts {
-      id
-      content
-      createdAt
-      likeCount
-      commentCount
-      isLikedByMe
-      user {
-        id
-        firstName
-        lastName
-        username
-      }
-      image {
-        id
-        path
-      }
-    }
-  }
-`;
-
 export const GET_TRIBE_POSTS = gql`
   query GetTribePosts($tribeId: String!) {
     tribePosts(tribeId: $tribeId) {

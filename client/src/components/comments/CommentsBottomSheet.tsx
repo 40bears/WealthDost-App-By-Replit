@@ -30,7 +30,7 @@ import { useAuth } from '@/hooks/useAuth';
 interface CommentsBottomSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  entityId: number;
+  entityId: string;
   entityType: 'POST' | 'STOCK_TIP';
 }
 
@@ -38,7 +38,7 @@ interface CommentItemProps {
   comment: any;
   depth?: number;
   entityType: 'POST' | 'STOCK_TIP';
-  entityId: number;
+  entityId: string;
   onCommentUpdate?: () => void;
 }
 

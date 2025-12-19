@@ -3,8 +3,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { PostCard } from './PostCard';
 import { TipCard } from './TipCard';
-import { usePublicPosts, usePublicStockTips } from '@/hooks/graphql';
+import { useFeed } from '@/hooks/graphql';
 import { formatDate } from '@/lib/utils';
+import type { FeedItem as ApiFeedItem } from '@/graphql/feed/types';
 
 interface FeedItem {
   id: string;
@@ -14,12 +15,15 @@ interface FeedItem {
 
 export function TrendingFeed() {
   const [showFollowing, setShowFollowing] = useState(false);
-  const { data: postsData, loading: loadingPosts } = usePublicPosts();
-  const { data: stockTipsData, loading: loadingStockTips } = usePublicStockTips();
+  const limit = 20;
 
-  const posts = (postsData as { publicPosts: any[] })?.publicPosts || [];
-  const stockTips = (stockTipsData as { publicStockTips: any[] })?.publicStockTips || [];
-  const loading = loadingPosts || loadingStockTips;
+  const { data, loading } = useFeed({
+    limit,
+    offset: 0,
+    showFollowing,
+  });
+
+  const feedItems = data?.feed?.items || [];
 
   // Helper function to transform minio URLs for local development
   const transformImageUrl = (url: string) => {
@@ -27,70 +31,80 @@ export function TrendingFeed() {
     return url.replace('http://minio:', 'http://localhost:');
   };
 
-  // Transform GraphQL posts to FeedItem format
-  const postFeedItems: FeedItem[] = posts.map((post) => ({
-    id: post.id.toString(),
-    type: 'post' as const,
-    data: {
-      id: post.id,
-      author: {
-        id: post.user.id.toString(),
-        name: `${post.user.firstName} ${post.user.lastName}`,
-        username: post.user.username ? `@${post.user.username}` : `@user${post.user.id}`,
-        avatar: '',
-        initials: post.user.firstName[0] + (post.user.lastName?.[0] || ''),
-        uuid: post.user.id.toString(), // Assuming id is the uuid
-      },
-      content: post.content,
-      tags: [], // TODO: extract hashtags from content
-      likes: post.likeCount || 0,
-      comments: post.commentCount || 0,
-      timestamp: formatDate(post.createdAt),
-      image: post.image?.path,
-      isLikedByMe: post.isLikedByMe || false,
-      tribe: post.tribe ? { id: post.tribe.id, name: post.tribe.name } : undefined,
-    },
-  }));
+  // Transform feed items to component props format
+  const feedData: FeedItem[] = feedItems.map((item: ApiFeedItem) => {
+    // Normalize type to handle both uppercase and lowercase variants
+    const itemType = item.type.toLowerCase();
 
-  // Transform GraphQL stock tips to FeedItem format
-  const stockTipFeedItems: FeedItem[] = stockTips.map((tip) => {
-    const entryPrice = typeof tip.entryPrice === 'string' ? parseFloat(tip.entryPrice) : tip.entryPrice;
-    const targetPrice = typeof tip.targetPrice === 'string' ? parseFloat(tip.targetPrice) : tip.targetPrice;
+    if (itemType === 'post' && item.post) {
+      const post = item.post;
+      const tags = post.hashtags?.map(h => h.masterHashtag?.tag || h.tagName) || [];
 
-    return {
-      id: tip.id.toString(),
-      type: 'tip' as const,
-      data: {
+      return {
+        id: post.id,
+        type: 'post' as const,
+        data: {
+          id: post.id,
+          author: {
+            id: post.user.id,
+            name: `${post.user.firstName} ${post.user.lastName}`,
+            username: post.user.username ? `@${post.user.username}` : `@user${post.user.id}`,
+            avatar: '',
+            initials: post.user.firstName[0] + (post.user.lastName?.[0] || ''),
+            uuid: post.user.id,
+          },
+          content: post.content,
+          tags,
+          likes: post.likeCount || 0,
+          comments: post.commentCount || 0,
+          timestamp: formatDate(post.createdAt),
+          image: post.image?.publicUrl ? transformImageUrl(post.image.publicUrl) : post.image?.path,
+          isLikedByMe: post.isLikedByMe || false,
+        },
+      };
+    } else if (itemType === 'stock_tip' && item.stockTip) {
+      const tip = item.stockTip;
+      const entryPrice = typeof tip.entryPrice === 'string' ? parseFloat(tip.entryPrice) : tip.entryPrice;
+      const targetPrice = typeof tip.targetPrice === 'string' ? parseFloat(tip.targetPrice) : tip.targetPrice;
+
+      return {
         id: tip.id,
-        author: {
-          id: tip.user?.id?.toString() || 'unknown',
-          name: tip.user ? `${tip.user.firstName} ${tip.user.lastName}`.trim() : 'User',
-          username: tip.user?.username ? `@${tip.user.username}` : `@user${tip.user?.id || 'unknown'}`,
-          avatar: '',
-          initials: tip.user ? `${tip.user.firstName?.[0] || ''}${tip.user.lastName?.[0] || ''}` : 'U',
+        type: 'tip' as const,
+        data: {
+          id: tip.id,
+          author: {
+            id: tip.user.id,
+            name: `${tip.user.firstName} ${tip.user.lastName}`.trim(),
+            username: tip.user.username ? `@${tip.user.username}` : `@user${tip.user.id}`,
+            avatar: '',
+            initials: `${tip.user.firstName?.[0] || ''}${tip.user.lastName?.[0] || ''}`,
+          },
+          stock: {
+            name: tip.stockName,
+            symbol: tip.symbol,
+            change: `${((targetPrice - entryPrice) / entryPrice * 100).toFixed(1)}%`,
+          },
+          entryPrice: `₹${entryPrice.toFixed(2)}`,
+          targetPrice: `₹${targetPrice.toFixed(2)}`,
+          buyDate: new Date(tip.entryDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }),
+          sellDate: tip.exitDate ? new Date(tip.exitDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }) : 'N/A',
+          reasoning: tip.reason || '',
+          chartImage: tip.chartImage?.publicUrl ? transformImageUrl(tip.chartImage.publicUrl) : undefined,
+          likes: tip.likeCount || 0,
+          comments: tip.commentCount || 0,
+          isFollowing: false,
+          isLikedByMe: tip.isLikedByMe || false,
         },
-        stock: {
-          name: tip.stockName,
-          symbol: tip.symbol,
-          change: `${((targetPrice - entryPrice) / entryPrice * 100).toFixed(1)}%`,
-        },
-        entryPrice: `₹${entryPrice.toFixed(2)}`,
-        targetPrice: `₹${targetPrice.toFixed(2)}`,
-        buyDate: new Date(tip.entryDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }),
-        sellDate: tip.exitDate ? new Date(tip.exitDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }) : 'N/A',
-        reasoning: tip.reason || '',
-        chartImage: tip.chartImage?.publicUrl ? transformImageUrl(tip.chartImage.publicUrl) : undefined,
-        likes: tip.likeCount || 0,
-        comments: tip.commentCount || 0,
-        isFollowing: false,
-        isLikedByMe: tip.isLikedByMe || false,
-        tribe: tip.tribe ? { id: tip.tribe.id, name: tip.tribe.name } : undefined,
-      },
-    };
-  });
+      };
+    }
 
-  // Combine real posts and stock tips
-  const feedData = [...postFeedItems, ...stockTipFeedItems];
+    // Fallback for unknown types
+    return {
+      id: item.id,
+      type: 'post' as const,
+      data: {},
+    };
+  }).filter(item => item.data.id); // Filter out any invalid items
 
   return (
     <div className="bg-transparent">

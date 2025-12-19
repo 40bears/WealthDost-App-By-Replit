@@ -110,6 +110,33 @@ export function PostCard({
     }
   };
 
+  const handleShare = async () => {
+    try {
+      const shareUrl = `${window.location.origin}/posts/${id}`;
+      if (navigator.share) {
+        await navigator.share({
+          title: `Post by ${author.name}`,
+          text: content,
+          url: shareUrl,
+        });
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        toast({
+          title: "Copied!",
+          description: "Post link copied to clipboard.",
+        });
+      }
+    } catch (error) {
+      console.error('Share error:', error);
+      const shareUrl = `${window.location.origin}/posts/${id}`;
+      await navigator.clipboard.writeText(shareUrl);
+      toast({
+        title: "Copied!",
+        description: "Post link copied to clipboard.",
+      });
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
       {/* Header */}
@@ -204,7 +231,10 @@ export function PostCard({
           <MessageCircle className="h-4 w-4" />
           <span className="text-sm">{comments}</span>
         </button>
-        <button className="flex items-center gap-1 hover:text-green-500 transition-colors">
+        <button
+          onClick={handleShare}
+          className="flex items-center gap-1 hover:text-green-500 transition-colors cursor-pointer"
+        >
           <Share2 className="h-4 w-4" />
           <span className="text-sm">Share</span>
         </button>

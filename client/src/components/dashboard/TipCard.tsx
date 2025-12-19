@@ -10,6 +10,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useLikeStockTip, useUnlikeStockTip } from '@/hooks/graphql';
+import { useIsFollowing, useFollowUser, useUnfollowUser } from '@/hooks/graphql/useFollow';
+import { useToast } from '@/hooks/use-toast';
 import { CommentsBottomSheet } from '@/components/comments/CommentsBottomSheet';
 
 interface TipCardProps {
@@ -20,6 +22,7 @@ interface TipCardProps {
     username: string;
     avatar?: string;
     initials: string;
+    uuid: string;
   };
   stock: {
     name: string;
@@ -30,12 +33,11 @@ interface TipCardProps {
   entryPrice: string;
   targetPrice: string;
   buyDate: string;
-  sellDate: string;
+  sellDate?: string;
   reasoning: string;
   chartImage?: string;
   likes: number;
   comments: number;
-  isFollowing?: boolean;
   isLikedByMe?: boolean;
   tribe?: {
     id: number;
@@ -55,19 +57,58 @@ export function TipCard({
   chartImage,
   likes,
   comments,
-  isFollowing = false,
   isLikedByMe = false,
   tribe,
 }: TipCardProps) {
   const navigate = useNavigate();
-  const [following, setFollowing] = useState(isFollowing);
+  const { toast } = useToast();
   const [showChart, setShowChart] = useState(false);
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [likeStockTip] = useLikeStockTip();
   const [unlikeStockTip] = useUnlikeStockTip();
+  const { data: isFollowingData } = useIsFollowing(author.id);
+  const [followUser] = useFollowUser();
+  const [unfollowUser] = useUnfollowUser();
 
-  const handleFollow = () => {
-    setFollowing(!following);
+  const isFollowing = author.id ? (isFollowingData?.isFollowing || false) : false;
+
+  const handleFollow = async () => {
+    if (!author.id) {
+      console.error('Author UUID is missing:', author);
+      toast({
+        title: "Error",
+        description: "Unable to follow: User information incomplete.",
+        variant: "destructive",
+        duration: 3000
+      });
+      return;
+    }
+
+    try {
+      if (isFollowing) {
+        await unfollowUser({ variables: { input: { userUuid: author.id } } });
+        toast({
+          title: "Unfollowed",
+          description: `You unfollowed ${author.name}`,
+          duration: 2000
+        });
+      } else {
+        await followUser({ variables: { input: { userUuid: author.id } } });
+        toast({
+          title: "Following",
+          description: `You are now following ${author.name}`,
+          duration: 2000
+        });
+      }
+    } catch (error) {
+      console.error('Follow/Unfollow error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update follow status. Please try again.",
+        variant: "destructive",
+        duration: 3000
+      });
+    }
   };
 
   const handleUserClick = () => {
@@ -89,6 +130,33 @@ export function TipCard({
       }
     } catch (error) {
       console.error('TipCard - Error toggling like:', error);
+    }
+  };
+
+  const handleShare = async () => {
+    try {
+      const shareUrl = `${window.location.origin}/stock-tips/${id}`;
+      if (navigator.share) {
+        await navigator.share({
+          title: `Stock Tip: ${stock.symbol}`,
+          text: reasoning || `Check out this stock tip for ${stock.name} (${stock.symbol})`,
+          url: shareUrl,
+        });
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        toast({
+          title: "Copied!",
+          description: "Stock tip link copied to clipboard.",
+        });
+      }
+    } catch (error) {
+      console.error('Share error:', error);
+      const shareUrl = `${window.location.origin}/stock-tips/${id}`;
+      await navigator.clipboard.writeText(shareUrl);
+      toast({
+        title: "Copied!",
+        description: "Stock tip link copied to clipboard.",
+      });
     }
   };
 
@@ -133,7 +201,7 @@ export function TipCard({
         </div>
         <div>
           <p className="text-xs text-gray-500 mb-1">Buy/Sell Date</p>
-          <p className="font-semibold text-gray-900 text-sm">{buyDate} - {sellDate}</p>
+          <p className="font-semibold text-gray-900 text-sm">{buyDate} {sellDate ? `- ${sellDate}` : ''}</p>
         </div>
       </div>
 
@@ -202,7 +270,7 @@ export function TipCard({
           </div>
         </div>
         
-        {!following ? (
+        {!isFollowing ? (
           <Button
             variant="ghost"
             size="icon"
@@ -220,8 +288,8 @@ export function TipCard({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={handleFollow}>Unfollow</DropdownMenuItem>
-              <DropdownMenuItem>Mute</DropdownMenuItem>
-              <DropdownMenuItem>Report</DropdownMenuItem>
+              {/* <DropdownMenuItem>Mute</DropdownMenuItem>
+              <DropdownMenuItem>Report</DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
         )}
@@ -243,8 +311,12 @@ export function TipCard({
           <MessageCircle className="h-4 w-4" />
           <span className="text-sm">{comments}</span>
         </button>
-        <button className="flex items-center gap-1 hover:text-green-500 transition-colors">
+        <button
+          onClick={handleShare}
+          className="flex items-center gap-1 hover:text-green-500 transition-colors cursor-pointer"
+        >
           <Share2 className="h-4 w-4" />
+          <span className="text-sm">Share</span>
         </button>
       </div>
 

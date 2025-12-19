@@ -104,40 +104,17 @@ export const GET_MY_STOCK_TIPS = gql`
         publicUrl
         originalName
       }
-      userId
-      createdAt
-      updatedAt
-    }
-  }
-`;
-
-export const GET_PUBLIC_STOCK_TIPS = gql`
-  query GetPublicStockTips {
-    publicStockTips {
-      id
-      type
-      stockName
-      symbol
-      entryPrice
-      targetPrice
-      entryDate
-      exitDate
-      reason
-      likeCount
-      commentCount
-      isLikedByMe
-      chartImage {
-        id
-        publicUrl
-        originalName
-      }
       user {
         id
+        uuid
+        avatar
         firstName
         lastName
         username
       }
+      userId
       createdAt
+      updatedAt
     }
   }
 `;
@@ -207,6 +184,8 @@ export const GET_MY_STOCK_TIPS_FEED = gql`
       }
       user {
         id
+        uuid
+        avatar
         firstName
         lastName
         username
