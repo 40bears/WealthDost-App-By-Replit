@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, TrendingUp, MessageCircle, Heart, Star } from "lucide-react";
 import { Link } from "wouter";
+import { PullToRefresh } from "@/components/common/PullToRefresh";
 
 const Activity = () => {
   const [activeTab, setActiveTab] = useState("all");
@@ -77,8 +78,15 @@ const Activity = () => {
     return true;
   });
 
+  // Pull-to-refresh handler
+  const handleRefresh = async () => {
+    // Simulate refreshing activity data
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    // In a real app, this would refetch data from the API
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
       <div className="sticky top-0 bg-white border-b border-gray-200 z-20 shadow-sm">
         <div className="max-w-md mx-auto px-4 py-4">
@@ -111,8 +119,12 @@ const Activity = () => {
         </div>
       </div>
 
-      {/* Activity Content */}
-      <div className="max-w-md mx-auto px-4 pb-24">
+      {/* Activity Content with Pull to Refresh */}
+      <PullToRefresh
+        onRefresh={handleRefresh}
+        className="flex-1 min-h-0"
+      >
+        <div className="max-w-md mx-auto px-4 pb-24">
         {/* Activity Summary */}
         <Card className="mb-4">
           <CardHeader className="pb-3">
@@ -200,7 +212,8 @@ const Activity = () => {
             <p className="text-gray-500 text-sm">Start engaging with the community to see your activity here!</p>
           </div>
         )}
-      </div>
+        </div>
+      </PullToRefresh>
     </div>
   );
 };

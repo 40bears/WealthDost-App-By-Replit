@@ -67,19 +67,11 @@ export function UsernameInput({
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <Label htmlFor={id}>{label}</Label>
-        {status === 'checking' && (
-          <span className="flex items-center gap-1 text-xs text-gray-500">
-            <span className="w-3 h-3 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></span>
-            Checking
-          </span>
-        )}
-      </div>
-      <div className="flex mt-1 relative w-full">
+      <Label htmlFor={id} className="text-sm font-medium text-gray-700 mb-2 block">{label}</Label>
+      <div className="flex relative w-full">
         {prefixAt && (
           <div className="bg-gray-100 flex items-center px-3 rounded-l-lg border border-r-0 border-gray-300">
-            <span className="text-gray-500">@</span>
+            <span className="text-gray-600 font-medium">@</span>
           </div>
         )}
         <Input
@@ -87,11 +79,16 @@ export function UsernameInput({
           name={name}
           value={value}
           onChange={handleChange}
-          className={`rounded-l-none pr-9 ${status==='available' ? 'ring-2 ring-green-500 ring-offset-2' : ''} ${status==='error' ? 'ring-2 ring-red-500 ring-offset-2' : ''} ${status==='warning' ? 'ring-2 ring-yellow-500 ring-offset-2' : ''} ${className}`}
+          className={`rounded-l-none pr-10 ${status==='available' ? 'ring-2 ring-green-500 ring-offset-2' : ''} ${status==='error' ? 'ring-2 ring-red-500 ring-offset-2' : ''} ${status==='warning' ? 'ring-2 ring-yellow-500 ring-offset-2' : ''} ${status==='checking' ? 'ring-2 ring-blue-300 ring-offset-2' : ''} ${className}`}
           placeholder={placeholder}
         />
+        {status === 'checking' && (
+          <span className="absolute right-3 top-1/2 -translate-y-1/2">
+            <span className="w-4 h-4 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin inline-block"></span>
+          </span>
+        )}
         {status === 'available' && (
-          <span className="material-icons text-green-500 absolute right-2 top-1/2 -translate-y-1/2 text-base">check_circle</span>
+          <span className="material-icons text-green-500 absolute right-3 top-1/2 -translate-y-1/2 text-xl">check_circle</span>
         )}
       </div>
       {status === 'available' && message && (

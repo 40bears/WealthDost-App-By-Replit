@@ -4,14 +4,20 @@ import { Button } from "@/components/ui/button";
 import EnhancedCreatePostModal from "@/components/dashboard/EnhancedCreatePostModal";
 import { TipCard } from "@/components/dashboard/TipCard";
 import { useStockTips } from "@/hooks/graphql";
+import { PullToRefresh } from "@/components/common/PullToRefresh";
 
 export default function StockTips() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [filter, setFilter] = useState<'live' | 'close'>('live');
 
   // Fetch stock tips using GraphQL
-  const { data, loading: isLoading, error } = useStockTips();
+  const { data, loading: isLoading, error, refetch } = useStockTips();
   const stockTips = data?.stockTips || [];
+
+  // Pull-to-refresh handler
+  const handleRefresh = async () => {
+    await refetch();
+  };
 
   // Helper function to transform minio URLs for local development
   const transformImageUrl = (url: string) => {
@@ -80,7 +86,7 @@ export default function StockTips() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB]">
+    <div className="min-h-screen bg-[#F9FAFB] flex flex-col">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
         <div className="flex items-center justify-between p-4 pb-3 mb-5">
@@ -113,8 +119,12 @@ export default function StockTips() {
         </div>
       </div>
 
-      {/* Stock Tips List */}
-      <div className="p-4 pb-24 space-y-4">
+      {/* Stock Tips List with Pull to Refresh */}
+      <PullToRefresh
+        onRefresh={handleRefresh}
+        className="flex-1 min-h-0"
+      >
+        <div className="p-4 pb-24 space-y-4">
         {mappedTips.length > 0 ? (
           mappedTips.map((tip) => (
             <TipCard key={tip.id.toString()} {...tip} />
@@ -125,7 +135,8 @@ export default function StockTips() {
             <p className="text-sm text-gray-400 mt-2">Be the first to share a stock tip!</p>
           </div>
         )}
-      </div>
+        </div>
+      </PullToRefresh>
 
       {/* Create Post Modal */}
       <EnhancedCreatePostModal
