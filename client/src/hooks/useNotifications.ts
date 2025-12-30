@@ -78,7 +78,7 @@ export const useNotifications = (options: UseNotificationsOptions = {}) => {
 
   const markAsRead = useCallback(async (notificationId: number) => {
     try {
-      await apiClient.notifications._id(notificationId).patch();
+      await apiClient.notifications._id(notificationId).read.patch();
 
       setNotifications((prev) =>
         prev.map((n) =>
