@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link as RouterLink } from "wouter";
 import MarketOverview from "@/components/dashboard/MarketOverview";
 // import FeatureNavigation from "@/components/dashboard/FeatureNavigation"; // Hidden for release
@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import { ChevronRight, Upload, Link as LinkIcon, User, Settings, HelpCircle, LogOut, FileText, Heart, Activity, Bell, Shield, Globe, BarChart3 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import PortfolioHealthScore from "@/components/portfolio/PortfolioHealthScore";
+import { PullToRefresh } from "@/components/common/PullToRefresh";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -176,6 +177,7 @@ const Dashboard = () => {
   const [showFollowingOnly, setShowFollowingOnly] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const [, setLocation] = useLocation();
+  const queryClient = useQueryClient();
 
   // Function to handle hashtag clicks
   const handleHashtagClick = (hashtag: string) => {
@@ -197,14 +199,23 @@ const Dashboard = () => {
   });
 
   // Fetch market data
-  const { data: marketData, isLoading: isLoadingMarketData } = useQuery({
+  const { data: marketData, isLoading: isLoadingMarketData, refetch: refetchMarketData } = useQuery({
     queryKey: ["/api/market-data"],
   });
 
   // Fetch feed posts
-  const { data: posts, isLoading: isLoadingPosts } = useQuery({
+  const { data: posts, isLoading: isLoadingPosts, refetch: refetchPosts } = useQuery({
     queryKey: ["/api/posts"],
   });
+
+  // Pull-to-refresh handler
+  const handleRefresh = async () => {
+    await Promise.all([
+      refetchMarketData(),
+      refetchPosts(),
+      queryClient.invalidateQueries()
+    ]);
+  };
 
   // Type assertions for data to fix typescript issues
   const typedMarketData = marketData as any[];
@@ -1271,11 +1282,14 @@ const Dashboard = () => {
         <FeatureNavigation activeFeature={activeFeature as any} onFeatureSelect={handleFeatureSelect} />
       </div> */}
 
-      {/* Main Content Area - Scrollable */}
-      <div className="flex-1 overflow-auto pb-20 min-h-0">
+      {/* Main Content Area - Scrollable with Pull to Refresh */}
+      <PullToRefresh
+        onRefresh={handleRefresh}
+        className="flex-1 pb-20 min-h-0"
+      >
         {/* Dynamic Content Area */}
         {renderMainContent()}
-      </div>
+      </PullToRefresh>
 
       {/* Create Post Modal */}
       <EnhancedCreatePostModal 

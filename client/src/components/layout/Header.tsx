@@ -12,11 +12,13 @@ import { useAuth } from "@/components/auth/auth-context";
 import { getUsername } from "@/lib/user-utils";
 import { useNavigate } from "@tanstack/react-router";
 import { useAuth as useAuthHook } from "@/hooks/useAuth";
+import { useNotificationCount } from "@/hooks/useNotificationCount";
 
 const Header = () => {
   const { logout } = useAuth();
   const { isAdmin } = useAuthHook();
   const navigate = useNavigate();
+  const { count: unreadCount } = useNotificationCount();
 
   // Get greeting based on time of day
   const getGreeting = () => {
@@ -66,10 +68,18 @@ const Header = () => {
         {/* Right side: Notification and Avatar */}
         <div className="flex items-center space-x-3">
           {/* Notification Bell */}
-          <Button variant="ghost" size="icon" className="relative text-gray-600 hover:bg-gray-100">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative text-gray-600 hover:bg-gray-100"
+            onClick={() => navigate({to: "/notification-list"})}
+          >
             <span className="material-icons">notifications_none</span>
-            {/* Notification badge (optional) */}
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 min-w-[18px] h-[18px] bg-red-500 rounded-full flex items-center justify-center text-[10px] text-white font-semibold px-1">
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </span>
+            )}
           </Button>
 
           {/* User Avatar with Dropdown */}

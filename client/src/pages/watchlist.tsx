@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TrendingUp, TrendingDown, Bell, Search, Plus, Users, Eye, Heart, MessageCircle, BarChart3, Newspaper, Star, ArrowLeft, X, ChevronDown, ChevronUp } from "lucide-react";
+import { PullToRefresh } from "@/components/common/PullToRefresh";
 
 interface WatchlistAsset {
   id: number;
@@ -184,8 +185,15 @@ const Watchlist = () => {
     setExpandedAssets(newExpanded);
   };
 
+  // Pull-to-refresh handler
+  const handleRefresh = async () => {
+    // Simulate refreshing watchlist data
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    // In a real app, this would refetch data from the API
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-100 flex flex-col">
       {/* Header */}
       <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b-2 border-gray-200/50 shadow-lg z-20">
         <div className="max-w-md mx-auto px-4 py-4">
@@ -254,8 +262,12 @@ const Watchlist = () => {
         </div>
       </div>
 
-      {/* Content */}
-      <div className="max-w-md mx-auto px-4 pb-24">
+      {/* Content with Pull to Refresh */}
+      <PullToRefresh
+        onRefresh={handleRefresh}
+        className="flex-1 min-h-0"
+      >
+        <div className="max-w-md mx-auto px-4 pb-24">
         {activeTab === "my-watchlist" && (
           <div className="space-y-3">
             {watchlistAssets.map((asset) => {
@@ -501,7 +513,8 @@ const Watchlist = () => {
             </div>
           </div>
         )}
-      </div>
+        </div>
+      </PullToRefresh>
 
       {/* Add Asset Modal */}
       {showAddAsset && (
@@ -690,9 +703,6 @@ const Watchlist = () => {
           </div>
         </div>
       )}
-
-      {/* Bottom padding for safe area */}
-      <div className="h-20"></div>
     </div>
   );
 };

@@ -6,6 +6,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useTribes } from "@/hooks/graphql/useTribes";
 import { useAuth } from "@/hooks/useAuth";
 import type { Tribe } from "@/types";
+import { PullToRefresh } from "@/components/common/PullToRefresh";
 
 const InvestmentRooms = () => {
   const [filterCategory, setFilterCategory] = useState("all");

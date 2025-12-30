@@ -5,6 +5,7 @@ import ExpertCard from "@/components/dashboard/ExpertCard";
 import { useNavigate } from "@tanstack/react-router";
 import { useExperts } from "@/hooks/graphql";
 import { Loader2 } from "lucide-react";
+import { PullToRefresh } from "@/components/common/PullToRefresh";
 
 const expertSpecializations = [
   { value: "all", label: "All" },
@@ -19,13 +20,18 @@ const expertSpecializations = [
 const ExpertsList = () => {
   const [selectedSector, setSelectedSector] = useState("all");
 
-  const { data, loading, error } = useExperts(selectedSector);
+  const { data, loading, error, refetch } = useExperts(selectedSector);
   const experts = data?.experts || [];
 
   const navigate = useNavigate();
 
+  // Pull-to-refresh handler
+  const handleRefresh = async () => {
+    await refetch();
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50/30 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50/30 to-gray-100 flex flex-col">
       {/* Filter Header */}
       <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b-2 border-gray-200/50 shadow-lg z-20">
         <div className="px-4 py-3">
@@ -46,27 +52,33 @@ const ExpertsList = () => {
         </div>
       </div>
 
-      {/* Loading State */}
-      {loading && (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 text-purple-600 animate-spin" />
-        </div>
-      )}
+      {/* Content with Pull to Refresh */}
+      <PullToRefresh
+        onRefresh={handleRefresh}
+        className="flex-1 min-h-0"
+      >
+        <div>
+          {/* Loading State */}
+          {loading && (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 text-purple-600 animate-spin" />
+            </div>
+          )}
 
-      {/* Error State */}
-      {error && (
-        <div className="px-4 pt-4">
-          <div className="bg-red-50 border-2 border-red-200 rounded-2xl text-center py-12">
-            <span className="material-icons text-3xl text-red-300 mb-2">error_outline</span>
-            <p className="text-red-600 text-sm">Failed to load experts</p>
-            <p className="text-red-500 text-xs mt-1">{error.message}</p>
-          </div>
-        </div>
-      )}
+          {/* Error State */}
+          {error && (
+            <div className="px-4 pt-4">
+              <div className="bg-red-50 border-2 border-red-200 rounded-2xl text-center py-12">
+                <span className="material-icons text-3xl text-red-300 mb-2">error_outline</span>
+                <p className="text-red-600 text-sm">Failed to load experts</p>
+                <p className="text-red-500 text-xs mt-1">{error.message}</p>
+              </div>
+            </div>
+          )}
 
-      {/* Experts List */}
-      {!loading && !error && (
-        <div className="px-4 pt-4 space-y-3 pb-20">
+          {/* Experts List */}
+          {!loading && !error && (
+            <div className="px-4 pt-4 space-y-3 pb-20">
           {experts.map((expert) => {
             // Parse industry sectors from comma-separated string
             const industrySectors = expert.profile?.industrySectors
@@ -103,11 +115,13 @@ const ExpertsList = () => {
               </Button>
             </div>
           )}
-        </div>
-      )}
+            </div>
+          )}
 
-      {/* Bottom padding for safe area */}
-      <div className="h-20"></div>
+          {/* Bottom padding for safe area */}
+          <div className="h-20"></div>
+        </div>
+      </PullToRefresh>
     </div>
   );
 };
