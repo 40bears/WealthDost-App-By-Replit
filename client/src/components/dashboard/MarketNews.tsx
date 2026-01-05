@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, MutableRefObject } from 'react';
 import { ListFilter } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
@@ -19,7 +19,11 @@ const categoryMap: Record<string, Category> = {
   'foreign-market': 'foreign',
 };
 
-export function MarketNews() {
+interface MarketNewsProps {
+  refetchRef?: MutableRefObject<(() => void) | null>;
+}
+
+export function MarketNews({ refetchRef }: MarketNewsProps) {
   const [selectedFilter, setSelectedFilter] = useState('hot-pursuit');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -28,7 +32,7 @@ export function MarketNews() {
   const apiCategory = categoryMap[selectedFilter];
 
   // Fetch news from API
-  const { data: newsData, isLoading } = useQuery({
+  const { data: newsData, isLoading, refetch } = useQuery({
     queryKey: ['market-news', apiCategory],
     queryFn: async () => {
       const response = await apiClient.market.news.$get({
@@ -38,6 +42,13 @@ export function MarketNews() {
     },
     refetchInterval: 300000, // Refetch every 5 minutes
   });
+
+  // Expose refetch function to parent
+  useEffect(() => {
+    if (refetchRef) {
+      refetchRef.current = refetch;
+    }
+  }, [refetch, refetchRef]);
 
   const news = newsData?.news || [];
 
