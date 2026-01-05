@@ -8,6 +8,10 @@ export interface User {
   id: string;
   email: string;
   username: string;
+  firstName?: string;
+  lastName?: string;
+  fullName?: string;
+  profileBio?: string;
   roles?: string[];
   isActive: boolean;
   isLoggedIn?: boolean;

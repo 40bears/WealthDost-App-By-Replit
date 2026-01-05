@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, MutableRefObject } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { PostCard } from './PostCard';
@@ -13,15 +13,26 @@ interface FeedItem {
   data: any;
 }
 
-export function TrendingFeed() {
+interface TrendingFeedProps {
+  refetchRef?: MutableRefObject<(() => void) | null>;
+}
+
+export function TrendingFeed({ refetchRef }: TrendingFeedProps) {
   const [showFollowing, setShowFollowing] = useState(false);
   const limit = 20;
 
-  const { data, loading } = useFeed({
+  const { data, loading, refetch } = useFeed({
     limit,
     offset: 0,
     showFollowing,
   });
+
+  // Expose refetch function to parent
+  useEffect(() => {
+    if (refetchRef && refetch) {
+      refetchRef.current = refetch;
+    }
+  }, [refetch, refetchRef]);
 
   const feedItems = data?.feed?.items || [];
 

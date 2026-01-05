@@ -1,9 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api";
+import { useEffect, MutableRefObject } from "react";
 
-const StockPerformance = () => {
+interface StockPerformanceProps {
+  refetchRef?: MutableRefObject<(() => void) | null>;
+}
+
+const StockPerformance = ({ refetchRef }: StockPerformanceProps) => {
   // Fetch trending stocks from API
-  const { data: trendingData, isLoading } = useQuery({
+  const { data: trendingData, isLoading, refetch } = useQuery({
     queryKey: ['trending-stocks'],
     queryFn: async () => {
       const response = await apiClient.market.stocks.trending.$get();
@@ -11,6 +16,13 @@ const StockPerformance = () => {
     },
     refetchInterval: 60000, // Refetch every minute
   });
+
+  // Expose refetch function to parent
+  useEffect(() => {
+    if (refetchRef) {
+      refetchRef.current = refetch;
+    }
+  }, [refetch, refetchRef]);
 
   // Fallback stocks for loading or error states
   const fallbackStocks = [
