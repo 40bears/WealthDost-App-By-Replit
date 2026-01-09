@@ -3,11 +3,21 @@ import StockPerformance from "@/components/dashboard/StockPerformance";
 import { TrendingFeed } from "@/components/dashboard/TrendingFeed";
 import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { useRef } from "react";
+import { getUsername } from "@/lib/user-utils";
 
 const Dashboard = () => {
+  const username = getUsername();
   const stockPerformanceRefetch = useRef<(() => void) | null>(null);
   const marketNewsRefetch = useRef<(() => void) | null>(null);
   const trendingFeedRefetch = useRef<(() => void) | null>(null);
+
+  // Get greeting based on time of day
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good Morning";
+    if (hour < 17) return "Good Afternoon";
+    return "Good Evening";
+  };
 
   const handleRefresh = async () => {
     // Trigger refetch for all components
@@ -29,7 +39,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex flex-col bg-[#F9FAFB] min-h-screen relative max-w-md mx-auto">
+    <div className="flex flex-col bg-white min-h-screen relative max-w-md mx-auto">
       {/* Stock Performance Ticker - Fixed at top */}
       <div className="sticky top-0 z-10">
         <StockPerformance refetchRef={stockPerformanceRefetch} />
@@ -40,6 +50,16 @@ const Dashboard = () => {
         className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
       >
         <div>
+          {/* Greeting Section */}
+          <div className="px-4 pt-6 pb-4 bg-white">
+            <h1 className="text-[28px] font-semibold text-gray-900 mb-1" style={{ fontFamily: 'SF Pro, -apple-system, BlinkMacSystemFont, sans-serif' }}>
+              {getGreeting()}, {username}
+            </h1>
+            <p className="text-[15px] text-gray-600" style={{ fontFamily: 'SF Pro, -apple-system, BlinkMacSystemFont, sans-serif' }}>
+              Build wealth with clarity, not noise.
+            </p>
+          </div>
+
           {/* Market News */}
           <div className="px-4 py-6">
             <MarketNews refetchRef={marketNewsRefetch} />

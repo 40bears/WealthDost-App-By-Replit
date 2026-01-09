@@ -358,6 +358,11 @@ const CreateStockTipModal = ({ isOpen, onClose, onTipCreated }: CreateStockTipMo
     setSelectedStock(stock);
     setSearchQuery("");
     setShowStockResults(false);
+
+    // Auto-populate entry price with current price if available
+    if (stock.currentPrice && stock.currentPrice > 0) {
+      setValue('entryPrice', stock.currentPrice.toString());
+    }
   };
 
   if (!isOpen) return null;

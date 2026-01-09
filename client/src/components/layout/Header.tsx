@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/components/auth/auth-context";
 import { getUsername } from "@/lib/user-utils";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useLocation } from "@tanstack/react-router";
 import { useAuth as useAuthHook } from "@/hooks/useAuth";
 import { useNotificationCount } from "@/hooks/useNotificationCount";
 
@@ -18,17 +18,22 @@ const Header = () => {
   const { logout } = useAuth();
   const { isAdmin } = useAuthHook();
   const navigate = useNavigate();
+  const location = useLocation();
   const { count: unreadCount } = useNotificationCount();
 
-  // Get greeting based on time of day
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good Morning";
-    if (hour < 17) return "Good Afternoon";
-    return "Good Evening";
-  };
-
   const username = getUsername();
+
+  // Get header title based on current route
+  const getHeaderTitle = () => {
+    const pathname = location.pathname;
+
+    if (pathname.startsWith('/stock-tips')) return 'Stock Tips';
+    if (pathname.startsWith('/global-search')) return 'Search';
+    if (pathname.startsWith('/experts-list')) return 'Experts';
+    if (pathname.startsWith('/tribes')) return 'Tribes';
+
+    return 'WealthDost';
+  };
 
   const handleSignOut = async () => {
     try {
@@ -50,19 +55,11 @@ const Header = () => {
             alt="WealthDost Logo"
             className="w-10 h-10 object-contain"
           />
-          
-          {/* Greeting and Username in same line */}
-          <div className="flex items-center space-x-1" style={{ fontFamily: 'SF Pro, -apple-system, BlinkMacSystemFont, sans-serif' }}>
-            <span className="text-[14px] font-medium leading-5" style={{ color: '#0C0A09' }}>{getGreeting()}</span>
-            <span className="text-[14px] font-medium leading-5 capitalize" style={{ color: '#0C0A09' }}>{username}</span>
-          </div>
 
-          {/* Owl Icon */}
-          <img
-            src="/owl.png"
-            alt="Owl"
-            className="w-6 h-6 object-contain"
-          />
+          {/* Dynamic Title */}
+          <div style={{ fontFamily: 'SF Pro, -apple-system, BlinkMacSystemFont, sans-serif' }}>
+            <span className="text-[18px] font-bold leading-5" style={{ color: '#0C0A09' }}>{getHeaderTitle()}</span>
+          </div>
         </div>
 
         {/* Right side: Notification and Avatar */}
