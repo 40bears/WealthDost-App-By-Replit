@@ -62,6 +62,7 @@ const TRIBE_CATEGORIES = [
   "ETFs",
   "Bonds",
   "Commodities",
+  "Other",
 ];
 
 export default function CreateTribeModal({ isOpen, onClose, onTribeCreated }: CreateTribeModalProps) {

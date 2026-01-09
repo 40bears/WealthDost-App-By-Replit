@@ -14,6 +14,7 @@ type Props = {
 
 export function ExpertSpecializations({ selected, onChange, onBack, onNext, progress }: Props) {
   const [showError, setShowError] = useState(false);
+  const [otherText, setOtherText] = useState("");
   const items = [
     { key: 'stocks', title: '📈 Stock Market & Equity Research', desc: 'Stock analysis, valuations, and market strategies' },
     { key: 'crypto', title: '🚀 Crypto & Web3', desc: 'Blockchain technology, DeFi, and token economics' },
@@ -21,6 +22,7 @@ export function ExpertSpecializations({ selected, onChange, onBack, onNext, prog
     { key: 'macro', title: '🌍 Macroeconomics & Global Markets', desc: 'Economic analysis, geopolitics, and policy impacts' },
     { key: 'wealth', title: '💰 Wealth Planning & Financial Advisory', desc: 'Comprehensive financial planning and advisory services' },
     { key: 'realestate', title: '🏠 Real Estate & Alternative Investments', desc: 'Property markets, REITs, and non-traditional assets' },
+    { key: 'other', title: '📝 Other - Please specify', desc: 'Specify your specialization area' },
   ];
 
   const isDisabled = (key: string) => selected.length >= 3 && !selected.includes(key);
@@ -70,12 +72,26 @@ export function ExpertSpecializations({ selected, onChange, onBack, onNext, prog
       </div>
       <div className="space-y-2 mb-4 flex-1">
         {items.map(item => (
-          <div key={item.key} className="flex items-start p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
-            <Checkbox id={item.key} checked={selected.includes(item.key)} onCheckedChange={(c) => onChange(item.key, !!c)} className="mr-2 mt-0.5" disabled={isDisabled(item.key)} />
-            <Label htmlFor={item.key} className="flex-1 cursor-pointer">
-              <span className="font-medium text-gray-800">{item.title}</span>
-              <p className="text-sm text-gray-700">{item.desc}</p>
-            </Label>
+          <div key={item.key}>
+            <div className="flex items-start p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+              <Checkbox id={item.key} checked={selected.includes(item.key)} onCheckedChange={(c) => onChange(item.key, !!c)} className="mr-2 mt-0.5" disabled={isDisabled(item.key)} />
+              <Label htmlFor={item.key} className="flex-1 cursor-pointer">
+                <span className="font-medium text-gray-800">{item.title}</span>
+                <p className="text-sm text-gray-700">{item.desc}</p>
+              </Label>
+            </div>
+            {/* Show input field if "Other" is selected */}
+            {item.key === 'other' && selected.includes('other') && (
+              <div className="mt-2 ml-6">
+                <input
+                  type="text"
+                  value={otherText}
+                  onChange={(e) => setOtherText(e.target.value)}
+                  placeholder="Please specify your specialization"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                />
+              </div>
+            )}
           </div>
         ))}
       </div>
