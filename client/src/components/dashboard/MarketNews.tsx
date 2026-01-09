@@ -71,6 +71,7 @@ export function MarketNews({ refetchRef }: MarketNewsProps) {
   }, [selectedFilter]);
 
   const currentNews = news[currentIndex];
+
   const truncateText = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
     return text.slice(0, maxLength) + '...';
@@ -129,50 +130,79 @@ export function MarketNews({ refetchRef }: MarketNewsProps) {
 
       {/* News Card with Swiper */}
       <div className="relative">
-        <div className="bg-white rounded-lg p-[9px] border border-gray-100 shadow-sm">
-          <div className="flex items-start justify-between gap-2 mb-2">
-            <p className="text-sm text-gray-700 leading-relaxed flex-1">
-              {displayContent}
-              {!isExpanded && currentNews.description.length > 100 && (
-                <button
-                  onClick={() => setIsExpanded(true)}
-                  className="ml-1 text-blue-600 hover:text-blue-700 font-medium transition-colors"
-                >
-                  (Read More)
-                </button>
-              )}
-              {isExpanded && (
-                <button
-                  onClick={() => setIsExpanded(false)}
-                  className="ml-1 text-blue-600 hover:text-blue-700 font-medium transition-colors"
-                >
-                  Show Less
-                </button>
-              )}
-            </p>
-          </div>
+        <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          {news.map((newsItem, index) => (
+            <div
+              key={index}
+              className="flex-shrink-0 w-[70%] snap-start"
+            >
+              <div className="bg-white rounded-2xl px-4 py-4 shadow-md h-full">
+                <div className="flex flex-col">
+                  {/* Title */}
+                  <div className="mb-3">
+                    <p className="text-[14px] font-medium leading-tight" style={{
+                      fontFamily: 'SF Pro, -apple-system, BlinkMacSystemFont, sans-serif',
+                      color: '#1F2937'
+                    }}>
+                      {newsItem.title}
+                    </p>
+                  </div>
 
-          {/* Progress indicator dots */}
-          {news.length > 1 && (
-            <div className="flex justify-center gap-1.5 mt-2">
-              {news.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => {
-                    setCurrentIndex(index);
-                    setIsExpanded(false);
-                  }}
-                  className={`h-1.5 rounded-full transition-all ${
-                    index === currentIndex
-                      ? 'w-6 bg-blue-600'
-                      : 'w-1.5 bg-gray-300 hover:bg-gray-400'
-                  }`}
-                  aria-label={`Go to news ${index + 1}`}
-                />
-              ))}
+                  {/* Separator line */}
+                  <div className="h-px bg-gray-200 mb-3"></div>
+
+                  {/* Description with Read More */}
+                  <div className="mb-2">
+                    <p className="text-[13px] text-gray-600 leading-relaxed" style={{
+                      fontFamily: 'SF Pro, -apple-system, BlinkMacSystemFont, sans-serif'
+                    }}>
+                      {index === currentIndex && isExpanded
+                        ? newsItem.description
+                        : truncateText(newsItem.description, 100)}
+                      {index === currentIndex && !isExpanded && newsItem.description.length > 100 && (
+                        <button
+                          onClick={() => setIsExpanded(true)}
+                          className="ml-1 text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                        >
+                          Read More
+                        </button>
+                      )}
+                      {index === currentIndex && isExpanded && (
+                        <button
+                          onClick={() => setIsExpanded(false)}
+                          className="ml-1 text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                        >
+                          Show Less
+                        </button>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
-          )}
+          ))}
         </div>
+
+        {/* Progress indicator dots */}
+        {news.length > 1 && (
+          <div className="flex justify-center gap-1.5 mt-3">
+            {news.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  setCurrentIndex(index);
+                  setIsExpanded(false);
+                }}
+                className={`h-1.5 rounded-full transition-all ${
+                  index === currentIndex
+                    ? 'w-6 bg-blue-600'
+                    : 'w-1.5 bg-gray-300 hover:bg-gray-400'
+                }`}
+                aria-label={`Go to news ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
