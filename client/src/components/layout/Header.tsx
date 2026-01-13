@@ -28,8 +28,8 @@ const Header = () => {
     const pathname = location.pathname;
 
     if (pathname.startsWith('/stock-tips')) return 'Stock Tips';
-    if (pathname.startsWith('/global-search')) return 'Search';
-    if (pathname.startsWith('/experts-list')) return 'Experts';
+    if (pathname.startsWith('/global-search')) return 'Explore';
+    if (pathname.startsWith('/experts-list')) return 'Top Experts';
     if (pathname.startsWith('/tribes')) return 'Tribes';
 
     return 'WealthDost';

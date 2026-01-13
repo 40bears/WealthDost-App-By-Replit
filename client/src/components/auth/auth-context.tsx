@@ -1,5 +1,6 @@
 import { User } from "@/types";
 import { createContext, useCallback, useContext, useEffect, useState, useRef } from "react";
+import { reEmitTokenIfExists, sendLogoutToNative, sendTokenIfChanged, clearLastSentToken } from "@/lib/webview-bridge";
 
 export interface AuthContext {
   isAuthenticated: boolean
@@ -30,6 +31,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
     setIsLoading(false)
+
+    // Re-emit token to native on app initialization if session exists
+    reEmitTokenIfExists()
   }, [])
 
   const logout = useCallback(async () => {
@@ -37,6 +41,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('user')
     localStorage.removeItem('accessToken')
     localStorage.removeItem('refreshToken')
+
+    // Notify native layer about logout
+    clearLastSentToken()
+    sendLogoutToNative()
   }, [])
 
   const login = useCallback(async (userData: User) => {
@@ -45,6 +53,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Update state
     setUser(userData)
+
+    // Send token to native layer if available
+    const accessToken = localStorage.getItem('accessToken')
+    if (accessToken) {
+      sendTokenIfChanged(accessToken)
+    }
 
     // Wait for multiple animation frames to ensure state propagates to all consumers
     await new Promise(resolve => {
