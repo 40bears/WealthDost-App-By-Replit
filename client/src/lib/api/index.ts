@@ -4,6 +4,7 @@ import api from "../../api/$api.ts";
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
 import appConfig from '@/config/app';
+import { sendTokenIfChanged } from '@/lib/webview-bridge';
 
 const axiosIns = axios.create({
   baseURL: appConfig.apiUrl,
@@ -109,6 +110,9 @@ axiosIns.interceptors.response.use(
         // Store new tokens
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', newRefreshToken);
+
+        // Send new token to native layer
+        sendTokenIfChanged(accessToken);
 
         // Update authorization header
         axiosIns.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
