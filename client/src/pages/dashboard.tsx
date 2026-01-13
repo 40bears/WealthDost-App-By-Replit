@@ -40,33 +40,33 @@ const Dashboard = () => {
 
   return (
     <div className="flex flex-col bg-white min-h-screen relative max-w-md mx-auto">
-      {/* Stock Performance Ticker - Fixed at top */}
-      <div className="sticky top-0 z-10">
-        <StockPerformance refetchRef={stockPerformanceRefetch} />
-      </div>
-
       <PullToRefresh
         onRefresh={handleRefresh}
         className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
       >
         <div>
           {/* Greeting Section */}
-          <div className="px-4 pt-6 pb-4 bg-white">
-            <h1 className="text-[28px] font-semibold text-gray-900 mb-1" style={{ fontFamily: 'SF Pro, -apple-system, BlinkMacSystemFont, sans-serif' }}>
+          <div className="px-4 pt-2 pb-0.5 bg-white">
+            <h1 className="text-[28px] font-semibold text-gray-900 leading-tight" style={{ fontFamily: 'SF Pro, -apple-system, BlinkMacSystemFont, sans-serif' }}>
               {getGreeting()}, {username}
             </h1>
-            <p className="text-[15px] text-gray-600" style={{ fontFamily: 'SF Pro, -apple-system, BlinkMacSystemFont, sans-serif' }}>
+            <p className="text-[15px] text-gray-600 mt-0.5" style={{ fontFamily: 'SF Pro, -apple-system, BlinkMacSystemFont, sans-serif' }}>
               Build wealth with clarity, not noise.
             </p>
           </div>
 
           {/* Market News */}
-          <div className="px-4 py-6">
+          <div className="px-4 pt-2 pb-3">
             <MarketNews refetchRef={marketNewsRefetch} />
           </div>
 
+          {/* Stock Performance Ticker */}
+          <div className="sticky top-0 z-10">
+            <StockPerformance refetchRef={stockPerformanceRefetch} />
+          </div>
+
           {/* Trending Feed */}
-          <div className="px-4 py-6 pb-24">
+          <div className="px-4 pt-3 pb-24">
             <TrendingFeed refetchRef={trendingFeedRefetch} />
           </div>
         </div>

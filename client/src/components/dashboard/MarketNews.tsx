@@ -26,7 +26,7 @@ interface MarketNewsProps {
 export function MarketNews({ refetchRef }: MarketNewsProps) {
   const [selectedFilter, setSelectedFilter] = useState('hot-pursuit');
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
   // Map filter to API category
   const apiCategory = categoryMap[selectedFilter];
@@ -58,7 +58,7 @@ export function MarketNews({ refetchRef }: MarketNewsProps) {
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % news.length);
-      setIsExpanded(false); // Reset expansion when changing news
+      setExpandedIndex(null); // Reset expansion when changing news
     }, 5000);
 
     return () => clearInterval(interval);
@@ -67,15 +67,10 @@ export function MarketNews({ refetchRef }: MarketNewsProps) {
   // Reset to first news when category changes
   useEffect(() => {
     setCurrentIndex(0);
-    setIsExpanded(false);
+    setExpandedIndex(null);
   }, [selectedFilter]);
 
   const currentNews = news[currentIndex];
-
-  const truncateText = (text: string, maxLength: number) => {
-    if (text.length <= maxLength) return text;
-    return text.slice(0, maxLength) + '...';
-  };
 
   if (isLoading) {
     return (
@@ -103,14 +98,10 @@ export function MarketNews({ refetchRef }: MarketNewsProps) {
     );
   }
 
-  const displayContent = isExpanded
-    ? currentNews.description
-    : truncateText(currentNews.title, 100);
-
   return (
     <div className="bg-transparent">
       {/* Header Row */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-2">
         <h2 className="text-base font-semibold text-gray-900">Market News</h2>
         <div className="flex items-center gap-2">
           <ListFilter className="h-4 w-4 text-gray-500" />
@@ -136,11 +127,11 @@ export function MarketNews({ refetchRef }: MarketNewsProps) {
               key={index}
               className="flex-shrink-0 w-[70%] snap-start"
             >
-              <div className="bg-white rounded-2xl px-4 py-4 shadow-md h-full">
+              <div className="bg-white rounded-2xl px-3 py-3 shadow-md h-full">
                 <div className="flex flex-col">
                   {/* Title */}
-                  <div className="mb-3">
-                    <p className="text-[14px] font-medium leading-tight" style={{
+                  <div className="mb-2">
+                    <p className={`text-[14px] font-medium leading-tight ${expandedIndex === index ? '' : 'line-clamp-2'}`} style={{
                       fontFamily: 'SF Pro, -apple-system, BlinkMacSystemFont, sans-serif',
                       color: '#1F2937'
                     }}>
@@ -149,33 +140,31 @@ export function MarketNews({ refetchRef }: MarketNewsProps) {
                   </div>
 
                   {/* Separator line */}
-                  <div className="h-px bg-gray-200 mb-3"></div>
+                  <div className="h-px bg-gray-200 mb-2"></div>
 
                   {/* Description with Read More */}
-                  <div className="mb-2">
-                    <p className="text-[13px] text-gray-600 leading-relaxed" style={{
+                  <div className="mb-1">
+                    <p className={`text-[13px] text-gray-600 leading-relaxed ${expandedIndex === index ? '' : 'line-clamp-2'}`} style={{
                       fontFamily: 'SF Pro, -apple-system, BlinkMacSystemFont, sans-serif'
                     }}>
-                      {index === currentIndex && isExpanded
-                        ? newsItem.description
-                        : truncateText(newsItem.description, 100)}
-                      {index === currentIndex && !isExpanded && newsItem.description.length > 100 && (
-                        <button
-                          onClick={() => setIsExpanded(true)}
-                          className="ml-1 text-blue-600 hover:text-blue-700 font-medium transition-colors"
-                        >
-                          Read More
-                        </button>
-                      )}
-                      {index === currentIndex && isExpanded && (
-                        <button
-                          onClick={() => setIsExpanded(false)}
-                          className="ml-1 text-blue-600 hover:text-blue-700 font-medium transition-colors"
-                        >
-                          Show Less
-                        </button>
-                      )}
+                      {newsItem.description}
                     </p>
+                    {expandedIndex !== index && (
+                      <button
+                        onClick={() => setExpandedIndex(index)}
+                        className="text-blue-600 hover:text-blue-700 font-medium transition-colors text-[13px] mt-1"
+                      >
+                        Read More
+                      </button>
+                    )}
+                    {expandedIndex === index && (
+                      <button
+                        onClick={() => setExpandedIndex(null)}
+                        className="text-blue-600 hover:text-blue-700 font-medium transition-colors text-[13px] mt-1"
+                      >
+                        Show Less
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -185,13 +174,13 @@ export function MarketNews({ refetchRef }: MarketNewsProps) {
 
         {/* Progress indicator dots */}
         {news.length > 1 && (
-          <div className="flex justify-center gap-1.5 mt-3">
+          <div className="flex justify-center gap-1.5 mt-2">
             {news.map((_, index) => (
               <button
                 key={index}
                 onClick={() => {
                   setCurrentIndex(index);
-                  setIsExpanded(false);
+                  setExpandedIndex(null);
                 }}
                 className={`h-1.5 rounded-full transition-all ${
                   index === currentIndex
