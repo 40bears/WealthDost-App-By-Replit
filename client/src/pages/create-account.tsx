@@ -82,7 +82,20 @@ export default function CreateAccount() {
 
         return
       }
-      toast.error("Invalid Mobile Number", err?.message || "Please enter a valid 10-digit mobile number");
+
+      // Handle network and server errors gracefully
+      if (!err?.response || err?.response?.status >= 500 || err?.code === 'ERR_NETWORK') {
+        toast.error("Service Unavailable", "We're having trouble connecting. Please try again later.");
+        return;
+      }
+
+      // Handle validation errors
+      const errorMessage = err?.response?.data?.message;
+      if (errorMessage && typeof errorMessage === 'string') {
+        toast.error("Invalid Mobile Number", errorMessage);
+      } else {
+        toast.error("Invalid Mobile Number", "Please enter a valid 10-digit mobile number");
+      }
     }
   };
 

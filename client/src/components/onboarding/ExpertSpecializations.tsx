@@ -16,13 +16,13 @@ export function ExpertSpecializations({ selected, onChange, onBack, onNext, prog
   const [showError, setShowError] = useState(false);
   const [otherText, setOtherText] = useState("");
   const items = [
-    { key: 'stocks', title: '📈 Stock Market & Equity Research', desc: 'Stock analysis, valuations, and market strategies' },
-    { key: 'crypto', title: '🚀 Crypto & Web3', desc: 'Blockchain technology, DeFi, and token economics' },
-    { key: 'privateequity', title: '🏦 Private Equity & Venture Capital', desc: 'Deal sourcing, due diligence, and portfolio management' },
-    { key: 'macro', title: '🌍 Macroeconomics & Global Markets', desc: 'Economic analysis, geopolitics, and policy impacts' },
-    { key: 'wealth', title: '💰 Wealth Planning & Financial Advisory', desc: 'Comprehensive financial planning and advisory services' },
-    { key: 'realestate', title: '🏠 Real Estate & Alternative Investments', desc: 'Property markets, REITs, and non-traditional assets' },
-    { key: 'other', title: '📝 Other - Please specify', desc: 'Specify your specialization area' },
+    { key: 'stocks', title: '📈 Stock Market & Equity Research', desc: 'Company analysis, valuations & market strategies' },
+    { key: 'macro', title: '🌍 Macroeconomics & Global Markets', desc: 'Interest rates, policy impact & global market cycles' },
+    { key: 'accounting', title: '📊 Accounting, Taxation & Risk Advisory', desc: 'Financial reporting, tax planning, compliance & risk controls' },
+    { key: 'wealth', title: '💰 Wealth Planning, Insurance & Risk Management', desc: 'Goal-based planning, insurance structuring & asset allocation' },
+    { key: 'privatecapital', title: '🏦 Private Capital & Project Finance', desc: 'Project feasibility, financial modelling & capital structuring' },
+    { key: 'crypto', title: '🚀 Crypto & Web3', desc: 'Blockchain fundamentals, DeFi & token economics' },
+    { key: 'other', title: '📝 Other', desc: 'Specify your specialization area' },
   ];
 
   const isDisabled = (key: string) => selected.length >= 3 && !selected.includes(key);
