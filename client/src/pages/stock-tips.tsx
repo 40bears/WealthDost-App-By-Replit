@@ -89,10 +89,9 @@ export default function StockTips() {
     <div className="min-h-screen bg-[#F9FAFB] flex flex-col">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
-        <div className="flex items-center justify-between p-4 pb-3 mb-5">
+        <div className="flex items-center justify-between p-4 pb-3">
           <div className="flex items-center gap-3">
             <div>
-              <h1 className="text-xl font-bold">Stock Tips</h1>
               <p className="text-sm text-gray-600">Expert recommendations & community insights</p>
             </div>
           </div>
