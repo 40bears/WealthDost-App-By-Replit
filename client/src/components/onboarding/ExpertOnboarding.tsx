@@ -31,6 +31,8 @@ export const ExpertOnboarding = ({ onBack, onComplete }: ExpertOnboardingProps) 
     profileBio: "",
     detailedBio: "",
     education: "",
+    membershipNumber: "",
+    sebiRegistrationNumber: "",
     achievements: [] as string[],
     specializations: [] as string[],
     expertPersona: "",

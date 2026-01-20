@@ -1,5 +1,5 @@
-import { useState, useEffect, MutableRefObject } from 'react';
-import { ListFilter } from 'lucide-react';
+import { useState, useEffect, MutableRefObject, useRef, useCallback } from 'react';
+import { ListFilter, ExternalLink } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
 import {
@@ -9,6 +9,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+
+// Format date to relative time or date string
+function formatNewsDate(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 60) {
+    return `${diffMins}m ago`;
+  } else if (diffHours < 24) {
+    return `${diffHours}h ago`;
+  } else if (diffDays < 7) {
+    return `${diffDays}d ago`;
+  } else {
+    return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  }
+}
 
 type Category = 'trending' | 'breaking' | 'foreign';
 
@@ -27,6 +47,7 @@ export function MarketNews({ refetchRef }: MarketNewsProps) {
   const [selectedFilter, setSelectedFilter] = useState('hot-pursuit');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Map filter to API category
   const apiCategory = categoryMap[selectedFilter];
@@ -52,23 +73,54 @@ export function MarketNews({ refetchRef }: MarketNewsProps) {
 
   const news = newsData?.news || [];
 
+  // Scroll to specific index (only call this explicitly, not in effect)
+  const scrollToIndex = useCallback((index: number) => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const cardWidth = container.scrollWidth / news.length;
+      container.scrollTo({
+        left: cardWidth * index,
+        behavior: 'smooth'
+      });
+    }
+  }, [news.length]);
+
   // Auto-advance swiper every 5 seconds
   useEffect(() => {
     if (news.length <= 1) return;
 
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % news.length);
-      setExpandedIndex(null); // Reset expansion when changing news
+      const nextIndex = (currentIndex + 1) % news.length;
+      setCurrentIndex(nextIndex);
+      setExpandedIndex(null);
+      scrollToIndex(nextIndex);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [news.length]);
+  }, [news.length, currentIndex, scrollToIndex]);
 
   // Reset to first news when category changes
   useEffect(() => {
     setCurrentIndex(0);
     setExpandedIndex(null);
+    // Scroll to first item when category changes
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+    }
   }, [selectedFilter]);
+
+  // Handle scroll to update current index (for manual swipes)
+  const handleScroll = useCallback(() => {
+    if (scrollContainerRef.current && news.length > 0) {
+      const container = scrollContainerRef.current;
+      const cardWidth = container.scrollWidth / news.length;
+      const newIndex = Math.round(container.scrollLeft / cardWidth);
+      if (newIndex !== currentIndex && newIndex >= 0 && newIndex < news.length) {
+        setCurrentIndex(newIndex);
+        setExpandedIndex(null);
+      }
+    }
+  }, [currentIndex, news.length]);
 
   const currentNews = news[currentIndex];
 
@@ -121,14 +173,38 @@ export function MarketNews({ refetchRef }: MarketNewsProps) {
 
       {/* News Card with Swiper */}
       <div className="relative">
-        <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div
+          ref={scrollContainerRef}
+          onScroll={handleScroll}
+          className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+        >
           {news.map((newsItem, index) => (
             <div
               key={index}
               className="flex-shrink-0 w-[70%] snap-start"
             >
-              <div className="bg-white rounded-2xl px-3 py-3 shadow-md h-full">
+              <div
+                className="bg-white rounded-2xl px-3 py-3 shadow-md h-full cursor-pointer active:scale-[0.98] transition-transform"
+                onClick={() => {
+                  if (newsItem.url) {
+                    window.open(newsItem.url, '_blank', 'noopener,noreferrer');
+                  }
+                }}
+              >
                 <div className="flex flex-col">
+                  {/* Source and Date */}
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[11px] font-medium text-blue-600">
+                      {newsItem.source || 'News'}
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-[11px] text-gray-400">
+                        {newsItem.publishedAt ? formatNewsDate(newsItem.publishedAt) : ''}
+                      </span>
+                      {newsItem.url && <ExternalLink className="h-3 w-3 text-gray-400" />}
+                    </div>
+                  </div>
+
                   {/* Title */}
                   <div className="mb-2">
                     <p className={`text-[14px] font-medium leading-tight ${expandedIndex === index ? '' : 'line-clamp-2'}`} style={{
@@ -151,7 +227,10 @@ export function MarketNews({ refetchRef }: MarketNewsProps) {
                     </p>
                     {expandedIndex !== index && (
                       <button
-                        onClick={() => setExpandedIndex(index)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setExpandedIndex(index);
+                        }}
                         className="text-blue-600 hover:text-blue-700 font-medium transition-colors text-[13px] mt-1"
                       >
                         Read More
@@ -159,7 +238,10 @@ export function MarketNews({ refetchRef }: MarketNewsProps) {
                     )}
                     {expandedIndex === index && (
                       <button
-                        onClick={() => setExpandedIndex(null)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setExpandedIndex(null);
+                        }}
                         className="text-blue-600 hover:text-blue-700 font-medium transition-colors text-[13px] mt-1"
                       >
                         Show Less
@@ -181,6 +263,7 @@ export function MarketNews({ refetchRef }: MarketNewsProps) {
                 onClick={() => {
                   setCurrentIndex(index);
                   setExpandedIndex(null);
+                  scrollToIndex(index);
                 }}
                 className={`h-1.5 rounded-full transition-all ${
                   index === currentIndex

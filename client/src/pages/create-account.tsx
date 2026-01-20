@@ -10,6 +10,7 @@ import { InvestorOnboarding } from "@/components/onboarding/InvestorOnboarding";
 import { type Role as ChosenRole } from "@/components/onboarding/RoleSelection";
 import { useAuth } from "@/hooks/useAuth";
 import { useCreateAccount } from "@/sdk/auth/create-account";
+import { useSubmitSebiRegistration } from "@/hooks/graphql";
 import { UI } from "@/ui";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearch } from "@tanstack/react-router";
@@ -32,6 +33,7 @@ export default function CreateAccount() {
     verifyOtp: verifyOtpAction,
     finalizeProfile,
   } = useCreateAccount();
+  const [submitSebiRegistration] = useSubmitSebiRegistration();
   const toast = UI.toast;
 
   useEffect(() => {
@@ -69,7 +71,6 @@ export default function CreateAccount() {
     e?.preventDefault();
     try {
       await sendOtpAction();
-      toast.success("OTP Sent", "We've sent a 6-digit OTP to your mobile number");
       flow.send("OTP_SENT");
     } catch (err: any) {
       if (err?.response?.status === 409) {
@@ -126,7 +127,6 @@ export default function CreateAccount() {
           localStorage.setItem('refreshToken', response.refreshToken);
         }
       }
-      toast.success("Phone Verified", "Choose your role to continue");
       flow.send("OTP_VERIFIED");
     } catch (err: any) {
       // Extract error message from response
@@ -237,6 +237,20 @@ export default function CreateAccount() {
         }
         const userWithLoginFlag = { ...userData, isLoggedIn: true };
         await auth.login(userWithLoginFlag);
+
+        // Submit SEBI registration if provided during signup
+        if (data.sebiRegistrationNumber?.trim()) {
+          try {
+            await submitSebiRegistration({
+              variables: {
+                registrationNumber: data.sebiRegistrationNumber.trim(),
+              },
+            });
+          } catch (sebiErr) {
+            // Don't block signup if SEBI submission fails, user can retry later
+            console.error('SEBI registration submission failed:', sebiErr);
+          }
+        }
       }
 
       UI.toast.success('Welcome!', 'Your account is ready.');
@@ -269,8 +283,8 @@ export default function CreateAccount() {
           element={
             <SignupLayout
               showLogo={false}
-              headerText="Enter your mobile number to get started"
               showTermsInCard={false}
+              centerVertically={true}
               footerContent={
                 <div className="text-center">
                   <button

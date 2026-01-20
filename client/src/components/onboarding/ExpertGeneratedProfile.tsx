@@ -17,10 +17,8 @@ function getEducationDisplay(code: string): string {
     case "ca": return "CA";
     case "cfa": return "CFA";
     case "mba": return "MBA Finance";
-    case "bcom": return "B.Com/M.Com";
-    case "engineer": return "Finance Engineer";
-    case "self": return "Market Expert";
-    default: return "MBA Finance";
+    case "other": return "Other";
+    default: return code;
   }
 }
 
