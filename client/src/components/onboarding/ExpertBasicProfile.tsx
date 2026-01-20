@@ -14,6 +14,8 @@ type FormData = {
   username: string;
   profileBio: string;
   education: string;
+  membershipNumber: string;
+  sebiRegistrationNumber: string;
   achievements: string[];
 };
 
@@ -134,12 +136,10 @@ export function ExpertBasicProfile({
             </SelectTrigger>
             <SelectContent>
               {[
-                { value: "ca", label: "CA (Chartered Accountant)" },
-                { value: "cfa", label: "CFA (Chartered Financial Analyst)" },
-                { value: "mba", label: "MBA Finance (IIM/ISB/Other)" },
-                { value: "bcom", label: "B.Com/M.Com" },
-                { value: "engineer", label: "Finance Engineer" },
-                { value: "self", label: "Self-Taught Market Expert" },
+                { value: "ca", label: "CA" },
+                { value: "cfa", label: "CFA" },
+                { value: "mba", label: "MBA Finance" },
+                { value: "other", label: "Other" },
               ].map(({ value, label }) => (
                 <SelectItem key={value} value={value}>
                   {label}
@@ -153,6 +153,17 @@ export function ExpertBasicProfile({
           )}
         </div>
         <div>
+          <Label htmlFor="membershipNumber">Membership Number</Label>
+          <Input
+            id="membershipNumber"
+            name="membershipNumber"
+            value={formData.membershipNumber}
+            onChange={onBasicChange}
+            className="mt-1"
+            placeholder="Enter your membership number"
+          />
+        </div>
+        <div>
           <Label className="block text-sm font-medium text-gray-700 mb-3">Exceptional Achievements</Label>
           <div className="space-y-2">
             {[
@@ -163,9 +174,25 @@ export function ExpertBasicProfile({
               { id: 'published', label: 'Published in Forbes/Moneycontrol' },
               { id: 'founder', label: 'Finance Startup Founder' },
             ].map(item => (
-              <div key={item.id} className="flex items-start p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
-                <Checkbox id={item.id} checked={formData.achievements.includes(item.id)} onCheckedChange={handleAchievementChecked(item.id)} className="mr-2 mt-0.5" />
-                <Label htmlFor={item.id} className="flex-1 cursor-pointer">{item.label}</Label>
+              <div key={item.id}>
+                <div className="flex items-start p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+                  <Checkbox id={item.id} checked={formData.achievements.includes(item.id)} onCheckedChange={handleAchievementChecked(item.id)} className="mr-2 mt-0.5" />
+                  <Label htmlFor={item.id} className="flex-1 cursor-pointer">{item.label}</Label>
+                </div>
+                {item.id === 'recognition' && formData.achievements.includes('recognition') && (
+                  <div className="mt-2 p-3 border border-gray-200 rounded-lg bg-gray-50">
+                    <Label htmlFor="sebiRegistrationNumber" className="text-sm text-gray-600">Regd Number :</Label>
+                    <Input
+                      id="sebiRegistrationNumber"
+                      name="sebiRegistrationNumber"
+                      value={formData.sebiRegistrationNumber}
+                      onChange={onBasicChange}
+                      className="mt-1 border border-gray-300 rounded-md focus-visible:ring-1 focus-visible:ring-gray-400 bg-white"
+                      placeholder="Enter 12 digit registration number"
+                      maxLength={12}
+                    />
+                  </div>
+                )}
               </div>
             ))}
           </div>

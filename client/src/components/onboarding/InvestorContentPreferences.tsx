@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { useState } from "react";
@@ -15,12 +16,35 @@ type Props = {
 
 export function InvestorContentPreferences({ selected, onChange, onBack, onNext, onSkipToDashboard, progress }: Props) {
   const [showError, setShowError] = useState(false);
+  const [isOtherSelected, setIsOtherSelected] = useState(false);
+  const [otherText, setOtherText] = useState('');
+
+  const handleOtherCheck = (checked: boolean) => {
+    setIsOtherSelected(checked);
+    if (!checked) {
+      setOtherText('');
+    }
+  };
+
+  const handleNext = () => {
+    if (selected.length === 0 && !isOtherSelected) {
+      setShowError(true);
+      return;
+    }
+    // Add otherText to interests if provided
+    if (isOtherSelected && otherText.trim()) {
+      onChange(otherText.trim(), true);
+    }
+    onNext();
+  };
   const items = [
-    { key: 'stocks', title: '📈 Stock Market', desc: 'Equities, indices, and market analysis' },
-    { key: 'crypto', title: '🚀 Crypto & Web3', desc: 'Blockchain and digital assets' },
-    { key: 'realestate', title: '🏠 Real Estate', desc: 'Property markets and REITs' },
-    { key: 'macro', title: '🌍 Macroeconomics', desc: 'Global trends and policy impacts' },
-    { key: 'personal', title: '💰 Personal Finance', desc: 'Budgeting, saving, and wealth planning' },
+    { key: 'stocks', title: '📈 Stock Market', desc: 'Learn how stocks move and why companies matter' },
+    { key: 'macro', title: '🌍 Macroeconomics', desc: 'How the economy, rates and global events affect you' },
+    { key: 'wealth', title: '🛡️ Wealth Planning & Insurance', desc: 'Plan goals, stay protected and reduce money stress' },
+    { key: 'taxation', title: '📋 Taxation & Compliance', desc: 'Understand taxes and avoid costly mistakes' },
+    { key: 'private', title: '🏢 Private Markets', desc: 'Startups, private investments and how deals work' },
+    { key: 'crypto', title: '🚀 Crypto & Web3', desc: 'Crypto basics, trends and real risks' },
+    { key: 'personal', title: '💰 Personal Finance', desc: 'Save better, spend smarter and build habits', optional: true },
   ];
 
   const handleSelectAll = () => {
@@ -45,7 +69,7 @@ export function InvestorContentPreferences({ selected, onChange, onBack, onNext,
         <Button variant="ghost" size="icon" onClick={onBack} className="text-gray-500">
           <span className="material-icons">arrow_back</span>
         </Button>
-        <h2 className="text-lg font-semibold ml-2">Content Preferences</h2>
+        <h2 className="text-lg font-semibold ml-2">Pick your money interests</h2>
       </div>
       <Progress value={progress} className="h-1 mb-4" />
       <div className="flex items-center justify-between mb-4">
@@ -66,6 +90,23 @@ export function InvestorContentPreferences({ selected, onChange, onBack, onNext,
             </Label>
           </div>
         ))}
+        {/* Other option with text box */}
+        <div className="flex flex-col p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+          <div className="flex items-start">
+            <Checkbox id="other" checked={isOtherSelected} onCheckedChange={(c) => handleOtherCheck(!!c)} className="mr-2 mt-0.5" />
+            <Label htmlFor="other" className="flex-1 cursor-pointer">
+              <span className="font-medium text-gray-800">✨ Other</span>
+            </Label>
+          </div>
+          {isOtherSelected && (
+            <Input
+              placeholder="Tell us what interests you..."
+              value={otherText}
+              onChange={(e) => setOtherText(e.target.value)}
+              className="mt-2 w-full"
+            />
+          )}
+        </div>
       </div>
       {showError && selected.length === 0 && (
         <p className="text-xs text-red-600 mb-2">Select at least one topic</p>
@@ -74,7 +115,7 @@ export function InvestorContentPreferences({ selected, onChange, onBack, onNext,
         <Button onClick={onSkipToDashboard} className="w-full mb-3 bg-[#E2E8F0] text-gray-700 hover:bg-[#E2E8F0]/80">Skip to dashboard</Button>
         <div className="flex space-x-3">
           <Button variant="outline" onClick={onBack} className="flex-1">Back</Button>
-          <Button onClick={() => { if (selected.length === 0) { setShowError(true); return; } onNext(); }} className="flex-1">Next</Button>
+          <Button onClick={handleNext} className="flex-1">Next</Button>
         </div>
       </div>
     </div>

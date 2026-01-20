@@ -7,9 +7,10 @@ interface SignupLayoutProps {
     showTermsInCard?: boolean;
     footerContent?: React.ReactNode;
     showWhiteAreas?: boolean;
+    centerVertically?: boolean;
 }
 
-export function SignupLayout({ children, showLogo = true, headerText, showTermsInCard = true, footerContent, showWhiteAreas = false }: SignupLayoutProps) {
+export function SignupLayout({ children, showLogo = true, headerText, showTermsInCard = true, footerContent, showWhiteAreas = false, centerVertically = false }: SignupLayoutProps) {
 
     const childrenArr = React.Children.toArray(children)
 
@@ -20,7 +21,7 @@ export function SignupLayout({ children, showLogo = true, headerText, showTermsI
                 <div className="absolute top-0 left-4 right-4 bg-white h-48 rounded-b-[2rem]"></div>
             )}
 
-            <div className={`w-full max-w-md mx-auto relative z-10 ${headerText ? 'min-h-screen flex flex-col justify-center' : ''}`}>
+            <div className={`w-full max-w-md mx-auto relative z-10 ${(headerText || centerVertically) ? 'min-h-screen flex flex-col justify-center' : ''}`}>
                 {/* Header */}
                 {showLogo && (
                     <div className="flex justify-center pt-24 mb-12">
