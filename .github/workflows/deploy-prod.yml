@@ -1,4 +1,4 @@
-name: deploy image to test server and build the app
+name: deploy image to PROD server and build the app
 
 on:
   workflow_dispatch:
@@ -28,7 +28,7 @@ jobs:
       - name: Transfer tarball to remote server via scp
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.SSH_HOST }}
+          host: ${{ secrets.SSH_HOST_PROD }}
           username: ${{ secrets.SSH_USERNAME_PROD }}
           key: ${{ secrets.SSH_KEY_PROD }}
           source: image.tar
