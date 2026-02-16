@@ -47,4 +47,4 @@ jobs:
             sed -i -E "s|(image: 'app-wealthdost:)[^']*('?)|\1${{ github.sha }}'|g" docker-compose.yml
             chmod +x /home/wealth-dost/public_html/WealthDost-App-By-Replit/scripts/cleanup.sh
             /home/wealth-dost/public_html/WealthDost-App-By-Replit/scripts/cleanup.sh app-wealthdost
-            docker-compose up -d
+            docker compose up -d
